@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" width="1200" height="900">
+  <!-- PLACEHOLDER ARTWORK — "Table for Two" (everyday). Replace with final illustration. -->
+  <defs>
+    <linearGradient id="tt-room" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3a1d12"/>
+      <stop offset="55%" stop-color="#24120c"/>
+      <stop offset="100%" stop-color="#100806"/>
+    </linearGradient>
+    <radialGradient id="tt-lamp" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#ffd9a0" stop-opacity="0.95"/>
+      <stop offset="40%" stop-color="#ff9d3c" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#ff8a1f" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="tt-window" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1b2b4a"/>
+      <stop offset="100%" stop-color="#0d1526"/>
+    </linearGradient>
+    <linearGradient id="tt-table" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#6b3a1f"/>
+      <stop offset="100%" stop-color="#2a1409"/>
+    </linearGradient>
+    <radialGradient id="tt-vignette" cx="0.5" cy="0.46" r="0.7">
+      <stop offset="48%" stop-color="#000" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#000" stop-opacity="0.7"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="900" fill="url(#tt-room)"/>
+
+  <!-- back wall panelling -->
+  <g fill="#180c08" opacity="0.7">
+    <rect x="0" y="0" width="1200" height="70"/>
+    <rect x="60" y="120" width="10" height="440"/>
+    <rect x="1130" y="120" width="10" height="440"/>
+  </g>
+
+  <!-- rainy night window -->
+  <rect x="120" y="90" width="380" height="420" rx="14" fill="url(#tt-window)"/>
+  <g stroke="#0d0704" stroke-width="16">
+    <line x1="310" y1="90" x2="310" y2="510"/>
+    <line x1="120" y1="300" x2="500" y2="300"/>
+  </g>
+  <g fill="#6f8fc4" opacity="0.35">
+    <circle cx="200" cy="200" r="4"/><circle cx="256" cy="252" r="3"/><circle cx="360" cy="176" r="3.5"/>
+    <circle cx="430" cy="240" r="3"/><circle cx="180" cy="390" r="4"/><circle cx="400" cy="420" r="3.5"/>
+  </g>
+  <g stroke="#9fb8e6" stroke-width="2" opacity="0.22">
+    <line x1="160" y1="120" x2="146" y2="200"/><line x1="270" y1="150" x2="256" y2="236"/>
+    <line x1="390" y1="130" x2="376" y2="214"/><line x1="470" y1="330" x2="456" y2="412"/>
+  </g>
+
+  <!-- hanging lamp -->
+  <rect x="754" y="0" width="6" height="150" fill="#120806"/>
+  <path d="M690 150 L824 150 L800 216 L714 216 Z" fill="#1c0d07"/>
+  <circle cx="757" cy="228" r="26" fill="#ffe3b4"/>
+  <circle cx="757" cy="250" r="330" fill="url(#tt-lamp)"/>
+
+  <!-- shelves with cups -->
+  <g fill="#1c0e07">
+    <rect x="880" y="180" width="280" height="12" rx="4"/>
+    <rect x="880" y="300" width="280" height="12" rx="4"/>
+  </g>
+  <g fill="#3d2113">
+    <rect x="906" y="142" width="34" height="38" rx="6"/><rect x="958" y="148" width="30" height="32" rx="6"/>
+    <rect x="1012" y="140" width="36" height="40" rx="6"/><rect x="1074" y="150" width="30" height="30" rx="6"/>
+    <rect x="920" y="262" width="32" height="38" rx="6"/><rect x="990" y="266" width="36" height="34" rx="6"/>
+    <rect x="1060" y="258" width="30" height="42" rx="6"/>
+  </g>
+
+  <!-- table -->
+  <ellipse cx="600" cy="676" rx="330" ry="86" fill="url(#tt-table)"/>
+  <ellipse cx="600" cy="662" rx="330" ry="86" fill="#8a4d27"/>
+  <ellipse cx="600" cy="656" rx="300" ry="72" fill="#a3612f" opacity="0.55"/>
+  <rect x="560" y="740" width="80" height="160" fill="#2a1409"/>
+
+  <!-- two people talking -->
+  <g fill="#150a06">
+    <!-- left -->
+    <path d="M300 900 L300 600 C300 540 360 508 416 508 C472 508 520 546 520 606 L520 900 Z"/>
+    <circle cx="410" cy="452" r="76"/>
+    <path d="M334 452 C334 380 486 380 486 452 C486 408 334 408 334 452 Z"/>
+    <!-- right -->
+    <path d="M690 900 L690 606 C690 546 738 508 794 508 C850 508 910 540 910 600 L910 900 Z"/>
+    <circle cx="800" cy="452" r="76"/>
+    <path d="M724 440 C742 372 858 372 876 440 C876 396 724 396 724 440 Z"/>
+  </g>
+  <!-- rim light from the lamp -->
+  <g fill="#ffb35c" opacity="0.5">
+    <path d="M486 452 C486 500 470 528 440 546 L456 560 C500 534 512 494 508 448 Z"/>
+    <path d="M724 452 C724 500 740 528 770 546 L754 560 C710 534 698 494 702 448 Z"/>
+  </g>
+
+  <!-- cups on the table -->
+  <g fill="#f0e2cd">
+    <ellipse cx="470" cy="640" rx="34" ry="12"/><rect x="436" y="606" width="68" height="36" rx="8"/>
+    <ellipse cx="736" cy="646" rx="32" ry="11"/><rect x="704" y="614" width="64" height="34" rx="8"/>
+  </g>
+  <g fill="#ffdfae" opacity="0.35">
+    <ellipse cx="470" cy="580" rx="26" ry="34"/>
+    <ellipse cx="736" cy="588" rx="24" ry="30"/>
+  </g>
+
+  <rect width="1200" height="900" fill="url(#tt-vignette)"/>
+</svg>

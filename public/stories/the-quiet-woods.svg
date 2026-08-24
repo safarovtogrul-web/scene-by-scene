@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" width="1200" height="900">
+  <!-- PLACEHOLDER ARTWORK — "The Quiet Woods" (folk tale). Replace with final illustration. -->
+  <defs>
+    <linearGradient id="qw-air" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0d2430"/>
+      <stop offset="45%" stop-color="#0a2029"/>
+      <stop offset="100%" stop-color="#040d12"/>
+    </linearGradient>
+    <radialGradient id="qw-lantern" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#d9f0ff" stop-opacity="0.95"/>
+      <stop offset="28%" stop-color="#7fd6ff" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#4aa8e0" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="qw-shaft" x1="0" y1="0" x2="0.4" y2="1">
+      <stop offset="0%" stop-color="#9fe4ff" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#9fe4ff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="qw-vignette" cx="0.5" cy="0.5" r="0.7">
+      <stop offset="45%" stop-color="#000" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#000" stop-opacity="0.72"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="900" fill="url(#qw-air)"/>
+
+  <!-- light shafts through the canopy -->
+  <g>
+    <path d="M420 -40 L560 -40 L760 900 L560 900 Z" fill="url(#qw-shaft)"/>
+    <path d="M700 -40 L790 -40 L920 900 L790 900 Z" fill="url(#qw-shaft)" opacity="0.6"/>
+    <path d="M180 -40 L250 -40 L360 900 L240 900 Z" fill="url(#qw-shaft)" opacity="0.4"/>
+  </g>
+
+  <!-- far trees (haze) -->
+  <g fill="#13323d" opacity="0.55">
+    <rect x="70" y="120" width="34" height="700"/><rect x="215" y="90" width="26" height="720"/>
+    <rect x="360" y="140" width="30" height="690"/><rect x="520" y="100" width="22" height="720"/>
+    <rect x="660" y="130" width="28" height="700"/><rect x="810" y="96" width="32" height="720"/>
+    <rect x="960" y="140" width="24" height="690"/><rect x="1090" y="110" width="30" height="710"/>
+  </g>
+
+  <!-- mid trees -->
+  <g fill="#0a1d25">
+    <path d="M120 900 L120 60 L172 60 L172 900 Z"/>
+    <path d="M300 900 L306 40 L368 40 L360 900 Z"/>
+    <path d="M880 900 L872 50 L936 50 L944 900 Z"/>
+    <path d="M1046 900 L1050 80 L1104 80 L1100 900 Z"/>
+    <!-- branches -->
+    <path d="M172 220 C240 200 280 170 320 130 L320 156 C284 196 236 226 172 246 Z"/>
+    <path d="M872 260 C800 236 760 200 720 160 L720 188 C760 228 806 262 872 286 Z"/>
+  </g>
+
+  <!-- near trunks, darkest -->
+  <g fill="#050f14">
+    <path d="M-20 900 L-14 -20 L86 -20 L74 900 Z"/>
+    <path d="M1150 900 L1136 -20 L1230 -20 L1230 900 Z"/>
+  </g>
+
+  <!-- ground fog -->
+  <g fill="#8fd8f0" opacity="0.1">
+    <ellipse cx="360" cy="770" rx="440" ry="60"/>
+    <ellipse cx="860" cy="800" rx="420" ry="52"/>
+    <ellipse cx="600" cy="836" rx="620" ry="44"/>
+  </g>
+  <path d="M0 806 C240 782 420 826 640 806 C860 786 1010 828 1200 800 L1200 900 L0 900 Z" fill="#04090d"/>
+
+  <!-- traveller with a lantern -->
+  <circle cx="596" cy="640" r="230" fill="url(#qw-lantern)" opacity="0.75"/>
+  <g fill="#020608">
+    <path d="M566 812 L566 618 C566 588 606 588 606 618 L606 812 Z"/>
+    <circle cx="586" cy="592" r="27"/>
+    <path d="M548 700 L548 626 L562 626 L562 706 Z"/>
+    <path d="M624 690 L624 626 L610 626 L610 700 Z"/>
+    <path d="M556 760 L546 812 L560 812 L572 764 Z"/>
+  </g>
+  <!-- lantern -->
+  <rect x="620" y="694" width="22" height="28" rx="5" fill="#0a1418"/>
+  <circle cx="631" cy="708" r="11" fill="#e6f7ff"/>
+  <circle cx="631" cy="708" r="52" fill="#9fe4ff" opacity="0.25"/>
+
+  <!-- fireflies -->
+  <g fill="#cdf3ff">
+    <circle cx="330" cy="520" r="3.6" opacity="0.8"/><circle cx="812" cy="470" r="3" opacity="0.7"/>
+    <circle cx="440" cy="380" r="2.6" opacity="0.6"/><circle cx="740" cy="600" r="3.4" opacity="0.75"/>
+    <circle cx="256" cy="660" r="2.8" opacity="0.55"/><circle cx="960" cy="580" r="3" opacity="0.6"/>
+  </g>
+
+  <rect width="1200" height="900" fill="url(#qw-vignette)"/>
+</svg>

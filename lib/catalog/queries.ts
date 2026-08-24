@@ -1,0 +1,79 @@
+import { STORIES } from "./stories";
+import { MOCK_PROGRESS } from "./progress";
+import { GENRES, bucketForMinutes } from "./taxonomy";
+import type { Difficulty, GenreId, LengthBucket, Story, StoryLanguageVariant, StoryProgress } from "./types";
+import type { LanguageId } from "@/lib/languages";
+
+const BY_ID = new Map(STORIES.map((story) => [story.id, story]));
+const PROGRESS_BY_ID = new Map(MOCK_PROGRESS.map((entry) => [entry.storyId, entry]));
+
+export function getStory(id: string): Story | undefined { return BY_ID.get(id); }
+export function requireStory(id: string): Story {
+  const story = BY_ID.get(id);
+  if (!story) throw new Error(`Unknown story: ${id}`);
+  return story;
+}
+export function getGenre(id: GenreId) { return GENRES.find((genre) => genre.id === id); }
+export function genreLabel(id: GenreId): string { return getGenre(id)?.label ?? id; }
+export function difficultyLabel(difficulty: Difficulty): string { return difficulty === "easy" ? "Easy" : "Hard"; }
+export function countByGenre(id: GenreId): number { return STORIES.filter((story) => story.genre === id).length; }
+
+/** Resolves one exact story/difficulty/learning-language variant, never falls back. */
+export function resolveStoryLanguageVariant(
+  story: Story,
+  difficulty: Difficulty,
+  learningLanguage: LanguageId,
+): StoryLanguageVariant | null {
+  if (!story.availableLanguages.includes(learningLanguage)) return null;
+  return story.levels[difficulty].languageVariants[learningLanguage] ?? null;
+}
+
+export function getProgress(storyId: string): StoryProgress | undefined { return PROGRESS_BY_ID.get(storyId); }
+export function progressRatio(story: Story): number {
+  const progress = PROGRESS_BY_ID.get(story.id);
+  return progress ? Math.min(progress.scenesCompleted / story.scenes, 1) : 0;
+}
+export function getContinueLearning(): Story[] {
+  return [...MOCK_PROGRESS].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)).map((entry) => BY_ID.get(entry.storyId)).filter((story): story is Story => Boolean(story));
+}
+export function getNewStories(limit = 8): Story[] { return [...STORIES].sort((a, b) => b.addedAt.localeCompare(a.addedAt)).slice(0, limit); }
+export function getRecommended(limit = 8): Story[] {
+  const started = new Set(MOCK_PROGRESS.map((entry) => entry.storyId));
+  return STORIES.filter((story) => !started.has(story.id)).sort((a, b) => a.title.localeCompare(b.title)).slice(0, limit);
+}
+export function getByDifficulty(difficulty: Difficulty, limit?: number): Story[] {
+  const matches = STORIES.filter((story) => story.levels[difficulty] !== undefined);
+  return limit ? matches.slice(0, limit) : matches;
+}
+export function getByGenre(genre: GenreId, limit?: number): Story[] {
+  const matches = STORIES.filter((story) => story.genre === genre);
+  return limit ? matches.slice(0, limit) : matches;
+}
+export function getRelated(story: Story, limit = 6): Story[] {
+  const sameGenre = STORIES.filter((candidate) => candidate.genre === story.genre && candidate.id !== story.id);
+  if (sameGenre.length >= limit) return sameGenre.slice(0, limit);
+  const sameDifficulty = STORIES.filter((candidate) => candidate.defaultDifficulty === story.defaultDifficulty && candidate.id !== story.id && candidate.genre !== story.genre);
+  return [...sameGenre, ...sameDifficulty].slice(0, limit);
+}
+
+export type SortOption = "recommended" | "newest" | "shortest";
+export type StoryQuery = {
+  search?: string;
+  difficulty?: Difficulty | "all";
+  genre?: GenreId | "all";
+  length?: LengthBucket | "all";
+  sort?: SortOption;
+};
+export function filterStories(query: StoryQuery): Story[] {
+  const search = query.search?.trim().toLowerCase() ?? "";
+  const results = STORIES.filter((story) => {
+    if (query.difficulty && query.difficulty !== "all" && !story.levels[query.difficulty]) return false;
+    if (query.genre && query.genre !== "all" && story.genre !== query.genre) return false;
+    if (query.length && query.length !== "all" && bucketForMinutes(story.minutes) !== query.length) return false;
+    return !search || `${story.title} ${story.description} ${genreLabel(story.genre)} ${difficultyLabel(story.defaultDifficulty)}`.toLowerCase().includes(search);
+  });
+  if (query.sort === "newest") return results.sort((a, b) => b.addedAt.localeCompare(a.addedAt));
+  if (query.sort === "shortest") return results.sort((a, b) => a.minutes - b.minutes);
+  return results.sort((a, b) => a.title.localeCompare(b.title));
+}
+export const TOTAL_STORY_COUNT = STORIES.length;

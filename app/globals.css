@@ -1,0 +1,279 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------ *
+ * Textory design system
+ * Dark cinematic navy/black canvas, violet neon accents, soft depth.
+ * ------------------------------------------------------------------ */
+
+@theme {
+  /* Surfaces — deep navy/black */
+  --color-ink-950: #04030c;
+  --color-ink-900: #070614;
+  --color-ink-850: #0b0919;
+  --color-ink-800: #101020;
+  --color-ink-700: #16162a;
+  --color-ink-600: #1e1d35;
+  --color-ink-500: #2a2844;
+
+  /* Violet / purple accent ramp */
+  --color-iris-200: #ddd3ff;
+  --color-iris-300: #c4b2ff;
+  --color-iris-400: #a78bfa;
+  --color-iris-500: #8b5cf6;
+  --color-iris-600: #7c3aed;
+  --color-iris-700: #6429e0;
+  --color-iris-800: #4c1d95;
+
+  /* Text */
+  --color-mist-100: #f4f2ff;
+  --color-mist-300: #cfcbe4;
+  --color-mist-400: #a6a1c2;
+  --color-mist-500: #7d7899;
+
+  /* Type */
+  --font-display: var(--font-outfit), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+
+  /* Depth */
+  --shadow-card: 0 30px 60px -20px rgba(2, 0, 12, 0.85),
+    0 12px 28px -14px rgba(80, 40, 200, 0.35);
+  --shadow-glow: 0 0 40px -6px rgba(124, 58, 237, 0.55);
+  --shadow-cta: 0 18px 40px -14px rgba(124, 58, 237, 0.9),
+    0 4px 14px -6px rgba(139, 92, 246, 0.6);
+
+  /* Motion */
+  --ease-cinematic: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ------------------------------------------------------------------ *
+ * Base
+ * ------------------------------------------------------------------ */
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background-color: var(--color-ink-950);
+    color: var(--color-mist-100);
+    font-family: var(--font-sans);
+    /* Hard guarantee against horizontal overflow from rotated cards. */
+    overflow-x: hidden;
+    overscroll-behavior-y: none;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--color-iris-500) 45%, transparent);
+    color: var(--color-mist-100);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-iris-400);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Utilities
+ * ------------------------------------------------------------------ */
+
+@utility text-balance-tight {
+  text-wrap: balance;
+}
+
+/* Violet emphasis used on headline fragments ("through stories."). */
+@utility text-emphasis {
+  background-image: linear-gradient(
+    100deg,
+    var(--color-iris-400) 0%,
+    var(--color-iris-300) 45%,
+    var(--color-iris-500) 100%
+  );
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+}
+
+@utility gpu {
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+/* ------------------------------------------------------------------ *
+ * Continuous ambient motion
+ *
+ * Every drifting element nests three single-axis oscillations that each
+ * run `alternate` with sine-like easing. Because the three periods are
+ * mutually incommensurable, the composed path is a Lissajous figure with
+ * no perceivable loop point, and every keyframe touches only `transform`
+ * so the whole scene stays on the compositor.
+ * ------------------------------------------------------------------ */
+
+@keyframes drift-x {
+  from {
+    transform: translate3d(calc(var(--drift-x, 10px) * -1), 0, 0);
+  }
+  to {
+    transform: translate3d(var(--drift-x, 10px), 0, 0);
+  }
+}
+
+@keyframes drift-y {
+  from {
+    transform: translate3d(0, calc(var(--drift-y, 12px) * -1), 0);
+  }
+  to {
+    transform: translate3d(0, var(--drift-y, 12px), 0);
+  }
+}
+
+/* Sway only — the card's base tilt is a static transform on the visual
+ * itself, so the composition keeps its pose when animations are switched
+ * off for reduced motion. */
+@keyframes drift-rotate {
+  from {
+    transform: rotate(calc(var(--rotate-amp, 1deg) * -1));
+  }
+  to {
+    transform: rotate(var(--rotate-amp, 1deg));
+  }
+}
+
+@keyframes drift-scale {
+  from {
+    transform: scale(calc(1 - var(--scale-amp, 0.015)));
+  }
+  to {
+    transform: scale(calc(1 + var(--scale-amp, 0.015)));
+  }
+}
+
+@keyframes aurora-sway {
+  from {
+    transform: translate3d(-2%, 1%, 0) scale(1.02);
+  }
+  to {
+    transform: translate3d(2%, -1.5%, 0) scale(1.08);
+  }
+}
+
+@keyframes glow-breathe {
+  from {
+    opacity: 0.35;
+  }
+  to {
+    opacity: 0.75;
+  }
+}
+
+/* One glint: fade up, drift a little, fade out. Both ends sit at zero opacity
+ * so the infinite loop has no seam and nothing pops. */
+@keyframes sparkle-twinkle {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 0, 0) scale(0.3);
+  }
+  22% {
+    opacity: var(--sparkle-peak, 1);
+    transform: translate3d(
+        calc(var(--sparkle-x, 6px) * 0.28),
+        calc(var(--sparkle-y, -6px) * 0.28),
+        0
+      )
+      scale(1);
+  }
+  58% {
+    opacity: calc(var(--sparkle-peak, 1) * 0.3);
+    transform: translate3d(
+        calc(var(--sparkle-x, 6px) * 0.62),
+        calc(var(--sparkle-y, -6px) * 0.62),
+        0
+      )
+      scale(0.72);
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--sparkle-x, 6px), var(--sparkle-y, -6px), 0)
+      scale(0.42);
+  }
+}
+
+.drift-x,
+.drift-y,
+.drift-rotate,
+.drift-scale,
+.aurora-sway,
+.glow-breathe {
+  animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1); /* sine in-out */
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  animation-fill-mode: both;
+  will-change: transform;
+}
+
+.drift-x {
+  animation-name: drift-x;
+}
+.drift-y {
+  animation-name: drift-y;
+}
+.drift-rotate {
+  animation-name: drift-rotate;
+}
+.drift-scale {
+  animation-name: drift-scale;
+}
+.aurora-sway {
+  animation-name: aurora-sway;
+}
+.glow-breathe {
+  animation-name: glow-breathe;
+  will-change: opacity;
+}
+
+/* Sparkles opt out of the shared `alternate` block above: they run one
+ * direction and rest at zero opacity, which is also what reduced motion
+ * leaves behind. */
+.sparkle {
+  position: absolute;
+  display: block;
+  opacity: 0;
+  will-change: transform, opacity;
+  animation-name: sparkle-twinkle;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.3, 1);
+  animation-iteration-count: infinite;
+  filter: drop-shadow(0 0 5px currentColor);
+}
+
+/* Thin custom scrollbar for in-app lists. */
+.scroll-slim {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-ink-500) transparent;
+}
+.scroll-slim::-webkit-scrollbar {
+  width: 5px;
+}
+.scroll-slim::-webkit-scrollbar-thumb {
+  background: var(--color-ink-500);
+  border-radius: 999px;
+}
+
+/* ------------------------------------------------------------------ *
+ * Accessibility — honour the OS "reduce motion" preference everywhere.
+ * Every ambient animation oscillates around its layout position, so
+ * switching them off leaves the composition exactly as designed.
+ * ------------------------------------------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
