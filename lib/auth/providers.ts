@@ -6,9 +6,9 @@
  * client id and secret.
  */
 export const AUTH_PROVIDERS = [
-  { id: "google", label: "Continue with Google" },
-  { id: "apple", label: "Continue with Apple" },
-  { id: "facebook", label: "Continue with Facebook" },
+  { id: "google", name: "Google" },
+  { id: "apple", name: "Apple" },
+  { id: "facebook", name: "Facebook" },
 ] as const;
 
 export type AuthProviderId = (typeof AUTH_PROVIDERS)[number]["id"];

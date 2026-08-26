@@ -3,12 +3,12 @@ import { Suspense } from "react";
 
 import { AmbientGlow } from "@/components/story/AmbientGlow";
 import { LoginPanel } from "@/components/auth/LoginPanel";
+import { getServerT } from "@/lib/i18n/server";
 
-export const metadata: Metadata = {
-  title: "Sign in",
-  description:
-    "Sign in to Textory to continue your stories and learning progress across devices.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getServerT();
+  return { title: t("signIn"), description: t("welcomeBody") };
+}
 
 export default function LoginPage() {
   return (

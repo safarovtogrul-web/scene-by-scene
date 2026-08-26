@@ -20,6 +20,7 @@ const TOTAL_STEPS = 2;
  */
 export function OnboardingFlow() {
   const router = useRouter();
+  const { t } = usePreferences();
   const [step, setStep] = useState(1);
   const { preferences, updatePreferences } = usePreferences();
 
@@ -40,15 +41,15 @@ export function OnboardingFlow() {
             <LanguageStep
               step={1}
               total={TOTAL_STEPS}
-              question={"Which language\ndo you want to"}
-              emphasis="learn?"
-              hint="You can change this later."
+              question={t("onbLearnQuestion")}
+              emphasis={t("onbLearnEmphasis")}
+              hint={t("onbLearnHint")}
               languages={LEARNING_LANGUAGES}
               value={preferences.learningLanguage}
               onChange={(code) => update({ learningLanguage: code as TextoryPreferences["learningLanguage"] })}
               onBack={goBack}
               onSubmit={() => setStep(2)}
-              ctaLabel="Continue"
+              ctaLabel={t("continueLabel")}
             />
           </Panel>
         )}
@@ -58,15 +59,15 @@ export function OnboardingFlow() {
             <LanguageStep
               step={2}
               total={TOTAL_STEPS}
-              question={"Which language\nshould Textory"}
-              emphasis="use?"
-              hint="This is the language of the interface and scene translations."
+              question={t("onbUseQuestion")}
+              emphasis={t("onbUseEmphasis")}
+              hint={t("onbUseHint")}
               languages={SPOKEN_LANGUAGES}
               value={preferences.interfaceLanguage}
               onChange={(code) => update({ interfaceLanguage: code as TextoryPreferences["interfaceLanguage"] })}
               onBack={goBack}
               onSubmit={() => setStep(3)}
-              ctaLabel="Start Textory ✨"
+              ctaLabel={`${t("startTextory")} ✨`}
             />
           </Panel>
         )}
@@ -102,6 +103,7 @@ function Confirmation({
   preferences: TextoryPreferences;
   onRestart: () => void;
 }) {
+  const { t } = usePreferences();
   const learning = getLanguage(preferences.learningLanguage);
   const interfaceLanguage = getLanguage(preferences.interfaceLanguage);
 
@@ -111,31 +113,26 @@ function Confirmation({
 
       <div>
         <h1 className="font-display text-[clamp(1.7rem,7vw,2.1rem)] font-bold tracking-[-0.02em] text-mist-100">
-          You&apos;re all set.
+          {t("allSet")}
         </h1>
         <p className="mt-3 text-[15px] leading-relaxed text-mist-300">
-          Learning{" "}
-          <span className="text-emphasis font-semibold">
-            {learning.nativeName}
-          </span>
-          , with Textory and scene translations in{" "}
-          <span className="text-emphasis font-semibold">
-            {interfaceLanguage.nativeName}
-          </span>
-          .
+          {t("setupSummary", {
+            learning: learning.englishName,
+            interface: interfaceLanguage.englishName,
+          })}
         </p>
         <p className="mt-6 text-[13.5px] text-mist-500">
-          Your story library is coming next.
+          {t("libraryNext")}
         </p>
       </div>
 
       <div className="flex w-full max-w-xs flex-col gap-3">
         <PrimaryButton href="/" size="block">
-          Back to Textory
+          {t("backToTextory")}
           <ArrowGlyph />
         </PrimaryButton>
         <PrimaryButton variant="ghost" size="block" onClick={onRestart}>
-          Change my languages
+          {t("changeLanguages")}
         </PrimaryButton>
       </div>
     </div>

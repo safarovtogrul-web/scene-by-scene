@@ -1,8 +1,11 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 
 import type { Genre } from "@/lib/catalog";
 import { cn } from "@/lib/cn";
+import { usePreferences } from "@/components/preferences/PreferencesProvider";
 
 /**
  * A story world, not a filter chip. The artwork carries the card; the label and
@@ -19,6 +22,8 @@ export function CategoryCard({
   priority?: boolean;
   className?: string;
 }) {
+  const { t } = usePreferences();
+
   return (
     <Link
       href={`/stories?genre=${genre.id}`}
@@ -42,10 +47,10 @@ export function CategoryCard({
       <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-6">
         <div>
           <h3 className="font-display text-[clamp(1.25rem,2vw,1.6rem)] font-semibold tracking-tight text-mist-100">
-            {genre.label}
+            {t(genre.labelKey)}
           </h3>
           <p className="mt-1 text-[13.5px] text-mist-400">
-            {storyCount} {storyCount === 1 ? "story" : "stories"}
+            {t(storyCount === 1 ? "storyCountOne" : "storyCount", { count: storyCount })}
           </p>
         </div>
 
@@ -66,7 +71,7 @@ export function CategoryCard({
       </div>
 
       <p className="pointer-events-none absolute inset-x-6 top-6 text-[13px] text-mist-300 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
-        {genre.tagline}
+        {t(genre.taglineKey)}
       </p>
     </Link>
   );

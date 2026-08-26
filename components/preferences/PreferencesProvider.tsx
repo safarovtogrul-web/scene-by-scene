@@ -2,15 +2,17 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, useSyncExternalStore, type ReactNode } from "react";
 
+import { DirectionProvider } from "@radix-ui/react-direction";
+
 import { useAuth } from "@/components/auth/AuthProvider";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import {
   EMPTY_PREFERENCES,
   PREFERENCES_METADATA_KEY,
   getPreferencesSnapshot,
-  getServerPreferencesSnapshot,
   hasStoredPreferences,
   parsePreferences,
+  readPreferencesCookie,
   subscribeToPreferences,
   writePreferences,
   type TextoryPreferences,
@@ -37,9 +39,29 @@ const PreferencesContext = createContext<PreferencesContextValue>({
  * canonical copy is stored on the existing Supabase auth user metadata; the
  * local store is a signed-out/offline cache rather than a competing profile.
  */
-export function PreferencesProvider({ children }: { children: ReactNode }) {
+export function PreferencesProvider({
+  children,
+  /**
+   * What the server read from the preferences cookie. It seeds both the
+   * server render and hydration, so the very first painted frame is already in
+   * the reader’s language instead of flashing the default one first.
+   */
+  initialPreferences,
+}: {
+  children: ReactNode;
+  initialPreferences?: TextoryPreferences;
+}) {
   const { status, user } = useAuth();
-  const rawLocal = useSyncExternalStore(subscribeToPreferences, getPreferencesSnapshot, getServerPreferencesSnapshot);
+  const serverSnapshot = useMemo(
+    () => (initialPreferences ? JSON.stringify(initialPreferences) : ""),
+    [initialPreferences],
+  );
+  const rawLocal = useSyncExternalStore(
+    subscribeToPreferences,
+    getPreferencesSnapshot,
+    // Must be referentially stable and identical on server and hydration.
+    () => serverSnapshot,
+  );
   const localPreferences = useMemo(() => parsePreferences(rawLocal), [rawLocal]);
   const [authenticatedPreferences, setAuthenticatedPreferences] = useState<TextoryPreferences | null>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -69,6 +91,13 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
     document.documentElement.dir = language.dir;
   }, [preferences.interfaceLanguage]);
 
+  // Readers who chose a language before the cookie existed only have the local
+  // copy; mirror it out once so their next page load is server-rendered right.
+  useEffect(() => {
+    const local = getPreferencesSnapshot();
+    if (local && local !== readPreferencesCookie()) writePreferences(parsePreferences(local));
+  }, []);
+
   const updatePreferences = useCallback(async (patch: Partial<TextoryPreferences>) => {
     const next = { ...preferences, ...patch };
     writePreferences(next);
@@ -92,7 +121,15 @@ export function PreferencesProvider({ children }: { children: ReactNode }) {
       : messageFor(preferences.interfaceLanguage, key),
   }), [isSaving, preferences, updatePreferences]);
 
-  return <PreferencesContext.Provider value={value}>{children}</PreferencesContext.Provider>;
+  // Radix primitives read their writing direction from context, not from the
+  // document, so the two are kept in step here rather than in each component.
+  return (
+    <PreferencesContext.Provider value={value}>
+      <DirectionProvider dir={getLanguage(preferences.interfaceLanguage).dir}>
+        {children}
+      </DirectionProvider>
+    </PreferencesContext.Provider>
+  );
 }
 
 export function usePreferences(): PreferencesContextValue {

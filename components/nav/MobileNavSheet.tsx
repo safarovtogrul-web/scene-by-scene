@@ -14,6 +14,7 @@ import {
 import { LOGIN_PATH } from "@/lib/auth/redirects";
 import { LanguageSettingsButton } from "@/components/preferences/LanguageSettings";
 import type { NavItem } from "@/lib/navigation";
+import { usePreferences } from "@/components/preferences/PreferencesProvider";
 
 /**
  * Small-screen navigation. The desktop mega-menu becomes one clear catalogue
@@ -29,6 +30,7 @@ export function MobileNavSheet({
   items: NavItem[];
 }) {
   const { status, user, signOut } = useAuth();
+  const { t } = usePreferences();
 
   useEffect(() => {
     if (!open) return;
@@ -57,7 +59,7 @@ export function MobileNavSheet({
           className="fixed inset-0 z-[70] bg-ink-950/95 backdrop-blur-2xl lg:hidden"
           role="dialog"
           aria-modal="true"
-          aria-label="Menu"
+          aria-label={t("menu")}
         >
           <div className="flex h-full flex-col overflow-y-auto px-6 pt-[max(1.25rem,env(safe-area-inset-top))] pb-[max(2rem,env(safe-area-inset-bottom))]">
             <div className="flex h-14 items-center justify-between">
@@ -67,7 +69,7 @@ export function MobileNavSheet({
               <button
                 type="button"
                 onClick={onClose}
-                aria-label="Close menu"
+                aria-label={t("closeMenu")}
                 className="grid h-10 w-10 place-items-center rounded-full border border-white/10 text-mist-300"
               >
                 <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5" aria-hidden>
@@ -89,13 +91,13 @@ export function MobileNavSheet({
             >
               <ul className="space-y-1">
                 {items.map((item) => (
-                    <li key={`${item.label}-${item.href}`}>
+                    <li key={`${item.labelKey}-${item.href}`}>
                       <Link
                         href={item.menu === "categories" ? "/#explore" : item.href}
                         onClick={onClose}
                         className="block min-h-12 py-2.5 font-display text-[25px] font-semibold tracking-tight text-mist-100"
                       >
-                        {item.label}
+                        {t(item.labelKey)}
                       </Link>
                     </li>
                   ))}
@@ -103,7 +105,7 @@ export function MobileNavSheet({
             </motion.nav>
 
             <div className="mt-auto space-y-3 pt-10">
-              <LanguageSettingsButton label className="w-full justify-start rounded-2xl px-4" />
+              <LanguageSettingsButton variant="row" />
               {status === "authenticated" && user ? (
                 <>
                   <div className="flex items-center gap-3 rounded-2xl border border-white/[0.08] bg-white/[0.04] px-4 py-3.5">
@@ -132,13 +134,13 @@ export function MobileNavSheet({
                       onClose();
                     }}
                   >
-                    Sign out
+                    {t("signOut")}
                   </PrimaryButton>
                 </>
               ) : (
                 <>
                   <PrimaryButton href="/onboarding" size="block" onClick={onClose}>
-                    Get Started
+                    {t("getStarted")}
                   </PrimaryButton>
                   <PrimaryButton
                     href={LOGIN_PATH}
@@ -146,7 +148,7 @@ export function MobileNavSheet({
                     size="block"
                     onClick={onClose}
                   >
-                    Sign in
+                    {t("signIn")}
                   </PrimaryButton>
                 </>
               )}

@@ -1,4 +1,7 @@
+"use client";
+
 import { cn } from "@/lib/cn";
+import { usePreferences } from "@/components/preferences/PreferencesProvider";
 
 export type OnboardingProgressProps = {
   /** 1-based. */
@@ -12,19 +15,20 @@ export function OnboardingProgress({
   total,
   className,
 }: OnboardingProgressProps) {
+  const { t } = usePreferences();
   const ratio = Math.min(Math.max(step / total, 0), 1);
 
   return (
     <div className={cn("w-full", className)}>
       <p className="text-[13px] font-medium tracking-wide text-mist-400">
-        Step {step} of {total}
+        {t("stepOf", { step, total })}
       </p>
       <div
         role="progressbar"
         aria-valuemin={1}
         aria-valuemax={total}
         aria-valuenow={step}
-        aria-label={`Onboarding step ${step} of ${total}`}
+        aria-label={t("stepOf", { step, total })}
         className="mt-3 h-[3px] w-full overflow-hidden rounded-full bg-white/10"
       >
         <div

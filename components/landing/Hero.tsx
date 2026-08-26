@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { AmbientGlow } from "@/components/story/AmbientGlow";
 import { FloatingStoryScene } from "@/components/story/FloatingStoryScene";
 import { PrimaryButton, ArrowGlyph } from "@/components/ui/PrimaryButton";
+import { usePreferences } from "@/components/preferences/PreferencesProvider";
 
 const rise = {
   hidden: { opacity: 0, y: 22 },
@@ -21,6 +22,9 @@ const transition = { duration: 0.8, ease: [0.22, 1, 0.36, 1] as const };
  * edge. Below md the app-style {@link MobileHero} takes over instead.
  */
 export function Hero() {
+  const { t } = usePreferences();
+  const [titleTop, titleBottom] = t("heroTitle").split("\n");
+
   return (
     <section
       id="top"
@@ -38,23 +42,27 @@ export function Hero() {
           <motion.h1
             variants={rise}
             transition={transition}
-            className="font-display text-[clamp(2.5rem,5vw,5.25rem)] leading-[1.02] font-bold tracking-[-0.03em] whitespace-nowrap text-mist-100"
+            // Not `whitespace-nowrap`: translated headlines are longer than
+            // the English one and must be allowed to wrap rather than overflow.
+            className="font-display text-[clamp(2.2rem,4.4vw,4.6rem)] leading-[1.05] font-bold tracking-[-0.03em] text-balance-tight text-mist-100"
           >
-            Learn
+            {titleTop}
+            {titleBottom && (
+              <>
+                <br />
+                {titleBottom}
+              </>
+            )}
             <br />
-            languages
-            <br />
-            <span className="text-emphasis">through stories.</span>
+            <span className="text-emphasis">{t("heroEmphasis")}</span>
           </motion.h1>
 
           <motion.p
             variants={rise}
             transition={transition}
-            className="mt-8 max-w-[30ch] text-[clamp(1rem,1.35vw,1.3rem)] leading-[1.65] text-mist-300"
+            className="mt-8 max-w-[34ch] text-[clamp(1rem,1.35vw,1.3rem)] leading-[1.65] text-mist-300"
           >
-            Real actions. Real scenes.
-            <br className="hidden lg:block" /> A natural way to understand
-            <br className="hidden lg:block" /> and remember new languages.
+            {t("heroSubtitle")}
           </motion.p>
 
           <motion.div
@@ -63,7 +71,7 @@ export function Hero() {
             className="mt-10 flex flex-col items-start gap-7"
           >
             <PrimaryButton href="/onboarding" size="lg" className="px-9">
-              Start your journey
+              {t("startJourney")}
               <ArrowGlyph />
             </PrimaryButton>
 
@@ -77,7 +85,7 @@ export function Hero() {
                   <path d="M3 1.6 13.4 8 3 14.4Z" fill="currentColor" className="text-iris-300" />
                 </svg>
               </span>
-              See how it works
+              {t("seeHowItWorks")}
             </a>
           </motion.div>
         </motion.div>

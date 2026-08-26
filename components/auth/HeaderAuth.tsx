@@ -7,6 +7,7 @@ import { AccountMenu } from "./AccountMenu";
 import { useAuth } from "./AuthProvider";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
 import { buildLoginHref } from "@/lib/auth/redirects";
+import { usePreferences } from "@/components/preferences/PreferencesProvider";
 
 /**
  * The right-hand side of the header.
@@ -17,6 +18,7 @@ import { buildLoginHref } from "@/lib/auth/redirects";
  */
 export function HeaderAuth() {
   const { status, user } = useAuth();
+  const { t } = usePreferences();
   const pathname = usePathname();
 
   if (status === "loading") {
@@ -38,13 +40,13 @@ export function HeaderAuth() {
         href={buildLoginHref(pathname)}
         className="hidden rounded-full px-4 py-2 text-[15px] text-mist-300 transition-colors duration-200 hover:text-mist-100 lg:block"
       >
-        Sign in
+        {t("signIn")}
       </Link>
       {/* Wrapped rather than given a `hidden` class: PrimaryButton's own
        * `inline-flex` sits in the same CSS layer and would win. */}
       <span className="hidden md:inline-flex">
         <PrimaryButton href="/onboarding" size="sm" className="px-6">
-          Get Started
+          {t("getStarted")}
         </PrimaryButton>
       </span>
     </>

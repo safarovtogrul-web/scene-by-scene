@@ -7,6 +7,7 @@ import { LanguageSelector } from "./LanguageSelector";
 import { OnboardingProgress } from "./OnboardingProgress";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
 import type { Language } from "@/lib/languages";
+import { usePreferences } from "@/components/preferences/PreferencesProvider";
 
 export type LanguageStepProps = {
   step: number;
@@ -44,6 +45,7 @@ export function LanguageStep({
   onSubmit,
   readOnly = false,
 }: LanguageStepProps) {
+  const { t } = usePreferences();
   const [firstLine, secondLine] = question.split("\n");
 
   return (
@@ -52,7 +54,7 @@ export function LanguageStep({
         type="button"
         onClick={onBack}
         disabled={readOnly}
-        aria-label="Go back"
+        aria-label={t("goBack")}
         className="-ml-2 grid h-9 w-9 shrink-0 place-items-center rounded-full text-mist-300 transition-colors hover:bg-white/[0.06] hover:text-mist-100 disabled:pointer-events-none"
       >
         <svg viewBox="0 0 24 24" fill="none" aria-hidden className="h-5 w-5">

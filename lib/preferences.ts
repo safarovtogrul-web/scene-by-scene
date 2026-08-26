@@ -8,6 +8,34 @@ import {
 /** Versioned local cache for signed-out and offline use. */
 const STORAGE_KEY = "textory.preferences.v2";
 
+/**
+ * The same value, mirrored into a cookie so the *server* can render the first
+ * paint in the reader’s language. `localStorage` is invisible to the server,
+ * which is why a client-only preference always shows a flash of the default
+ * language before hydration swaps it out.
+ */
+export const PREFERENCES_COOKIE = "textory_prefs";
+
+/** A year: the preference is not sensitive and should survive between visits. */
+const COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
+
+function writePreferencesCookie(serialized: string): void {
+  try {
+    document.cookie = `${PREFERENCES_COOKIE}=${encodeURIComponent(serialized)};path=/;max-age=${COOKIE_MAX_AGE};samesite=lax`;
+  } catch {
+    // Cookies disabled — the local copy still drives this browser session.
+  }
+}
+
+export function readPreferencesCookie(): string {
+  try {
+    const match = document.cookie.match(new RegExp(`(?:^|; )${PREFERENCES_COOKIE}=([^;]*)`));
+    return match ? decodeURIComponent(match[1]) : "";
+  } catch {
+    return "";
+  }
+}
+
 /** Key in Supabase's existing authenticated user metadata for signed-in users. */
 export const PREFERENCES_METADATA_KEY = "textory_preferences";
 
@@ -95,5 +123,7 @@ export function writePreferences(preferences: TextoryPreferences): void {
   } catch {
     // The in-memory copy still keeps this browser session usable.
   }
+  // Kept in step with the local copy so the next server render already knows.
+  writePreferencesCookie(next);
   listeners.forEach((listener) => listener());
 }

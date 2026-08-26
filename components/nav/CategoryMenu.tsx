@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from "framer-motion";
 
 import { DIFFICULTY_OPTIONS, GENRES, countByGenre } from "@/lib/catalog";
 import { cn } from "@/lib/cn";
+import { usePreferences } from "@/components/preferences/PreferencesProvider";
 
 /**
  * Desktop categories mega-menu.
@@ -17,6 +18,7 @@ import { cn } from "@/lib/cn";
  * change via the links themselves.
  */
 export function CategoryMenu({ label }: { label: string }) {
+  const { t } = usePreferences();
   const [open, setOpen] = useState(false);
   const container = useRef<HTMLDivElement>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | undefined>(
@@ -109,7 +111,7 @@ export function CategoryMenu({ label }: { label: string }) {
 
               <div className="grid gap-8 p-7 sm:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
                 <div>
-                  <MenuHeading>By difficulty</MenuHeading>
+                  <MenuHeading>{t("byLevel")}</MenuHeading>
                   <ul className="mt-3 space-y-0.5">
                     {DIFFICULTY_OPTIONS.map((difficulty) => (
                       <li key={difficulty.id}>
@@ -119,10 +121,10 @@ export function CategoryMenu({ label }: { label: string }) {
                           className="group flex items-baseline gap-3 rounded-xl px-3 py-2.5 transition-colors duration-200 hover:bg-white/[0.05]"
                         >
                           <span className="font-display text-[15px] font-semibold text-mist-100">
-                            {difficulty.label}
+                            {t(difficulty.labelKey)}
                           </span>
                           <span className="text-[13px] text-mist-500 transition-colors group-hover:text-mist-400">
-                            {difficulty.id === "easy" ? "A gentler story version" : "A fuller story version"}
+                            {t(difficulty.id === "easy" ? "easyHint" : "hardHint")}
                           </span>
                         </Link>
                       </li>
@@ -131,7 +133,7 @@ export function CategoryMenu({ label }: { label: string }) {
                 </div>
 
                 <div>
-                  <MenuHeading>By genre</MenuHeading>
+                  <MenuHeading>{t("byGenre")}</MenuHeading>
                   <ul className="mt-3 grid grid-cols-2 gap-0.5">
                     {GENRES.map((genre) => (
                       <li key={genre.id}>
@@ -141,7 +143,7 @@ export function CategoryMenu({ label }: { label: string }) {
                           className="group flex items-center justify-between gap-3 rounded-xl px-3 py-2.5 transition-colors duration-200 hover:bg-white/[0.05]"
                         >
                           <span className="text-[14px] text-mist-300 transition-colors group-hover:text-mist-100">
-                            {genre.label}
+                            {t(genre.labelKey)}
                           </span>
                           <span className="text-[12px] text-mist-500 tabular-nums">
                             {countByGenre(genre.id)}
@@ -156,7 +158,7 @@ export function CategoryMenu({ label }: { label: string }) {
                         className="group flex items-center rounded-xl px-3 py-2.5 transition-colors duration-200 hover:bg-white/[0.05]"
                       >
                         <span className="text-[14px] text-mist-300 transition-colors group-hover:text-mist-100">
-                          Short Stories
+                          {t("shortStories")}
                         </span>
                       </Link>
                     </li>
@@ -169,7 +171,7 @@ export function CategoryMenu({ label }: { label: string }) {
                 onClick={() => setOpen(false)}
                 className="flex items-center justify-between border-t border-white/[0.06] bg-white/[0.02] px-7 py-4 text-[14px] text-mist-300 transition-colors duration-200 hover:bg-white/[0.05] hover:text-mist-100"
               >
-                Browse the whole library
+                {t("browseWholeLibrary")}
                 <svg viewBox="0 0 20 20" fill="none" className="h-4 w-4" aria-hidden>
                   <path
                     d="M4 10h11M11 5.5 15.5 10 11 14.5"

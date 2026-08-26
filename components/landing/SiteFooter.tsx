@@ -1,16 +1,22 @@
+"use client";
+
 import Link from "next/link";
 
 import { TextoryLogo } from "@/components/brand/TextoryLogo";
+import { usePreferences } from "@/components/preferences/PreferencesProvider";
+import type { MessageKey } from "@/lib/i18n/messages";
 
-const EXPLORE_LINKS = [
-  { label: "All stories", href: "/stories" },
-  { label: "New stories", href: "/stories?sort=newest" },
-  { label: "Short stories", href: "/stories?length=short" },
-  { label: "How it works", href: "/#how-it-works" },
-  { label: "Pricing", href: "/pricing" },
+const EXPLORE_LINKS: Array<{ labelKey: MessageKey; href: string }> = [
+  { labelKey: "allStories", href: "/stories" },
+  { labelKey: "newStories", href: "/stories?sort=newest" },
+  { labelKey: "shortStories", href: "/stories?length=short" },
+  { labelKey: "navHowItWorks", href: "/#how-it-works" },
+  { labelKey: "navPricing", href: "/pricing" },
 ];
 
 export function SiteFooter() {
+  const { t } = usePreferences();
+
   return (
     <footer className="relative overflow-hidden border-t border-white/[0.06] bg-ink-950 px-6 py-12 md:px-10 md:py-14 lg:px-16">
       <div className="pointer-events-none absolute inset-x-0 -top-40 h-80 bg-[radial-gradient(closest-side,rgba(124,58,237,0.2),transparent)]" />
@@ -20,14 +26,14 @@ export function SiteFooter() {
           <div className="max-w-[30ch]">
             <TextoryLogo size="md" />
             <p className="mt-4 text-[15px] leading-relaxed text-mist-400">
-              Language learning, told through stories.
+              {t("footerTagline")}
             </p>
           </div>
 
-          <FooterColumn title="Explore">
+          <FooterColumn title={t("footerExplore")}>
             {EXPLORE_LINKS.map((link) => (
               <FooterLink key={link.href} href={link.href}>
-                {link.label}
+                {t(link.labelKey)}
               </FooterLink>
             ))}
           </FooterColumn>

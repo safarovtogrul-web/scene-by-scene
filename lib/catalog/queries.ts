@@ -1,6 +1,7 @@
 import { STORIES } from "./stories";
 import { MOCK_PROGRESS } from "./progress";
 import { GENRES, bucketForMinutes } from "./taxonomy";
+import type { MessageKey } from "@/lib/i18n/messages";
 import type { Difficulty, GenreId, LengthBucket, Story, StoryLanguageVariant, StoryProgress } from "./types";
 import type { LanguageId } from "@/lib/languages";
 
@@ -14,8 +15,14 @@ export function requireStory(id: string): Story {
   return story;
 }
 export function getGenre(id: GenreId) { return GENRES.find((genre) => genre.id === id); }
-export function genreLabel(id: GenreId): string { return getGenre(id)?.label ?? id; }
-export function difficultyLabel(difficulty: Difficulty): string { return difficulty === "easy" ? "Easy" : "Hard"; }
+/** Message key for a genre name; resolve it through `t()` to display it. */
+export function genreLabelKey(id: GenreId): MessageKey | null { return getGenre(id)?.labelKey ?? null; }
+
+/** English name, for page metadata and image alt text — neither is user-language aware. */
+export function genreSlugLabel(id: GenreId): string {
+  return id.split("-").map((word) => word[0].toUpperCase() + word.slice(1)).join(" ");
+}
+export function difficultyLabelKey(difficulty: Difficulty): MessageKey { return difficulty === "easy" ? "easy" : "hard"; }
 export function countByGenre(id: GenreId): number { return STORIES.filter((story) => story.genre === id).length; }
 
 /** Resolves one exact story/difficulty/learning-language variant, never falls back. */
@@ -70,7 +77,7 @@ export function filterStories(query: StoryQuery): Story[] {
     if (query.difficulty && query.difficulty !== "all" && !story.levels[query.difficulty]) return false;
     if (query.genre && query.genre !== "all" && story.genre !== query.genre) return false;
     if (query.length && query.length !== "all" && bucketForMinutes(story.minutes) !== query.length) return false;
-    return !search || `${story.title} ${story.description} ${genreLabel(story.genre)} ${difficultyLabel(story.defaultDifficulty)}`.toLowerCase().includes(search);
+    return !search || `${story.title} ${story.description} ${story.genre} ${story.defaultDifficulty}`.toLowerCase().includes(search);
   });
   if (query.sort === "newest") return results.sort((a, b) => b.addedAt.localeCompare(a.addedAt));
   if (query.sort === "shortest") return results.sort((a, b) => a.minutes - b.minutes);

@@ -1,3 +1,5 @@
+import type { MessageKey } from "@/lib/i18n/messages";
+
 import type { LanguageId } from "@/lib/languages";
 
 /** Textory intentionally uses only these two editorial difficulty versions. */
@@ -106,8 +108,8 @@ export function createStoryShell(seed: StorySeed): Story {
 
 export type Genre = {
   id: GenreId;
-  label: string;
-  tagline: string;
+  labelKey: MessageKey;
+  taglineKey: MessageKey;
   cover: string;
 };
 

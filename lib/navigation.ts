@@ -7,28 +7,28 @@
  * needed is deciding that value from session state.
  */
 
+import type { MessageKey } from "@/lib/i18n/messages";
+
 export type NavAudience = "public" | "member";
 
 export type NavItem = {
-  label: string;
+  /** Resolved through the interface-language catalogue at render time. */
+  labelKey: MessageKey;
   href: string;
   /** Renders the categories mega-menu instead of a plain link. */
   menu?: "categories";
 };
 
 export const PUBLIC_NAV: NavItem[] = [
-  { label: "Stories", href: "/stories" },
-  { label: "Categories", href: "/stories", menu: "categories" },
-  { label: "How it works", href: "/#how-it-works" },
-  { label: "Pricing", href: "/pricing" },
+  { labelKey: "navStories", href: "/stories" },
+  { labelKey: "navCategories", href: "/stories", menu: "categories" },
+  { labelKey: "navHowItWorks", href: "/#how-it-works" },
+  { labelKey: "navPricing", href: "/pricing" },
 ];
 
 /** Not routed yet — kept here so the shape is settled before auth exists. */
 export const MEMBER_NAV: NavItem[] = [
-  { label: "Home", href: "/" },
-  { label: "Stories", href: "/stories" },
-  { label: "Saved", href: "/saved" },
-  { label: "My Learning", href: "/my-learning" },
+  { labelKey: "navStories", href: "/stories" },
 ];
 
 export function navFor(audience: NavAudience): NavItem[] {

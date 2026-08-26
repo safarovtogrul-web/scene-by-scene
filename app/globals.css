@@ -277,3 +277,133 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* ------------------------------------------------------------------ *
+ * Overlay motion — popovers, dialogs and the mobile language sheet.
+ *
+ * Deliberately short (140–220ms) and limited to opacity, a few pixels of
+ * translation and a touch of scale. Nothing here is related to the
+ * homepage hero, which keeps its own ambient system above.
+ * ------------------------------------------------------------------ */
+
+@keyframes popover-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes popover-out {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.97);
+  }
+}
+
+@keyframes overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes overlay-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Mobile: the panel rises from the bottom edge. */
+@keyframes sheet-in {
+  from {
+    opacity: 0.6;
+    transform: translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes sheet-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0.4;
+    transform: translateY(100%);
+  }
+}
+
+/* Desktop: the same panel is centred, so it settles instead of sliding. */
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes dialog-out {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+  }
+}
+
+/* The language panel's two levels: the incoming view fades up on its own,
+ * with no dependency on the outgoing one finishing first. */
+@keyframes view-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * The globe in the language controls actually turns.
+ *
+ * The land layer is two identical tiles side by side; shifting it by
+ * exactly one tile width and restarting puts the second copy where the
+ * first began, so the loop has no seam. Linear, because a planet does
+ * not ease.
+ * ------------------------------------------------------------------ */
+
+@keyframes planet-spin {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-24px, 0, 0);
+  }
+}
+
+.planet-spin {
+  animation: planet-spin 28s linear infinite;
+  will-change: transform;
+}

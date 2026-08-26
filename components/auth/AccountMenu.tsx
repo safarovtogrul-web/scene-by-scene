@@ -7,7 +7,10 @@ import type { User } from "@supabase/supabase-js";
 
 import { displayNameFor, initialsFor, useAuth } from "./AuthProvider";
 import { POST_SIGN_OUT_PATH } from "@/lib/auth/redirects";
-import { LanguageSettingsButton } from "@/components/preferences/LanguageSettings";
+import { LanguageSettingsSheet } from "@/components/language/LanguageSettingsSheet";
+import { LanguageFlag } from "@/components/ui/FlagIcon";
+import { PlanetIcon } from "@/components/ui/PlanetIcon";
+import { usePreferences } from "@/components/preferences/PreferencesProvider";
 import { cn } from "@/lib/cn";
 
 /**
@@ -23,6 +26,8 @@ export function AccountMenu({ user }: { user: User }) {
   const { signOut } = useAuth();
   const [open, setOpen] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
+  const [languageOpen, setLanguageOpen] = useState(false);
+  const { preferences, t } = usePreferences();
   const container = useRef<HTMLDivElement>(null);
   const menuId = useId();
 
@@ -97,7 +102,7 @@ export function AccountMenu({ user }: { user: User }) {
             strokeLinejoin="round"
           />
         </svg>
-        <span className="sr-only">Account menu</span>
+        <span className="sr-only">{t("accountMenu")}</span>
       </button>
 
       <AnimatePresence>
@@ -123,7 +128,25 @@ export function AccountMenu({ user }: { user: User }) {
             </div>
 
             <div className="p-1.5">
-              <LanguageSettingsButton label className="mb-1 w-full justify-start rounded-xl border-transparent bg-transparent px-3" />
+              <button
+                type="button"
+                role="menuitem"
+                aria-haspopup="dialog"
+                onClick={() => {
+                  // The menu closes on outside pointer events, so it hands the
+                  // dialog off rather than owning it while unmounting.
+                  setOpen(false);
+                  setLanguageOpen(true);
+                }}
+                className="mb-0.5 flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-left text-[14px] text-mist-200 transition-colors duration-200 hover:bg-white/[0.06] hover:text-mist-100"
+              >
+                <PlanetIcon className="size-4 text-mist-400" />
+                <span className="flex-1 truncate">{t("languageSettings")}</span>
+                <LanguageFlag
+                  language={preferences.interfaceLanguage}
+                  size="xs"
+                />
+              </button>
 
               <button
                 type="button"
@@ -146,12 +169,14 @@ export function AccountMenu({ user }: { user: User }) {
                     strokeLinejoin="round"
                   />
                 </svg>
-                {signingOut ? "Signing out…" : "Sign out"}
+                {signingOut ? t("signingOut") : t("signOut")}
               </button>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
+
+      <LanguageSettingsSheet open={languageOpen} onOpenChange={setLanguageOpen} />
     </div>
   );
 }

@@ -196,6 +196,8 @@ export function AnimatedStoryBackground({
               timings: MOBILE_TIMINGS,
               frontZ: FEATURE_Z,
               enhanceForeground: true,
+              // The collage is placed exactly; drifting would unsettle it.
+              pauseDrift: true,
               bow: FEATURE_BOW,
               minTop: FEATURED_STAGE_TOP,
             }}

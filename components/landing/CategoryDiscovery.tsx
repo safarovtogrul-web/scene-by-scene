@@ -10,6 +10,7 @@ import {
   countByGenre,
   TOTAL_STORY_COUNT,
 } from "@/lib/catalog";
+import { usePreferences } from "@/components/preferences/PreferencesProvider";
 
 const featured = FEATURED_GENRE_IDS.map((id) =>
   GENRES.find((genre) => genre.id === id),
@@ -20,6 +21,8 @@ const featured = FEATURED_GENRE_IDS.map((id) =>
  * Three per row on desktop so covers stay large.
  */
 export function CategoryDiscovery() {
+  const { t } = usePreferences();
+
   return (
     <section
       id="explore"
@@ -29,11 +32,10 @@ export function CategoryDiscovery() {
         <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-4">
           <div>
             <h2 className="font-display text-[clamp(1.9rem,3.4vw,2.9rem)] font-bold tracking-[-0.025em] text-mist-100">
-              Explore stories
+              {t("exploreStories")}
             </h2>
             <p className="mt-3 max-w-[43ch] text-[clamp(0.95rem,1.1vw,1.05rem)] leading-relaxed text-mist-400">
-              {TOTAL_STORY_COUNT} illustrated stories across genres and levels.
-              Pick a world worth spending time in.
+              {t("exploreIntro", { count: TOTAL_STORY_COUNT })}
             </p>
           </div>
 
@@ -41,7 +43,7 @@ export function CategoryDiscovery() {
             href="/stories"
             className="group inline-flex items-center gap-2 text-[15px] text-mist-300 transition-colors hover:text-mist-100"
           >
-            Browse all stories
+            {t("browseAllStories")}
             <svg
               viewBox="0 0 20 20"
               fill="none"

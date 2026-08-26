@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { StoryCard } from "./StoryCard";
 import type { Story } from "@/lib/catalog";
 import { cn } from "@/lib/cn";
+import { usePreferences } from "@/components/preferences/PreferencesProvider";
 
 export type StorySectionProps = {
   title: string;
@@ -35,6 +36,7 @@ export function StorySection({
   priority = false,
   className,
 }: StorySectionProps) {
+  const { t } = usePreferences();
   const scroller = useRef<HTMLDivElement>(null);
   const [edges, setEdges] = useState({ start: false, end: false });
 
@@ -88,7 +90,7 @@ export function StorySection({
               href={href}
               className="text-[14px] whitespace-nowrap text-mist-400 transition-colors hover:text-mist-100"
             >
-              See all
+              {t("seeAll")}
             </Link>
           )}
           <div className="hidden items-center gap-2 md:flex">
@@ -154,12 +156,14 @@ function ScrollButton({
   disabled: boolean;
   onClick: () => void;
 }) {
+  const { t } = usePreferences();
+
   return (
     <button
       type="button"
       onClick={onClick}
       disabled={disabled}
-      aria-label={direction === "left" ? "Scroll left" : "Scroll right"}
+      aria-label={direction === "left" ? t("scrollLeft") : t("scrollRight")}
       className="grid h-9 w-9 place-items-center rounded-full border border-white/10 bg-white/[0.04] text-mist-300 transition-all duration-300 hover:border-iris-400/50 hover:bg-white/[0.08] hover:text-mist-100 disabled:pointer-events-none disabled:opacity-25"
     >
       <svg viewBox="0 0 24 24" fill="none" className="h-4 w-4" aria-hidden>

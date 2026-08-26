@@ -12,25 +12,28 @@ import { AUTH_PROVIDERS, type AuthProviderId } from "@/lib/auth/providers";
 import { buildOAuthRedirectUrl, sanitizeNextPath } from "@/lib/auth/redirects";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/cn";
+import { usePreferences } from "@/components/preferences/PreferencesProvider";
+import type { MessageKey } from "@/lib/i18n/messages";
 
-const ERROR_MESSAGES: Record<string, string> = {
-  provider: "That sign-in was cancelled before it finished.",
-  missing_code: "The sign-in link was incomplete. Please try again.",
-  exchange: "We couldn't finish that sign-in. Please try again.",
-  not_configured: "Sign-in isn't connected yet.",
+const ERROR_KEYS: Record<string, MessageKey> = {
+  provider: "errSignInCancelled",
+  missing_code: "errSignInIncomplete",
+  exchange: "errSignInFailed",
+  not_configured: "signInUnavailable",
 };
 
 export function LoginPanel() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { status } = useAuth();
+  const { t } = usePreferences();
 
   const next = sanitizeNextPath(searchParams.get("next"));
   const errorCode = searchParams.get("error");
 
   const [pending, setPending] = useState<AuthProviderId | null>(null);
   const [failure, setFailure] = useState<string | null>(
-    errorCode ? (ERROR_MESSAGES[errorCode] ?? ERROR_MESSAGES.exchange) : null,
+    errorCode ? t(ERROR_KEYS[errorCode] ?? "errSignInFailed") : null,
   );
 
   // Already signed in? There is nothing to do here.
@@ -74,19 +77,15 @@ export function LoginPanel() {
         </div>
 
         <h1 className="mt-8 text-center font-display text-[clamp(1.7rem,4.4vw,2.1rem)] leading-tight font-bold tracking-[-0.025em] text-mist-100">
-          Welcome to Textory
+          {t("welcomeTitle")}
         </h1>
         <p className="mx-auto mt-3 max-w-[34ch] text-center text-[15px] leading-relaxed text-mist-400">
-          Continue your stories and learning progress across devices.
+          {t("welcomeBody")}
         </p>
 
         {unavailable && (
           <div className="mt-7 rounded-2xl border border-iris-400/25 bg-iris-500/[0.09] px-5 py-4 text-[13.5px] leading-relaxed text-iris-100/85">
-            Sign-in isn&apos;t connected yet. Add your Supabase project keys to
-            <code className="mx-1 rounded bg-black/30 px-1.5 py-0.5 text-[12.5px]">
-              .env.local
-            </code>
-            and enable the providers to switch this on.
+            {t("signInUnavailable")} {t("signInUnavailableHint")}
           </div>
         )}
 
@@ -121,7 +120,7 @@ export function LoginPanel() {
                 )}
               </span>
               <span className="flex-1 text-left whitespace-nowrap">
-                {provider.label}
+                {t("continueWithProvider", { provider: provider.name })}
               </span>
               <svg
                 viewBox="0 0 20 20"
@@ -144,7 +143,7 @@ export function LoginPanel() {
         <div className="mt-8 flex items-center gap-4">
           <span className="h-px flex-1 bg-white/[0.08]" />
           <span className="text-[12px] tracking-[0.14em] text-mist-500 uppercase">
-            or
+            {t("orLabel")}
           </span>
           <span className="h-px flex-1 bg-white/[0.08]" />
         </div>
@@ -153,11 +152,11 @@ export function LoginPanel() {
           href="/stories"
           className="mt-6 block text-center text-[14.5px] text-mist-300 transition-colors hover:text-mist-100"
         >
-          Browse the library first
+          {t("browseFirst")}
         </Link>
 
         <p className="mt-7 text-center text-[12.5px] leading-relaxed text-mist-500">
-          No password needed — Textory uses an account you already have.
+          {t("noPasswordNeeded")}
         </p>
       </div>
 
@@ -179,7 +178,7 @@ export function LoginPanel() {
             strokeLinejoin="round"
           />
         </svg>
-        Back to Textory
+        {t("backToTextory")}
       </Link>
     </motion.div>
   );

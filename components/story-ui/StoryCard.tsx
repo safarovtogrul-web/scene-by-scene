@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 
@@ -5,6 +7,7 @@ import { PremiumBadge, StoryMeta } from "./StoryMeta";
 import { progressRatio } from "@/lib/catalog";
 import type { Story } from "@/lib/catalog";
 import { cn } from "@/lib/cn";
+import { usePreferences } from "@/components/preferences/PreferencesProvider";
 
 export type StoryCardProps = {
   story: Story;
@@ -31,6 +34,7 @@ export function StoryCard({
   priority = false,
   className,
 }: StoryCardProps) {
+  const { t } = usePreferences();
   const ratio = showProgress ? progressRatio(story) : 0;
 
   return (
@@ -81,8 +85,9 @@ export function StoryCard({
       </h3>
       {showProgress && ratio > 0 ? (
         <p className="mt-1 text-[13px] text-mist-400">
-          Scene {Math.round(ratio * story.scenes)} of {story.scenes} ·{" "}
-          {story.defaultDifficulty === "easy" ? "Easy" : "Hard"}
+          {t("sceneOf", { done: Math.round(ratio * story.scenes), total: story.scenes })}
+          {" · "}
+          {t(story.defaultDifficulty === "easy" ? "easy" : "hard")}
         </p>
       ) : (
         <StoryMeta story={story} className="mt-1" />

@@ -3,11 +3,14 @@
 import { motion } from "framer-motion";
 import type { ReactNode } from "react";
 
+import { usePreferences } from "@/components/preferences/PreferencesProvider";
+import type { MessageKey } from "@/lib/i18n/messages";
+
 /**
  * The method, in three beats. Deliberately compact — this explains the product,
  * it is not a feature list.
  */
-const STEPS: Array<{ icon: ReactNode; title: string; body: string }> = [
+const STEPS: Array<{ icon: ReactNode; titleKey: MessageKey; bodyKey: MessageKey }> = [
   {
     icon: (
       <>
@@ -16,8 +19,8 @@ const STEPS: Array<{ icon: ReactNode; title: string; body: string }> = [
         <circle cx="9" cy="9" r="1.4" />
       </>
     ),
-    title: "See the action",
-    body: "Every scene makes the meaning visible.",
+    titleKey: "stepSeeTitle",
+    bodyKey: "stepSeeBody",
   },
   {
     icon: (
@@ -26,8 +29,8 @@ const STEPS: Array<{ icon: ReactNode; title: string; body: string }> = [
         <path d="m15 17 2 2 4-4.5" />
       </>
     ),
-    title: "Understand the sentence",
-    body: "Read one short sentence, with translation when you need it.",
+    titleKey: "stepReadTitle",
+    bodyKey: "stepReadBody",
   },
   {
     icon: (
@@ -35,12 +38,14 @@ const STEPS: Array<{ icon: ReactNode; title: string; body: string }> = [
         <path d="M12 20.5s-7.5-4.3-7.5-9.7A4.3 4.3 0 0 1 12 8.2a4.3 4.3 0 0 1 7.5 2.6c0 5.4-7.5 9.7-7.5 9.7Z" />
       </>
     ),
-    title: "Remember through the story",
-    body: "The next moment gives the language something to attach to.",
+    titleKey: "stepRememberTitle",
+    bodyKey: "stepRememberBody",
   },
 ];
 
 export function HowItWorks() {
+  const { t } = usePreferences();
+
   return (
     <section
       id="how-it-works"
@@ -52,12 +57,12 @@ export function HowItWorks() {
       <div className="relative mx-auto max-w-[1200px]">
         <div className="max-w-[52ch]">
           <p className="text-[12px] font-semibold tracking-[0.16em] text-iris-300 uppercase">
-            How Textory works
+            {t("howEyebrow")}
           </p>
           <h2 className="mt-3 font-display text-[clamp(1.9rem,3.4vw,2.9rem)] font-bold tracking-[-0.025em] text-mist-100">
-            You don&apos;t study the sentence.
+            {t("howTitleOne")}
             <br />
-            <span className="text-emphasis">You watch it happen.</span>
+            <span className="text-emphasis">{t("howTitleTwo")}</span>
           </h2>
         </div>
 
@@ -70,7 +75,7 @@ export function HowItWorks() {
         >
           {STEPS.map((step, index) => (
             <motion.li
-              key={step.title}
+              key={step.titleKey}
               variants={{
                 hidden: { opacity: 0, y: 26 },
                 show: { opacity: 1, y: 0 },
@@ -98,10 +103,10 @@ export function HowItWorks() {
               </div>
 
               <h3 className="mt-5 font-display text-[19px] font-semibold tracking-tight text-mist-100">
-                {step.title}
+                {t(step.titleKey)}
               </h3>
               <p className="mt-2 max-w-[38ch] text-[15px] leading-relaxed text-mist-400">
-                {step.body}
+                {t(step.bodyKey)}
               </p>
             </motion.li>
           ))}

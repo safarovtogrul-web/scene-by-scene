@@ -12,7 +12,7 @@ import {
   type FeaturedSlot,
 } from "./heroFeature";
 import type { ParallaxField } from "@/lib/usePointerParallax";
-import { genreLabel, type Story } from "@/lib/catalog";
+import { genreSlugLabel, type Story } from "@/lib/catalog";
 import { cn } from "@/lib/cn";
 
 /**
@@ -39,8 +39,26 @@ export type CardFeatureState = {
   frontZ?: number;
   /** How far the travel arcs bow away from a straight line, in scene-%. */
   bow?: { out: number; back: number };
-  /** Adds the brighter, sharper foreground treatment used by the mobile hero. */
+  /**
+   * Brighter, sharper foreground treatment for the presented card: the depth
+   * veil clears, a highlight and violet rim fade in, and the glint set gets its
+   * three extra edge sparkles. Used by both heroes.
+   */
   enhanceForeground?: boolean;
+  /**
+   * Freezes the ambient drift and snaps the orbit at rest. The mobile collage
+   * is placed exactly and must not wander; the desktop scene keeps drifting.
+   */
+  pauseDrift?: boolean;
+  /**
+   * Extra darkness on every card that is not being presented, on top of the
+   * depth-derived veil. The mobile hero leaves this at 0 because its legibility
+   * scrim already sits over the resting cards, and the presented card rises
+   * above that scrim. The desktop scene has no scrim, so it shades its own
+   * resting cards instead — otherwise a near card reads as bright as the
+   * featured one and nothing appears to come forward.
+   */
+  restingShade?: number;
   /** Minimum top edge for the full featured orbit, as a scene percentage. */
   minTop?: number;
 };
@@ -165,29 +183,44 @@ export function FloatingStoryCard({
   const isFront = phase === "entering" || phase === "featured";
   const isForeground = isPresenting;
   const mobilePromotion = Boolean(feature?.enhanceForeground);
+  const staticCollage = Boolean(feature?.pauseDrift);
   const promotionTarget = isFront ? 1 : 0;
+
+  /**
+   * A permanent `will-change: opacity` would give every one of these layers its
+   * own compositor layer for the whole session — eight cards times five layers
+   * of surface the GPU has to keep around while nothing is fading. They only
+   * need promoting while this card is actually moving through the sequence.
+   */
+  const willChangeOpacity = isPresenting ? "will-change-[opacity]" : "";
+
+  /** How dark this card sits while it is not the one being presented. */
+  const restingVeil = Math.min(
+    0.62,
+    (feature?.restingShade ?? 0) + (1 - depth) * 0.22,
+  );
 
   const driftXStyle: DriftStyle = {
     "--drift-x": `${driftX}px`,
     animationDuration: `${durationX}s`,
     animationDelay: `${-delay}s`,
-    animationName: mobilePromotion ? "none" : undefined,
+    animationName: staticCollage ? "none" : undefined,
   };
   const driftYStyle: DriftStyle = {
     "--drift-y": `${driftY}px`,
     animationDuration: `${durationY}s`,
     animationDelay: `${-delay * 1.7}s`,
-    animationName: mobilePromotion ? "none" : undefined,
+    animationName: staticCollage ? "none" : undefined,
   };
   const rotateStyle: DriftStyle = {
     "--rotate-amp": `${rotateAmplitude}deg`,
     animationDuration: `${durationRotate}s`,
     animationDelay: `${-delay * 2.3}s`,
-    animationName: mobilePromotion ? "none" : undefined,
+    animationName: staticCollage ? "none" : undefined,
   };
 
   const orbitTarget = useMemo(() => {
-    const dimmed = feature?.dimmed ? 0.62 : 1;
+    const dimmed = feature?.dimmed ? 0.78 : 1;
     if (!orbit || phase === "resting") {
       return { x: "0%", y: "0%", scale: 1, rotate: 0, rotateY: 0, opacity: dimmed };
     }
@@ -249,14 +282,14 @@ export function FloatingStoryCard({
       };
     }
     if (phase === "featured") {
-      return mobilePromotion
+      return staticCollage
         ? { duration: 0 }
         : { duration: 0.45, ease: "easeOut" as const };
     }
-    return mobilePromotion
+    return staticCollage
       ? { duration: 0 }
       : { duration: 0.75, ease: [0.22, 1, 0.36, 1] as const };
-  }, [phase, feature?.timings, mobilePromotion]);
+  }, [phase, feature?.timings, staticCollage]);
 
   const promotionTransition = useMemo(() => {
     const timings = feature?.timings;
@@ -315,7 +348,7 @@ export function FloatingStoryCard({
           animate={mobilePromotion ? { opacity: promotionTarget } : undefined}
           transition={mobilePromotion ? promotionTransition : undefined}
           className={cn(
-            "pointer-events-none absolute -inset-8 rounded-[40px] bg-[radial-gradient(closest-side,rgba(139,92,246,0.42),transparent)] will-change-[opacity]",
+            `pointer-events-none absolute -inset-8 rounded-[40px] bg-[radial-gradient(closest-side,rgba(139,92,246,0.42),transparent)] ${willChangeOpacity}`,
             !mobilePromotion &&
               "transition-opacity duration-[900ms] ease-out",
             !mobilePromotion && (isFront ? "opacity-100" : "opacity-0"),
@@ -335,7 +368,7 @@ export function FloatingStoryCard({
               >
                 <Image
                   src={story.heroScene ?? story.cover}
-                  alt={`${story.title} — ${genreLabel(story.genre)} story`}
+                  alt={`${story.title} — ${genreSlugLabel(story.genre)} story`}
                   fill
                   sizes={sizes}
                   priority={priority}
@@ -350,19 +383,19 @@ export function FloatingStoryCard({
                   initial={false}
                   animate={
                     mobilePromotion
-                      ? { opacity: isFront ? 0 : (1 - depth) * 0.22 }
+                      ? { opacity: isFront ? 0 : restingVeil }
                       : undefined
                   }
                   transition={mobilePromotion ? promotionTransition : undefined}
                   className={cn(
-                    "pointer-events-none absolute inset-0 bg-ink-950 will-change-[opacity]",
+                    `pointer-events-none absolute inset-0 bg-ink-950 ${willChangeOpacity}`,
                     !mobilePromotion &&
                       "transition-opacity duration-[900ms] ease-out",
                   )}
                   style={
                     mobilePromotion
                       ? undefined
-                      : { opacity: isFront ? 0 : (1 - depth) * 0.22 }
+                      : { opacity: isFront ? 0 : restingVeil }
                   }
                 />
 
@@ -372,7 +405,7 @@ export function FloatingStoryCard({
                     initial={false}
                     animate={{ opacity: promotionTarget * 0.14 }}
                     transition={promotionTransition}
-                    className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/35 via-iris-300/15 to-transparent mix-blend-screen will-change-[opacity]"
+                    className={`pointer-events-none absolute inset-0 bg-gradient-to-br from-white/35 via-iris-300/15 to-transparent mix-blend-screen ${willChangeOpacity}`}
                   />
                 )}
 
@@ -387,7 +420,7 @@ export function FloatingStoryCard({
                   }
                   transition={mobilePromotion ? promotionTransition : undefined}
                   className={cn(
-                    "pointer-events-none absolute inset-0 bg-gradient-to-t from-ink-950/45 via-transparent to-iris-500/[0.06] will-change-[opacity]",
+                    `pointer-events-none absolute inset-0 bg-gradient-to-t from-ink-950/45 via-transparent to-iris-500/[0.06] ${willChangeOpacity}`,
                     !mobilePromotion &&
                       "transition-opacity duration-[900ms] ease-out",
                     !mobilePromotion &&
@@ -402,7 +435,7 @@ export function FloatingStoryCard({
                   animate={mobilePromotion ? { opacity: promotionTarget } : undefined}
                   transition={mobilePromotion ? promotionTransition : undefined}
                   className={cn(
-                    "pointer-events-none absolute inset-0 rounded-[inherit] ring-1 ring-inset ring-iris-200/55 will-change-[opacity]",
+                    `pointer-events-none absolute inset-0 rounded-[inherit] ring-1 ring-inset ring-iris-200/55 ${willChangeOpacity}`,
                     !mobilePromotion &&
                       "transition-opacity duration-[900ms] ease-out",
                     !mobilePromotion &&

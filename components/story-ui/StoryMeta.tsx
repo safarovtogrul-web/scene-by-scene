@@ -1,6 +1,9 @@
-import { genreLabel } from "@/lib/catalog";
+"use client";
+
+import { genreLabelKey } from "@/lib/catalog";
 import type { Story } from "@/lib/catalog";
 import { cn } from "@/lib/cn";
+import { usePreferences } from "@/components/preferences/PreferencesProvider";
 
 /**
  * The one-line story signature: `Easy · Hard · Mystery · 8 min`.
@@ -15,11 +18,14 @@ export function StoryMeta({
   className?: string;
   withScenes?: boolean;
 }) {
+  const { t } = usePreferences();
+  const genre = genreLabelKey(story.genre);
+
   const parts = [
-    "Easy · Hard",
-    genreLabel(story.genre),
-    `${story.minutes} min`,
-    ...(withScenes ? [`${story.scenes} scenes`] : []),
+    `${t("easy")} · ${t("hard")}`,
+    ...(genre ? [t(genre)] : []),
+    t("minutesCount", { count: story.minutes }),
+    ...(withScenes ? [t("scenesCount", { count: story.scenes })] : []),
   ];
 
   return (
@@ -31,6 +37,8 @@ export function StoryMeta({
 
 /** Understated premium marker. No paywall behaviour is attached to it yet. */
 export function PremiumBadge({ className }: { className?: string }) {
+  const { t } = usePreferences();
+
   return (
     <span
       className={cn(
@@ -44,7 +52,7 @@ export function PremiumBadge({ className }: { className?: string }) {
           fill="currentColor"
         />
       </svg>
-      Premium
+      {t("premium")}
     </span>
   );
 }

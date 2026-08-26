@@ -6,11 +6,10 @@ import { PhoneFrame } from "@/components/device/PhoneFrame";
 import { SplashScreen } from "@/components/app/SplashScreen";
 import { LanguageStep } from "@/components/onboarding/LanguageStep";
 import { LEARNING_LANGUAGES } from "@/lib/languages";
+import { usePreferences } from "@/components/preferences/PreferencesProvider";
+import type { MessageKey } from "@/lib/i18n/messages";
 
-const POINTS = [
-  "Installable from your browser",
-  "Your place stays with you",
-];
+const POINT_KEYS: MessageKey[] = ["showcaseInstall", "showcaseProgress"];
 
 /**
  * Supporting section, not a second hero.
@@ -19,6 +18,8 @@ const POINTS = [
  * it for depth. Both render the real app components rather than screenshots.
  */
 export function MobileShowcase() {
+  const { t } = usePreferences();
+
   return (
     <section className="relative overflow-hidden bg-ink-950 px-6 py-16 md:px-10 md:py-20 lg:px-16 lg:py-28">
       <div className="pointer-events-none absolute top-1/2 right-[-10%] h-[560px] w-[560px] -translate-y-1/2 rounded-full bg-[radial-gradient(closest-side,rgba(124,58,237,0.22),transparent)]" />
@@ -31,20 +32,19 @@ export function MobileShowcase() {
           transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
         >
           <p className="text-[12px] font-semibold tracking-[0.16em] text-iris-300 uppercase">
-            Web and mobile
+            {t("showcaseEyebrow")}
           </p>
           <h2 className="mt-3 font-display text-[clamp(1.9rem,3.2vw,2.7rem)] font-bold tracking-[-0.025em] text-mist-100">
-            Stories that follow you
+            {t("showcaseTitle")}
           </h2>
           <p className="mt-4 max-w-[39ch] text-[16px] leading-relaxed text-mist-400">
-            Read in the browser or add Textory to your home screen. The same
-            stories are ready wherever you continue.
+            {t("showcaseBody")}
           </p>
 
           <ul className="mt-7 flex flex-wrap gap-2.5">
-            {POINTS.map((point) => (
+            {POINT_KEYS.map((key) => (
               <li
-                key={point}
+                key={key}
                 className="flex items-center gap-2 rounded-full border border-white/[0.08] bg-white/[0.035] px-3.5 py-2"
               >
                 <span
@@ -62,7 +62,7 @@ export function MobileShowcase() {
                   </svg>
                 </span>
                 <span className="text-[13.5px] text-mist-300">
-                  {point}
+                  {t(key)}
                 </span>
               </li>
             ))}
@@ -85,12 +85,12 @@ export function MobileShowcase() {
                   readOnly
                   step={1}
                   total={2}
-                  question={"Which language\ndo you want to"}
-                  emphasis="learn?"
-                  hint="You can change this later."
+                  question={t("onbLearnQuestion")}
+                  emphasis={t("onbLearnEmphasis")}
+                  hint={t("onbLearnHint")}
                   languages={LEARNING_LANGUAGES}
                   value="es"
-                  ctaLabel="Continue"
+                  ctaLabel={t("continueLabel")}
                 />
               </div>
             </PhoneFrame>

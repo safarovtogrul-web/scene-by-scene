@@ -5,6 +5,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { StoryFilters } from "@/components/story-ui/StoryFilters";
 import { StoryGrid } from "@/components/story-ui/StoryGrid";
+import { usePreferences } from "@/components/preferences/PreferencesProvider";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
 import { filterStories, type StoryQuery } from "@/lib/catalog";
 
@@ -84,6 +85,7 @@ export function StoryCatalogue() {
   }, []);
 
   const onReset = useCallback(() => setQuery(DEFAULTS), []);
+  const { t } = usePreferences();
 
   const results = useMemo(() => filterStories(query), [query]);
 
@@ -101,11 +103,10 @@ export function StoryCatalogue() {
       ) : (
         <div className="mt-16 rounded-3xl border border-white/[0.07] bg-white/[0.02] px-8 py-16 text-center">
           <p className="font-display text-[20px] font-semibold text-mist-100">
-            No stories match that yet.
+            {t("noStoriesTitle")}
           </p>
           <p className="mx-auto mt-2 max-w-[42ch] text-[15px] leading-relaxed text-mist-400">
-            The library is still growing. Try another difficulty, or clear the
-            filters to see everything.
+            {t("noStoriesBody")}
           </p>
           <PrimaryButton
             variant="ghost"
@@ -113,7 +114,7 @@ export function StoryCatalogue() {
             className="mt-7"
             onClick={onReset}
           >
-            Clear filters
+            {t("clearFilters")}
           </PrimaryButton>
         </div>
       )}

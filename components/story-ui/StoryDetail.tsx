@@ -1,11 +1,14 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 
 import { PremiumBadge } from "./StoryMeta";
 import { StorySection } from "./StorySection";
 import { StoryExperience } from "./StoryExperience";
-import { genreLabel, getProgress, getRelated, progressRatio } from "@/lib/catalog";
+import { genreLabelKey, getProgress, getRelated, progressRatio } from "@/lib/catalog";
 import type { Story } from "@/lib/catalog";
+import { usePreferences } from "@/components/preferences/PreferencesProvider";
 
 /**
  * The page a story link opens.
@@ -15,6 +18,8 @@ import type { Story } from "@/lib/catalog";
  * dropped into scene one.
  */
 export function StoryDetail({ story }: { story: Story }) {
+  const { t } = usePreferences();
+  const genre = genreLabelKey(story.genre);
   const progress = getProgress(story.id);
   const ratio = progressRatio(story);
   const related = getRelated(story);
@@ -49,7 +54,7 @@ export function StoryDetail({ story }: { story: Story }) {
               strokeLinejoin="round"
             />
           </svg>
-          All stories
+          {t("backToStories")}
         </Link>
 
         <div className="mt-6 grid gap-8 md:mt-8 md:gap-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,1fr)] lg:gap-16">
@@ -70,12 +75,12 @@ export function StoryDetail({ story }: { story: Story }) {
 
           <div className="lg:pt-4">
             <div className="flex flex-wrap items-center gap-2">
-              <Pill accent>Easy · Hard</Pill>
+              <Pill accent>{`${t("easy")} · ${t("hard")}`}</Pill>
               <Link href={`/stories?genre=${story.genre}`}>
-                <Pill interactive>{genreLabel(story.genre)}</Pill>
+                <Pill interactive>{genre ? t(genre) : story.genre}</Pill>
               </Link>
-              <Pill>{story.scenes} scenes</Pill>
-              <Pill>~{story.minutes} min</Pill>
+              <Pill>{t("scenesCount", { count: story.scenes })}</Pill>
+              <Pill>{t("minutesCount", { count: story.minutes })}</Pill>
             </div>
 
             <h1 className="mt-5 font-display text-[clamp(2rem,9vw,3.2rem)] leading-[1.05] font-bold tracking-[-0.03em] text-mist-100 md:mt-6">
@@ -90,7 +95,7 @@ export function StoryDetail({ story }: { story: Story }) {
               <div className="mt-8 max-w-sm">
                 <div className="flex items-baseline justify-between text-[13.5px] text-mist-400">
                   <span>
-                    Scene {progress.scenesCompleted} of {story.scenes}
+                    {t("sceneOf", { done: progress.scenesCompleted, total: story.scenes })}
                   </span>
                   <span className="tabular-nums">{Math.round(ratio * 100)}%</span>
                 </div>
@@ -107,7 +112,7 @@ export function StoryDetail({ story }: { story: Story }) {
 
             <div className="mt-10 md:mt-12">
               <h2 className="text-[12px] font-semibold tracking-[0.16em] text-iris-300 uppercase">
-                You&apos;ll learn
+                {t("youWillLearn")}
               </h2>
               <ul className="mt-4 flex flex-wrap gap-2.5">
                 {story.vocabulary.map((word) => (
@@ -120,8 +125,7 @@ export function StoryDetail({ story }: { story: Story }) {
                 ))}
               </ul>
               <p className="mt-4 max-w-[46ch] text-[14px] leading-relaxed text-mist-500">
-                Each expression appears inside a scene that shows what it means —
-                no lists to memorise.
+                {t("vocabularyNote")}
               </p>
             </div>
           </div>
@@ -132,7 +136,7 @@ export function StoryDetail({ story }: { story: Story }) {
 
       {related.length > 0 && (
         <div className="relative pb-24">
-          <StorySection title="More like this" stories={related} />
+          <StorySection title={t("moreLikeThis")} stories={related} />
         </div>
       )}
     </>
@@ -150,18 +154,20 @@ function SceneStrip({
   story: Story;
   completed: number;
 }) {
+  const { t } = usePreferences();
+
   return (
     <section className="mt-12 border-t border-white/[0.06] pt-8 md:mt-16 md:pt-10">
       <div className="flex flex-wrap items-baseline justify-between gap-4">
         <h2 className="font-display text-[19px] font-semibold tracking-tight text-mist-100">
-          Story structure
+          {t("storyStructure")}
         </h2>
         <p className="text-[14px] text-mist-500">
-          One clear action and one short sentence in each scene
+          {t("storyStructureNote")}
         </p>
       </div>
 
-      <ol className="mt-6 flex flex-wrap gap-1.5" aria-label="Scene progress">
+      <ol className="mt-6 flex flex-wrap gap-1.5" aria-label={t("sceneProgressLabel")}>
         {Array.from({ length: story.scenes }).map((_, index) => (
           <li
             key={index}

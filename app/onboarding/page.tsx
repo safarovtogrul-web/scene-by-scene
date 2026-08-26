@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 
 import { AmbientGlow } from "@/components/story/AmbientGlow";
 import { OnboardingFlow } from "@/components/onboarding/OnboardingFlow";
+import { getServerT } from "@/lib/i18n/server";
 
-export const metadata: Metadata = {
-  title: "Language setup",
-  description:
-    "Choose the language you want to learn and the language you already speak.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getServerT();
+  return { title: t("metaLanguageSetup"), description: t("onbUseHint") };
+}
 
 export default function OnboardingPage() {
   return (

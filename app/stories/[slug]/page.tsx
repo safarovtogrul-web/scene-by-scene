@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { SiteHeader } from "@/components/landing/SiteHeader";
 import { SiteFooter } from "@/components/landing/SiteFooter";
 import { StoryDetail } from "@/components/story-ui/StoryDetail";
-import { STORIES, genreLabel, getStory } from "@/lib/catalog";
+import { STORIES, genreSlugLabel, getStory } from "@/lib/catalog";
 
 type PageProps = { params: Promise<{ slug: string }> };
 
@@ -21,7 +21,7 @@ export async function generateMetadata({
 
   return {
     title: story.title,
-    description: `Easy and Hard · ${genreLabel(story.genre)} · ${story.scenes} scenes. ${story.description}`,
+    description: `Easy and Hard · ${genreSlugLabel(story.genre)} · ${story.scenes} scenes. ${story.description}`,
   };
 }
 

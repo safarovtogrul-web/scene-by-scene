@@ -8,8 +8,9 @@ import { CategoryMenu } from "@/components/nav/CategoryMenu";
 import { MobileNavSheet } from "@/components/nav/MobileNavSheet";
 import { TextoryLogo } from "@/components/brand/TextoryLogo";
 import { HeaderAuth } from "@/components/auth/HeaderAuth";
-import { LanguageSettingsButton } from "@/components/preferences/LanguageSettings";
+import { HeaderLanguageControls } from "@/components/preferences/LanguageSettings";
 import { navFor, type NavAudience } from "@/lib/navigation";
+import { usePreferences } from "@/components/preferences/PreferencesProvider";
 import { cn } from "@/lib/cn";
 
 /**
@@ -27,6 +28,7 @@ export function SiteHeader({
 }: {
   audience?: NavAudience;
 }) {
+  const { t } = usePreferences();
   const { scrollY } = useScroll();
   const [lifted, setLifted] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -57,30 +59,33 @@ export function SiteHeader({
             </span>
           </Link>
 
-          <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-8 lg:flex">
+          {/* True optical centring needs room the `lg` range does not have, so
+           * the navigation only leaves the flex flow once the header is wide
+           * enough for it to clear the controls on the right. */}
+          <nav className="hidden items-center gap-8 lg:mx-auto lg:flex xl:absolute xl:left-1/2 xl:mx-0 xl:-translate-x-1/2">
             {items.map((item) =>
               item.menu === "categories" ? (
-                <CategoryMenu key={item.label} label={item.label} />
+                <CategoryMenu key={item.labelKey} label={t(item.labelKey)} />
               ) : (
                 <Link
-                  key={item.href}
+                  key={item.labelKey}
                   href={item.href}
                   className="text-[15px] text-mist-300 transition-colors duration-200 hover:text-mist-100"
                 >
-                  {item.label}
+                  {t(item.labelKey)}
                 </Link>
               ),
             )}
           </nav>
 
           <div className="flex items-center gap-2">
-            <LanguageSettingsButton className="hidden lg:inline-flex" />
+            <HeaderLanguageControls />
             <HeaderAuth />
 
             <button
               type="button"
               onClick={() => setMenuOpen(true)}
-              aria-label="Open menu"
+              aria-label={t("openMenu")}
               aria-expanded={menuOpen}
               className="grid h-11 w-11 place-items-center rounded-full border border-white/10 bg-ink-950/45 text-mist-200 backdrop-blur-md lg:hidden"
             >

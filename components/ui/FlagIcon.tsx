@@ -1,13 +1,43 @@
+import { getLanguage, type LanguageId } from "@/lib/languages";
 import { cn } from "@/lib/cn";
 
 export type FlagCode = string;
 
 /**
- * Simplified vector flags.
+ * Simplified vector flags — the single source of flag artwork for Textory.
  *
- * Drawn inline rather than using emoji: Windows has no colour flag glyphs, so
- * emoji flags would degrade to bare letter pairs on a large share of desktops.
+ * Drawn inline rather than using emoji or a webfont: Windows has no colour
+ * flag glyphs, so emoji flags degrade to bare letter pairs on a large share of
+ * desktops, and a sprite library would ship several hundred unused files for
+ * the thirteen countries the language registry actually references.
+ *
+ * Every `flag` value in `LANGUAGE_REGISTRY` must have an entry here; the
+ * `flagArtworkExists` helper below lets that be asserted rather than assumed.
  */
+
+/** Regular five-pointed star, point up, as a polygon. */
+function Star({
+  cx,
+  cy,
+  r,
+  fill,
+  rotate = 0,
+}: {
+  cx: number;
+  cy: number;
+  r: number;
+  fill: string;
+  rotate?: number;
+}) {
+  const points = Array.from({ length: 10 }, (_, index) => {
+    const radius = index % 2 === 0 ? r : r * 0.382;
+    const angle = (Math.PI / 5) * index - Math.PI / 2 + (rotate * Math.PI) / 180;
+    return `${(cx + radius * Math.cos(angle)).toFixed(2)},${(cy + radius * Math.sin(angle)).toFixed(2)}`;
+  }).join(" ");
+
+  return <polygon points={points} fill={fill} />;
+}
+
 const FLAGS: Record<string, React.ReactNode> = {
   GB: (
     <>
@@ -57,10 +87,7 @@ const FLAGS: Record<string, React.ReactNode> = {
       <rect width="30" height="22" fill="#E30A17" />
       <circle cx="12" cy="11" r="5" fill="#fff" />
       <circle cx="13.7" cy="11" r="4" fill="#E30A17" />
-      <path
-        d="m19.4 11 1.5-1.1-.55 1.8 1.5 1.15h-1.87L19.4 14.7 18.83 12.85H17l1.5-1.15-.57-1.8z"
-        fill="#fff"
-      />
+      <Star cx={19.9} cy={11} r={2.6} fill="#fff" />
     </>
   ),
   AZ: (
@@ -70,10 +97,7 @@ const FLAGS: Record<string, React.ReactNode> = {
       <rect y="14.67" width="30" height="7.33" fill="#509E2F" />
       <circle cx="14" cy="11" r="4.1" fill="#fff" />
       <circle cx="15.5" cy="11" r="3.3" fill="#EF3340" />
-      <path
-        d="m20.3 11 1.25-.9-.46 1.47 1.25.95h-1.55L20.3 14.06 19.83 12.52h-1.55l1.25-.95-.46-1.47z"
-        fill="#fff"
-      />
+      <Star cx={20.5} cy={11} r={2.2} fill="#fff" />
     </>
   ),
   RU: (
@@ -103,48 +127,186 @@ const FLAGS: Record<string, React.ReactNode> = {
       />
     </>
   ),
+  CN: (
+    <>
+      <rect width="30" height="22" fill="#EE1C25" />
+      <Star cx={6.2} cy={6.2} r={3.5} fill="#FFDE00" />
+      <Star cx={11.6} cy={2.6} r={1.25} fill="#FFDE00" rotate={22} />
+      <Star cx={13.6} cy={5.2} r={1.25} fill="#FFDE00" rotate={45} />
+      <Star cx={13.5} cy={8.4} r={1.25} fill="#FFDE00" rotate={70} />
+      <Star cx={11.3} cy={10.7} r={1.25} fill="#FFDE00" rotate={20} />
+    </>
+  ),
+  IN: (
+    <>
+      <rect width="30" height="22" fill="#fff" />
+      <rect width="30" height="7.34" fill="#FF9933" />
+      <rect y="14.66" width="30" height="7.34" fill="#138808" />
+      <circle cx="15" cy="11" r="3.1" fill="none" stroke="#000080" strokeWidth="0.75" />
+      <circle cx="15" cy="11" r="0.65" fill="#000080" />
+      <g stroke="#000080" strokeWidth="0.3">
+        {Array.from({ length: 12 }, (_, index) => {
+          const angle = (Math.PI / 6) * index;
+          return (
+            <line
+              key={index}
+              x1={15 + 0.8 * Math.cos(angle)}
+              y1={11 + 0.8 * Math.sin(angle)}
+              x2={15 + 3 * Math.cos(angle)}
+              y2={11 + 3 * Math.sin(angle)}
+            />
+          );
+        })}
+      </g>
+    </>
+  ),
+  BD: (
+    <>
+      <rect width="30" height="22" fill="#006A4E" />
+      <circle cx="13.5" cy="11" r="6" fill="#F42A41" />
+    </>
+  ),
+  PT: (
+    <>
+      <rect width="30" height="22" fill="#DA291C" />
+      <rect width="12" height="22" fill="#046A38" />
+      <circle cx="12" cy="11" r="4.2" fill="#FFE900" />
+      <circle cx="12" cy="11" r="4.2" fill="none" stroke="#DA291C" strokeWidth="0.5" />
+      <circle cx="12" cy="11" r="2.5" fill="#fff" />
+      <path
+        d="M12 8.5v5M9.5 11h5"
+        stroke="#DA291C"
+        strokeWidth="0.7"
+        strokeLinecap="round"
+      />
+    </>
+  ),
+  PK: (
+    <>
+      <rect width="30" height="22" fill="#01411C" />
+      <rect width="7.5" height="22" fill="#fff" />
+      <path
+        d="M20.6 5.6a5.6 5.6 0 1 0 0 10.8 6.4 6.4 0 1 1 0-10.8Z"
+        fill="#fff"
+      />
+      <Star cx={22.6} cy={7.6} r={2.1} fill="#fff" rotate={20} />
+    </>
+  ),
+  ID: (
+    <>
+      <rect width="30" height="22" fill="#fff" />
+      <rect width="30" height="11" fill="#CE1126" />
+    </>
+  ),
+  NG: (
+    <>
+      <rect width="30" height="22" fill="#fff" />
+      <rect width="10" height="22" fill="#008751" />
+      <rect x="20" width="10" height="22" fill="#008751" />
+    </>
+  ),
+  VN: (
+    <>
+      <rect width="30" height="22" fill="#DA251D" />
+      <Star cx={15} cy={11} r={6} fill="#FFFF00" />
+    </>
+  ),
+  HK: (
+    <>
+      <rect width="30" height="22" fill="#DE2910" />
+      <g fill="#fff">
+        {Array.from({ length: 5 }, (_, index) => {
+          const angle = (Math.PI * 2 * index) / 5 - Math.PI / 2;
+          const px = 15 + 3.1 * Math.cos(angle);
+          const py = 11 + 3.1 * Math.sin(angle);
+          return (
+            <ellipse
+              key={index}
+              cx={px}
+              cy={py}
+              rx="1.35"
+              ry="2.5"
+              transform={`rotate(${(angle * 180) / Math.PI + 90} ${px} ${py})`}
+            />
+          );
+        })}
+      </g>
+      <circle cx="15" cy="11" r="1.1" fill="#DE2910" />
+    </>
+  ),
 };
+
+/** Lets callers (and tests) confirm the registry has no blank flag slots. */
+export function flagArtworkExists(code: FlagCode): boolean {
+  return code in FLAGS;
+}
+
+/**
+ * Fixed sizes rather than free-form class overrides: `cn` only joins strings,
+ * so a caller-supplied `h-[15px]` would compete with the base `h-[22px]` and
+ * lose or win purely on stylesheet order.
+ */
+const FLAG_SIZES = {
+  xs: "h-[14px] w-[20px] rounded-[3px]",
+  sm: "h-[16px] w-[22px] rounded-[4px]",
+  md: "h-[19px] w-[26px] rounded-[4px]",
+  lg: "h-[22px] w-[30px] rounded-[5px]",
+} as const;
+
+export type FlagSize = keyof typeof FLAG_SIZES;
 
 export function FlagIcon({
   code,
+  size = "lg",
   className,
 }: {
   code: FlagCode;
+  size?: FlagSize;
   className?: string;
 }) {
   return (
-    <svg
+    <span
       aria-hidden
-      viewBox="0 0 30 22"
       className={cn(
-        "h-[22px] w-[30px] shrink-0 rounded-[5px] ring-1 ring-inset ring-white/20",
+        "inline-block shrink-0 overflow-hidden ring-1 ring-inset ring-white/15",
+        FLAG_SIZES[size],
         className,
       )}
     >
-      <defs>
-        <clipPath id={`flag-clip-${code}`}>
-          <rect width="30" height="22" rx="5" />
-        </clipPath>
-      </defs>
-      <g clipPath={`url(#flag-clip-${code})`}>
+      <svg viewBox="0 0 30 22" className="h-full w-full">
         {FLAGS[code] ?? (
           <>
-            <rect width="30" height="22" fill="#312e81" />
-            <path d="M0 0h30v22H0z" fill="url(#fallback-flag)" opacity="0.45" />
-            <text x="15" y="14" textAnchor="middle" fill="#f5f3ff" fontSize="7.5" fontWeight="700">
-              {code.slice(0, 2)}
+            <rect width="30" height="22" fill="#1e1b4b" />
+            <text
+              x="15"
+              y="14.5"
+              textAnchor="middle"
+              fill="#c4b2ff"
+              fontSize="8"
+              fontWeight="700"
+              fontFamily="system-ui, sans-serif"
+            >
+              {code.slice(0, 2).toUpperCase()}
             </text>
           </>
         )}
-      </g>
-      {!FLAGS[code] && (
-        <defs>
-          <linearGradient id="fallback-flag" x1="0" y1="0" x2="30" y2="22">
-            <stop stopColor="#7c3aed" />
-            <stop offset="1" stopColor="#1e1b4b" />
-          </linearGradient>
-        </defs>
-      )}
-    </svg>
+      </svg>
+    </span>
   );
+}
+
+/**
+ * The preferred entry point: components pass a language id and never reach
+ * into the registry for a flag code themselves.
+ */
+export function LanguageFlag({
+  language,
+  size,
+  className,
+}: {
+  language: LanguageId | string;
+  size?: FlagSize;
+  className?: string;
+}) {
+  return <FlagIcon code={getLanguage(language).flag} size={size} className={className} />;
 }

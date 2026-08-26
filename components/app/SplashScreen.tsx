@@ -11,6 +11,7 @@ import {
   useFeatureSequence,
 } from "@/components/story/heroFeature";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
+import { usePreferences } from "@/components/preferences/PreferencesProvider";
 
 const rise = {
   hidden: { opacity: 0, y: 18 },
@@ -27,6 +28,8 @@ const transition = { duration: 0.75, ease: [0.22, 1, 0.36, 1] as const };
  * miniature inside the phone mockups without a second implementation.
  */
 export function SplashScreen({ animate = true }: { animate?: boolean }) {
+  const { t } = usePreferences();
+  const [titleTop, titleBottom] = t("heroTitle").split("\n");
   const sequence = useFeatureSequence({
     count: MOBILE_FEATURE_COUNT,
     timings: MOBILE_TIMINGS,
@@ -49,13 +52,15 @@ export function SplashScreen({ animate = true }: { animate?: boolean }) {
       >
         <motion.div variants={rise} transition={transition}>
           <h1 className="origin-top -translate-y-4 scale-[0.88] font-display text-[clamp(2.5rem,12.5vw,3.55rem)] font-bold leading-[0.98] tracking-[-0.04em] text-mist-100">
-            Learn
+            {titleTop}
+            {titleBottom && (
+              <>
+                <br />
+                {titleBottom}
+              </>
+            )}
             <br />
-            languages
-            <br />
-            <span className="whitespace-nowrap">
-              <span className="text-emphasis">through stories.</span>
-            </span>
+            <span className="text-emphasis">{t("heroEmphasis")}</span>
           </h1>
         </motion.div>
 
@@ -64,8 +69,7 @@ export function SplashScreen({ animate = true }: { animate?: boolean }) {
           transition={transition}
           className="mt-3 max-w-[31ch] text-[13px] leading-[1.55] text-mist-300"
         >
-          Real actions. Real scenes. A natural way to understand and remember a
-          new language.
+          {t("heroSubtitle")}
         </motion.p>
 
         <motion.div
@@ -74,7 +78,7 @@ export function SplashScreen({ animate = true }: { animate?: boolean }) {
           className="mt-auto w-full max-w-sm pt-10"
         >
           <PrimaryButton href="/onboarding" size="block">
-            Start your journey
+            {t("startJourney")}
           </PrimaryButton>
         </motion.div>
 
@@ -84,7 +88,7 @@ export function SplashScreen({ animate = true }: { animate?: boolean }) {
           href="#explore"
           className="mt-6 inline-flex flex-col items-center gap-1.5 text-[13px] tracking-wide text-mist-400 transition-colors hover:text-mist-100"
         >
-          Explore stories
+          {t("exploreStories")}
           <svg
             viewBox="0 0 24 24"
             fill="none"
