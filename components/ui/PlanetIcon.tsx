@@ -5,7 +5,7 @@ import { useId } from "react";
 import { cn } from "@/lib/cn";
 
 /**
- * Textory's globe: a small Earth with oceans and landmasses that turns slowly
+ * Scene by Scene's globe: a small Earth with oceans and landmasses that turns slowly
  * on its own axis, rather than a line-art globe glyph.
  *
  * The rotation is a seamless loop, not a spin: the continents are drawn twice

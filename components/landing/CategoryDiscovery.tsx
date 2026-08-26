@@ -17,7 +17,7 @@ const featured = FEATURED_GENRE_IDS.map((id) =>
 ).filter((genre) => genre !== undefined);
 
 /**
- * The first thing under the hero: the worlds Textory contains, as artwork.
+ * The first thing under the hero: the worlds Scene by Scene contains, as artwork.
  * Three per row on desktop so covers stay large.
  */
 export function CategoryDiscovery() {

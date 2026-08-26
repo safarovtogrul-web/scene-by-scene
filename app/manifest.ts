@@ -1,9 +1,10 @@
+import { BRAND_NAME } from "@/lib/brand";
 import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Textory — Learn languages through stories",
-    short_name: "Textory",
+    name: `${BRAND_NAME} — Learn languages, scene by scene.`,
+    short_name: BRAND_NAME,
     description:
       "Learn languages through illustrated stories. Real actions, real scenes, a natural way to understand and remember new languages.",
     start_url: "/",

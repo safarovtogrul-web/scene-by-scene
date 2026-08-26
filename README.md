@@ -1,4 +1,6 @@
-# Textory
+# Scene by Scene
+
+**Learn languages, scene by scene.** <https://scenebyscene.app>
 
 Learn languages through illustrated stories. A story is a sequence of scenes;
 each scene is one clear action paired with one short sentence in the language

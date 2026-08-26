@@ -1,6 +1,11 @@
 import { cookies } from "next/headers";
 
-import { PREFERENCES_COOKIE, parsePreferences, type TextoryPreferences } from "@/lib/preferences";
+import {
+  LEGACY_PREFERENCES_COOKIE,
+  PREFERENCES_COOKIE,
+  parsePreferences,
+  type AppPreferences,
+} from "@/lib/preferences";
 import { formatMessage, messageFor, type MessageKey } from "./messages";
 
 /**
@@ -13,9 +18,13 @@ import { formatMessage, messageFor, type MessageKey } from "./messages";
  * Crawlers arrive without the cookie and get the English default, which is the
  * behaviour we want for shared links and search results.
  */
-export async function getServerPreferences(): Promise<TextoryPreferences> {
+export async function getServerPreferences(): Promise<AppPreferences> {
   const store = await cookies();
-  return parsePreferences(store.get(PREFERENCES_COOKIE)?.value ?? "");
+  // The legacy name is still honoured so a returning reader’s first server
+  // paint is in their language rather than the default one.
+  const raw =
+    store.get(PREFERENCES_COOKIE)?.value ?? store.get(LEGACY_PREFERENCES_COOKIE)?.value ?? "";
+  return parsePreferences(raw);
 }
 
 export async function getServerT(): Promise<

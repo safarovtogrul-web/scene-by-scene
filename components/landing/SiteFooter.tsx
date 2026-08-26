@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 
-import { TextoryLogo } from "@/components/brand/TextoryLogo";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 import { usePreferences } from "@/components/preferences/PreferencesProvider";
 import type { MessageKey } from "@/lib/i18n/messages";
+import { BRAND_NAME } from "@/lib/brand";
 
 const EXPLORE_LINKS: Array<{ labelKey: MessageKey; href: string }> = [
   { labelKey: "allStories", href: "/stories" },
@@ -24,7 +25,7 @@ export function SiteFooter() {
       <div className="relative mx-auto max-w-[1200px]">
         <div className="grid gap-10 pb-10 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
           <div className="max-w-[30ch]">
-            <TextoryLogo size="md" />
+            <BrandLogo size="md" />
             <p className="mt-4 text-[15px] leading-relaxed text-mist-400">
               {t("footerTagline")}
             </p>
@@ -40,7 +41,7 @@ export function SiteFooter() {
         </div>
 
         <p className="border-t border-white/[0.06] pt-8 text-xs text-mist-500">
-          © {new Date().getFullYear()} Textory
+          © {new Date().getFullYear()} {BRAND_NAME}
         </p>
       </div>
     </footer>

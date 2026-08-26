@@ -51,10 +51,11 @@ const EN_MESSAGES = {
   menu: "Menu",
 
   /* --- Hero --- */
-  /** Plain part of the headline. A newline becomes a hard line break. */
-  heroTitle: "Learn\nlanguages",
-  /** Closing fragment, rendered in the violet gradient. */
-  heroEmphasis: "through stories.",
+  /**
+   * The descriptive line under the brand name. The name itself is a proper
+   * noun and lives in `lib/brand.ts`, untranslated.
+   */
+  tagline: "Learn languages, scene by scene.",
   heroSubtitle:
     "Real actions. Real scenes. A natural way to understand and remember new languages.",
   startJourney: "Start your journey",
@@ -67,7 +68,7 @@ const EN_MESSAGES = {
   browseAllStories: "Browse all stories",
 
   /* --- Method --- */
-  howEyebrow: "How Textory works",
+  howEyebrow: "How Scene by Scene works",
   howTitleOne: "You don't study the sentence.",
   howTitleTwo: "You watch it happen.",
   stepSeeTitle: "See the action",
@@ -161,14 +162,14 @@ const EN_MESSAGES = {
   pricingTitle: "Still being",
   pricingEmphasis: "written.",
   pricingBody:
-    "We're finishing the first set of stories before we decide what Textory costs. Until then, everything in the library is open.",
+    "We're finishing the first set of stories before we decide what Scene by Scene costs. Until then, everything in the library is open.",
   browseLibrary: "Browse the library",
 
   /* --- Web and mobile section --- */
   showcaseEyebrow: "Web and mobile",
   showcaseTitle: "Stories that follow you",
   showcaseBody:
-    "Read in the browser or add Textory to your home screen. The same stories are ready wherever you continue.",
+    "Read in the browser or add Scene by Scene to your home screen. The same stories are ready wherever you continue.",
   showcaseInstall: "Installable from your browser",
   showcaseProgress: "Your place stays with you",
 
@@ -176,30 +177,29 @@ const EN_MESSAGES = {
   onbLearnQuestion: "Which language\ndo you want to",
   onbLearnEmphasis: "learn?",
   onbLearnHint: "You can change this later.",
-  onbUseQuestion: "Which language\nshould Textory",
+  onbUseQuestion: "Which language should\nScene by Scene",
   onbUseEmphasis: "use?",
   onbUseHint: "This is the language of the interface and the subtitles.",
   continueLabel: "Continue",
-  startTextory: "Start Textory",
+  startApp: "Start Scene by Scene",
   allSet: "You're all set.",
-  setupSummary: "Learning {learning}, with Textory and subtitles in {interface}.",
+  setupSummary: "Learning {learning}, with Scene by Scene and subtitles in {interface}.",
   libraryNext: "Your story library is coming next.",
-  backToTextory: "Back to Textory",
+  backToApp: "Back to Scene by Scene",
   changeLanguages: "Change my languages",
   goBack: "Go back",
   stepOf: "Step {step} of {total}",
 
   /* --- Page metadata (browser tab titles) --- */
-  metaTitle: "Textory — Learn languages through stories",
   metaLanguageSetup: "Language setup",
 
   /* --- Sign in --- */
-  welcomeTitle: "Welcome to Textory",
+  welcomeTitle: "Welcome to Scene by Scene",
   welcomeBody: "Continue your stories and learning progress across devices.",
   continueWithProvider: "Continue with {provider}",
   orLabel: "or",
   browseFirst: "Browse the library first",
-  noPasswordNeeded: "No password needed — Textory uses an account you already have.",
+  noPasswordNeeded: "No password needed — Scene by Scene uses an account you already have.",
   signInUnavailable: "Sign-in isn't connected yet.",
   signInUnavailableHint:
     "Add your Supabase project keys to .env.local and enable the providers to switch this on.",

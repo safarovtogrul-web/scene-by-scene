@@ -1,12 +1,11 @@
 import type { Metadata, Viewport } from "next";
-import { cookies } from "next/headers";
 import { Outfit, Plus_Jakarta_Sans } from "next/font/google";
 
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import { PreferencesProvider } from "@/components/preferences/PreferencesProvider";
 import { ServiceWorkerRegistrar } from "@/components/pwa/ServiceWorkerRegistrar";
-import { PREFERENCES_COOKIE, parsePreferences } from "@/lib/preferences";
-import { getServerT } from "@/lib/i18n/server";
+import { getServerPreferences, getServerT } from "@/lib/i18n/server";
+import { BRAND_NAME, BRAND_URL } from "@/lib/brand";
 import { getLanguage } from "@/lib/languages";
 import "./globals.css";
 
@@ -26,16 +25,16 @@ export async function generateMetadata(): Promise<Metadata> {
   const t = await getServerT();
 
   return {
-    metadataBase: new URL("https://textory.app"),
+    metadataBase: new URL(BRAND_URL),
     title: {
-      default: t("metaTitle"),
-      template: "%s · Textory",
+      default: BRAND_NAME,
+      template: `%s · ${BRAND_NAME}`,
     },
-    description: t("heroSubtitle"),
-    applicationName: "Textory",
+    description: t("tagline"),
+    applicationName: BRAND_NAME,
     appleWebApp: {
       capable: true,
-      title: "Textory",
+      title: BRAND_NAME,
       statusBarStyle: "black-translucent",
     },
     icons: {
@@ -43,8 +42,8 @@ export async function generateMetadata(): Promise<Metadata> {
       apple: [{ url: "/icons/icon.svg" }],
     },
     openGraph: {
-      title: t("metaTitle"),
-      description: t("heroSubtitle"),
+      title: BRAND_NAME,
+      description: t("tagline"),
       type: "website",
     },
   };
@@ -68,10 +67,7 @@ export const viewport: Viewport = {
 export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  const store = await cookies();
-  const preferences = parsePreferences(
-    store.get(PREFERENCES_COOKIE)?.value ?? "",
-  );
+  const preferences = await getServerPreferences();
   const language = getLanguage(preferences.interfaceLanguage);
 
   return (

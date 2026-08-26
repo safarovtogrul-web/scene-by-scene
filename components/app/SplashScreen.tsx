@@ -11,6 +11,7 @@ import {
   useFeatureSequence,
 } from "@/components/story/heroFeature";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
+import { BRAND_WORDMARK } from "@/lib/brand";
 import { usePreferences } from "@/components/preferences/PreferencesProvider";
 
 const rise = {
@@ -21,7 +22,7 @@ const rise = {
 const transition = { duration: 0.75, ease: [0.22, 1, 0.36, 1] as const };
 
 /**
- * The Textory opening screen: a collage of six unrelated story worlds drifting
+ * The Scene by Scene opening screen: a collage of six unrelated story worlds drifting
  * behind a completely static hero message and one CTA.
  *
  * Fills its parent, so it serves both the real mobile landing hero and the
@@ -29,7 +30,6 @@ const transition = { duration: 0.75, ease: [0.22, 1, 0.36, 1] as const };
  */
 export function SplashScreen({ animate = true }: { animate?: boolean }) {
   const { t } = usePreferences();
-  const [titleTop, titleBottom] = t("heroTitle").split("\n");
   const sequence = useFeatureSequence({
     count: MOBILE_FEATURE_COUNT,
     timings: MOBILE_TIMINGS,
@@ -52,24 +52,19 @@ export function SplashScreen({ animate = true }: { animate?: boolean }) {
       >
         <motion.div variants={rise} transition={transition}>
           <h1 className="origin-top -translate-y-4 scale-[0.88] font-display text-[clamp(2.5rem,12.5vw,3.55rem)] font-bold leading-[0.98] tracking-[-0.04em] text-mist-100">
-            {titleTop}
-            {titleBottom && (
-              <>
-                <br />
-                {titleBottom}
-              </>
-            )}
+            {BRAND_WORDMARK[0]}{" "}
+            <span className="text-emphasis">{BRAND_WORDMARK[1]}</span>
             <br />
-            <span className="text-emphasis">{t("heroEmphasis")}</span>
+            {BRAND_WORDMARK[2]}
           </h1>
         </motion.div>
 
         <motion.p
           variants={rise}
           transition={transition}
-          className="mt-3 max-w-[31ch] text-[13px] leading-[1.55] text-mist-300"
+          className="mt-3 max-w-[28ch] text-[15px] leading-[1.45] font-medium text-mist-200"
         >
-          {t("heroSubtitle")}
+          {t("tagline")}
         </motion.p>
 
         <motion.div

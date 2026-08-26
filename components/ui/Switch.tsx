@@ -5,7 +5,7 @@ import * as RadixSwitch from "@radix-ui/react-switch";
 import { cn } from "@/lib/cn";
 
 /**
- * Textory's switch. Radix supplies the button semantics, keyboard handling and
+ * Scene by Scene's switch. Radix supplies the button semantics, keyboard handling and
  * `aria-checked`; everything visual is ours, tuned to the violet accent ramp.
  */
 export function Switch({

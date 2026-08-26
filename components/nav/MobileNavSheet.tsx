@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
-import { TextoryLogo } from "@/components/brand/TextoryLogo";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
 import {
   displayNameFor,
@@ -64,7 +64,7 @@ export function MobileNavSheet({
           <div className="flex h-full flex-col overflow-y-auto px-6 pt-[max(1.25rem,env(safe-area-inset-top))] pb-[max(2rem,env(safe-area-inset-bottom))]">
             <div className="flex h-14 items-center justify-between">
               <Link href="/" onClick={onClose}>
-                <TextoryLogo size="sm" />
+                <BrandLogo size="sm" />
               </Link>
               <button
                 type="button"

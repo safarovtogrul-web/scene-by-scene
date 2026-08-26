@@ -17,7 +17,7 @@ export const SUPABASE_PUBLISHABLE_KEY =
   process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? "";
 
 /**
- * Textory runs perfectly well before Supabase is connected: the catalogue,
+ * Scene by Scene runs perfectly well before Supabase is connected: the catalogue,
  * hero and onboarding are all public. Everything auth-related checks this
  * first and degrades to a clearly-explained disabled state rather than
  * throwing, so a missing `.env.local` can never take the site down.

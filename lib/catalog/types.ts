@@ -2,7 +2,7 @@ import type { MessageKey } from "@/lib/i18n/messages";
 
 import type { LanguageId } from "@/lib/languages";
 
-/** Textory intentionally uses only these two editorial difficulty versions. */
+/** Scene by Scene intentionally uses only these two editorial difficulty versions. */
 export const STORY_DIFFICULTIES = ["easy", "hard"] as const;
 export type Difficulty = (typeof STORY_DIFFICULTIES)[number];
 

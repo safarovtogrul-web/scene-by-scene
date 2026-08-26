@@ -6,10 +6,11 @@ import { useMotionValueEvent, useScroll } from "framer-motion";
 
 import { CategoryMenu } from "@/components/nav/CategoryMenu";
 import { MobileNavSheet } from "@/components/nav/MobileNavSheet";
-import { TextoryLogo } from "@/components/brand/TextoryLogo";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 import { HeaderAuth } from "@/components/auth/HeaderAuth";
 import { HeaderLanguageControls } from "@/components/preferences/LanguageSettings";
 import { navFor, type NavAudience } from "@/lib/navigation";
+import { BRAND_NAME } from "@/lib/brand";
 import { usePreferences } from "@/components/preferences/PreferencesProvider";
 import { cn } from "@/lib/cn";
 
@@ -50,12 +51,12 @@ export function SiteHeader({
         )}
       >
         <div className="mx-auto flex h-14 max-w-[1440px] items-center justify-between gap-6 px-4 md:h-20 md:px-10 lg:px-12">
-          <Link href="/" aria-label="Textory home" className="shrink-0">
+          <Link href="/" aria-label={`${BRAND_NAME} home`} className="shrink-0">
             <span className="md:hidden">
-              <TextoryLogo size="sm" />
+              <BrandLogo size="sm" />
             </span>
             <span className="hidden md:inline-flex">
-              <TextoryLogo size="md" />
+              <BrandLogo size="md" />
             </span>
           </Link>
 

@@ -6,7 +6,16 @@ import {
 } from "./languages";
 
 /** Versioned local cache for signed-out and offline use. */
-const STORAGE_KEY = "textory.preferences.v2";
+const STORAGE_KEY = "scenebyscene.preferences.v1";
+
+/**
+ * Keys written before the rename. They are only ever read — anything found
+ * under them is migrated to the current key on first load, so the rebrand does
+ * not throw away a reader’s saved languages.
+ */
+const LEGACY_STORAGE_KEY = "textory.preferences.v2";
+export const LEGACY_PREFERENCES_COOKIE = "textory_prefs";
+export const LEGACY_PREFERENCES_METADATA_KEY = "textory_preferences";
 
 /**
  * The same value, mirrored into a cookie so the *server* can render the first
@@ -14,7 +23,7 @@ const STORAGE_KEY = "textory.preferences.v2";
  * which is why a client-only preference always shows a flash of the default
  * language before hydration swaps it out.
  */
-export const PREFERENCES_COOKIE = "textory_prefs";
+export const PREFERENCES_COOKIE = "scenebyscene_prefs";
 
 /** A year: the preference is not sensitive and should survive between visits. */
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
@@ -29,23 +38,26 @@ function writePreferencesCookie(serialized: string): void {
 
 export function readPreferencesCookie(): string {
   try {
-    const match = document.cookie.match(new RegExp(`(?:^|; )${PREFERENCES_COOKIE}=([^;]*)`));
-    return match ? decodeURIComponent(match[1]) : "";
+    for (const name of [PREFERENCES_COOKIE, LEGACY_PREFERENCES_COOKIE]) {
+      const match = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
+      if (match) return decodeURIComponent(match[1]);
+    }
+    return "";
   } catch {
     return "";
   }
 }
 
 /** Key in Supabase's existing authenticated user metadata for signed-in users. */
-export const PREFERENCES_METADATA_KEY = "textory_preferences";
+export const PREFERENCES_METADATA_KEY = "scenebyscene_preferences";
 
-export type TextoryPreferences = {
+export type AppPreferences = {
   interfaceLanguage: LanguageId;
   learningLanguage: LanguageId;
   showTranslations: boolean;
 };
 
-export const EMPTY_PREFERENCES: TextoryPreferences = {
+export const EMPTY_PREFERENCES: AppPreferences = {
   interfaceLanguage: DEFAULT_INTERFACE_LANGUAGE,
   learningLanguage: DEFAULT_LEARNING_LANGUAGE,
   showTranslations: true,
@@ -57,7 +69,11 @@ let memoryValue: string | null = null;
 export function getPreferencesSnapshot(): string {
   if (memoryValue !== null) return memoryValue;
   try {
-    return window.localStorage.getItem(STORAGE_KEY) ?? "";
+    return (
+      window.localStorage.getItem(STORAGE_KEY) ??
+      window.localStorage.getItem(LEGACY_STORAGE_KEY) ??
+      ""
+    );
   } catch {
     return "";
   }
@@ -80,7 +96,7 @@ export function subscribeToPreferences(onChange: () => void): () => void {
  * Parses both the permanent v2 shape and the former onboarding-only
  * `{ learning, speaking }` shape, so existing local choices move forward.
  */
-export function parsePreferences(raw: string | unknown): TextoryPreferences {
+export function parsePreferences(raw: string | unknown): AppPreferences {
   let parsed: Record<string, unknown> | null = null;
   try {
     const value = typeof raw === "string" ? JSON.parse(raw) : raw;
@@ -115,7 +131,7 @@ export function hasStoredPreferences(value: unknown): boolean {
   );
 }
 
-export function writePreferences(preferences: TextoryPreferences): void {
+export function writePreferences(preferences: AppPreferences): void {
   const next = JSON.stringify(preferences);
   memoryValue = next;
   try {

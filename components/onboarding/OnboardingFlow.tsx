@@ -5,11 +5,11 @@ import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 
 import { LanguageStep } from "./LanguageStep";
-import { TextoryLogo } from "@/components/brand/TextoryLogo";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 import { PrimaryButton, ArrowGlyph } from "@/components/ui/PrimaryButton";
 import { LEARNING_LANGUAGES, SPOKEN_LANGUAGES, getLanguage } from "@/lib/languages";
 import { usePreferences } from "@/components/preferences/PreferencesProvider";
-import type { TextoryPreferences } from "@/lib/preferences";
+import type { AppPreferences } from "@/lib/preferences";
 
 const TOTAL_STEPS = 2;
 
@@ -24,7 +24,7 @@ export function OnboardingFlow() {
   const [step, setStep] = useState(1);
   const { preferences, updatePreferences } = usePreferences();
 
-  const update = (patch: Partial<TextoryPreferences>) => {
+  const update = (patch: Partial<AppPreferences>) => {
     void updatePreferences(patch);
   };
 
@@ -46,7 +46,7 @@ export function OnboardingFlow() {
               hint={t("onbLearnHint")}
               languages={LEARNING_LANGUAGES}
               value={preferences.learningLanguage}
-              onChange={(code) => update({ learningLanguage: code as TextoryPreferences["learningLanguage"] })}
+              onChange={(code) => update({ learningLanguage: code as AppPreferences["learningLanguage"] })}
               onBack={goBack}
               onSubmit={() => setStep(2)}
               ctaLabel={t("continueLabel")}
@@ -64,10 +64,10 @@ export function OnboardingFlow() {
               hint={t("onbUseHint")}
               languages={SPOKEN_LANGUAGES}
               value={preferences.interfaceLanguage}
-              onChange={(code) => update({ interfaceLanguage: code as TextoryPreferences["interfaceLanguage"] })}
+              onChange={(code) => update({ interfaceLanguage: code as AppPreferences["interfaceLanguage"] })}
               onBack={goBack}
               onSubmit={() => setStep(3)}
-              ctaLabel={`${t("startTextory")} ✨`}
+              ctaLabel={`${t("startApp")} ✨`}
             />
           </Panel>
         )}
@@ -100,7 +100,7 @@ function Confirmation({
   preferences,
   onRestart,
 }: {
-  preferences: TextoryPreferences;
+  preferences: AppPreferences;
   onRestart: () => void;
 }) {
   const { t } = usePreferences();
@@ -109,7 +109,7 @@ function Confirmation({
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-center gap-8 px-8 text-center">
-      <TextoryLogo size="lg" markOnly />
+      <BrandLogo size="lg" markOnly />
 
       <div>
         <h1 className="font-display text-[clamp(1.7rem,7vw,2.1rem)] font-bold tracking-[-0.02em] text-mist-100">
@@ -128,7 +128,7 @@ function Confirmation({
 
       <div className="flex w-full max-w-xs flex-col gap-3">
         <PrimaryButton href="/" size="block">
-          {t("backToTextory")}
+          {t("backToApp")}
           <ArrowGlyph />
         </PrimaryButton>
         <PrimaryButton variant="ghost" size="block" onClick={onRestart}>

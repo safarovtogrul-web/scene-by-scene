@@ -203,7 +203,7 @@ export function FloatingStoryScene({ className }: { className?: string }) {
   return (
     <div
       className={cn("relative aspect-[7/6] w-full", className)}
-      aria-label="A selection of stories from the Textory library"
+      aria-label="A selection of stories from the library"
       role="img"
     >
       {CARD_LAYOUT.map((card) => (

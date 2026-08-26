@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 
 import { ProviderIcon } from "./ProviderIcons";
 import { useAuth } from "./AuthProvider";
-import { TextoryLogo } from "@/components/brand/TextoryLogo";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 import { AUTH_PROVIDERS, type AuthProviderId } from "@/lib/auth/providers";
 import { buildOAuthRedirectUrl, sanitizeNextPath } from "@/lib/auth/redirects";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
@@ -73,7 +73,7 @@ export function LoginPanel() {
     >
       <div className="rounded-[32px] border border-white/[0.08] bg-ink-900/60 p-6 shadow-[0_60px_120px_-50px_rgba(0,0,0,0.95)] backdrop-blur-2xl sm:p-10">
         <div className="flex justify-center">
-          <TextoryLogo size="md" />
+          <BrandLogo size="md" />
         </div>
 
         <h1 className="mt-8 text-center font-display text-[clamp(1.7rem,4.4vw,2.1rem)] leading-tight font-bold tracking-[-0.025em] text-mist-100">
@@ -178,7 +178,7 @@ export function LoginPanel() {
             strokeLinejoin="round"
           />
         </svg>
-        {t("backToTextory")}
+        {t("backToApp")}
       </Link>
     </motion.div>
   );

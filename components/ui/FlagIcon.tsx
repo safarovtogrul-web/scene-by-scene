@@ -4,7 +4,7 @@ import { cn } from "@/lib/cn";
 export type FlagCode = string;
 
 /**
- * Simplified vector flags — the single source of flag artwork for Textory.
+ * Simplified vector flags — the single source of flag artwork for Scene by Scene.
  *
  * Drawn inline rather than using emoji or a webfont: Windows has no colour
  * flag glyphs, so emoji flags degrade to bare letter pairs on a large share of

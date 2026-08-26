@@ -1,5 +1,5 @@
 /**
- * The single registry for every language Textory can present, learn, or use
+ * The single registry for every language Scene by Scene can present, learn, or use
  * for scene translations. Components should always resolve language metadata
  * from here instead of carrying their own display-name lists.
  */

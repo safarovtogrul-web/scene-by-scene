@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { AmbientGlow } from "@/components/story/AmbientGlow";
 import { FloatingStoryScene } from "@/components/story/FloatingStoryScene";
 import { PrimaryButton, ArrowGlyph } from "@/components/ui/PrimaryButton";
+import { BRAND_WORDMARK } from "@/lib/brand";
 import { usePreferences } from "@/components/preferences/PreferencesProvider";
 
 const rise = {
@@ -23,7 +24,6 @@ const transition = { duration: 0.8, ease: [0.22, 1, 0.36, 1] as const };
  */
 export function Hero() {
   const { t } = usePreferences();
-  const [titleTop, titleBottom] = t("heroTitle").split("\n");
 
   return (
     <section
@@ -42,25 +42,27 @@ export function Hero() {
           <motion.h1
             variants={rise}
             transition={transition}
-            // Not `whitespace-nowrap`: translated headlines are longer than
-            // the English one and must be allowed to wrap rather than overflow.
-            className="font-display text-[clamp(2.2rem,4.4vw,4.6rem)] leading-[1.05] font-bold tracking-[-0.03em] text-balance-tight text-mist-100"
+            className="font-display text-[clamp(2.3rem,4.6vw,4.4rem)] leading-[1.04] font-bold tracking-[-0.03em] text-balance-tight text-mist-100"
           >
-            {titleTop}
-            {titleBottom && (
-              <>
-                <br />
-                {titleBottom}
-              </>
-            )}
-            <br />
-            <span className="text-emphasis">{t("heroEmphasis")}</span>
+            {/* Both halves of the name stay white; the connector carries the
+             * violet accent the design already uses for emphasis. */}
+            {BRAND_WORDMARK[0]}{" "}
+            <span className="text-emphasis">{BRAND_WORDMARK[1]}</span>{" "}
+            {BRAND_WORDMARK[2]}
           </motion.h1>
 
           <motion.p
             variants={rise}
             transition={transition}
-            className="mt-8 max-w-[34ch] text-[clamp(1rem,1.35vw,1.3rem)] leading-[1.65] text-mist-300"
+            className="mt-6 max-w-[30ch] text-[clamp(1.15rem,1.6vw,1.5rem)] leading-[1.35] font-medium tracking-[-0.01em] text-mist-200"
+          >
+            {t("tagline")}
+          </motion.p>
+
+          <motion.p
+            variants={rise}
+            transition={transition}
+            className="mt-5 max-w-[36ch] text-[clamp(0.95rem,1.15vw,1.1rem)] leading-[1.6] text-mist-400"
           >
             {t("heroSubtitle")}
           </motion.p>

@@ -1,5 +1,5 @@
 /**
- * Minimal Textory service worker — just enough to make the app installable
+ * Minimal Scene by Scene service worker — just enough to make the app installable
  * and resilient offline. No build step, no framework.
  *
  * Strategy:
@@ -8,7 +8,7 @@
  *   • everything else passes straight through
  */
 
-const CACHE = "textory-shell-v1";
+const CACHE = "scenebyscene-shell-v1";
 const SHELL = ["/", "/onboarding", "/icons/icon.svg"];
 
 self.addEventListener("install", (event) => {

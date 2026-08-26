@@ -8,6 +8,7 @@ import { useAuth } from "@/components/auth/AuthProvider";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import {
   EMPTY_PREFERENCES,
+  LEGACY_PREFERENCES_METADATA_KEY,
   PREFERENCES_METADATA_KEY,
   getPreferencesSnapshot,
   hasStoredPreferences,
@@ -15,14 +16,14 @@ import {
   readPreferencesCookie,
   subscribeToPreferences,
   writePreferences,
-  type TextoryPreferences,
+  type AppPreferences,
 } from "@/lib/preferences";
 import { getLanguage, type LanguageId } from "@/lib/languages";
 import { formatMessage, messageFor, type MessageKey } from "@/lib/i18n/messages";
 
 type PreferencesContextValue = {
-  preferences: TextoryPreferences;
-  updatePreferences: (patch: Partial<TextoryPreferences>) => Promise<void>;
+  preferences: AppPreferences;
+  updatePreferences: (patch: Partial<AppPreferences>) => Promise<void>;
   isSaving: boolean;
   t: (key: MessageKey, values?: Record<string, string | number>) => string;
 };
@@ -49,7 +50,7 @@ export function PreferencesProvider({
   initialPreferences,
 }: {
   children: ReactNode;
-  initialPreferences?: TextoryPreferences;
+  initialPreferences?: AppPreferences;
 }) {
   const { status, user } = useAuth();
   const serverSnapshot = useMemo(
@@ -63,7 +64,7 @@ export function PreferencesProvider({
     () => serverSnapshot,
   );
   const localPreferences = useMemo(() => parsePreferences(rawLocal), [rawLocal]);
-  const [authenticatedPreferences, setAuthenticatedPreferences] = useState<TextoryPreferences | null>(null);
+  const [authenticatedPreferences, setAuthenticatedPreferences] = useState<AppPreferences | null>(null);
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -72,7 +73,8 @@ export function PreferencesProvider({
       return;
     }
     const metadata = user.user_metadata as Record<string, unknown> | undefined;
-    const stored = metadata?.[PREFERENCES_METADATA_KEY];
+    const stored =
+      metadata?.[PREFERENCES_METADATA_KEY] ?? metadata?.[LEGACY_PREFERENCES_METADATA_KEY];
     if (hasStoredPreferences(stored)) {
       const next = parsePreferences(stored);
       setAuthenticatedPreferences(next);
@@ -98,7 +100,7 @@ export function PreferencesProvider({
     if (local && local !== readPreferencesCookie()) writePreferences(parsePreferences(local));
   }, []);
 
-  const updatePreferences = useCallback(async (patch: Partial<TextoryPreferences>) => {
+  const updatePreferences = useCallback(async (patch: Partial<AppPreferences>) => {
     const next = { ...preferences, ...patch };
     writePreferences(next);
     if (status !== "authenticated" || !user) return;
