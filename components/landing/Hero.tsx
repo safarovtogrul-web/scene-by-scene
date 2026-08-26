@@ -37,7 +37,13 @@ export function Hero() {
           initial="hidden"
           animate="show"
           transition={{ staggerChildren: 0.09, delayChildren: 0.05 }}
-          className="relative z-20 max-w-[36rem] lg:max-w-none"
+          /* The brand name is a far shorter headline than the sentence it
+           * replaced, so centring this column against the tall card scene left
+           * it sitting well below where the eye expects it. From `lg` up it is
+           * anchored to the top of the row instead; the offset grows with the
+           * viewport because at `lg` itself the copy nearly fills the row and
+           * centring already puts it near the top. */
+          className="relative z-20 max-w-[36rem] lg:max-w-none lg:self-start lg:pt-2 xl:pt-8 2xl:pt-12"
         >
           <motion.h1
             variants={rise}

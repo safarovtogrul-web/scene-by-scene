@@ -10,6 +10,7 @@ import { usePreferences } from "@/components/preferences/PreferencesProvider";
 import { getLanguage, shortCodeFor, type LanguageId } from "@/lib/languages";
 import { cn } from "@/lib/cn";
 import { LanguagePicker } from "./LanguagePicker";
+import { LanguageSettingsSheet } from "./LanguageSettingsSheet";
 import { SubtitlesToggle } from "./SubtitlesToggle";
 
 const POPOVER_CLASSES = cn(
@@ -256,8 +257,49 @@ function PanelTab({
 }
 
 /**
- * What `SiteHeader` renders: two focused controls where there is room, and a
- * single combined control where there is not.
+ * The phone header control.
+ *
+ * Deliberately not a popover: anchored to a 44px trigger at the very edge of a
+ * 375px screen, the desktop panel would open as a cramped, scrolling column
+ * with a search field the on-screen keyboard then covers. This opens the same
+ * bottom sheet the menu uses instead — a full-width surface with real touch
+ * targets — and the trigger itself carries only a flag and a code so it sits
+ * beside the menu button without crowding the wordmark.
+ */
+export function MobileLanguageControl({ className }: { className?: string }) {
+  const { preferences, t } = usePreferences();
+  const [open, setOpen] = useState(false);
+  const interfaceLanguage = getLanguage(preferences.interfaceLanguage);
+  const learningLanguage = getLanguage(preferences.learningLanguage);
+
+  return (
+    <>
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        aria-haspopup="dialog"
+        aria-expanded={open}
+        aria-label={`${t("languageSettings")} — ${interfaceLanguage.englishName}, ${learningLanguage.englishName}`}
+        className={cn(
+          "inline-flex h-11 items-center gap-1.5 rounded-full border border-white/10 bg-ink-950/45 ps-2 pe-2.5",
+          "text-mist-200 backdrop-blur-md transition-colors duration-200 ease-[cubic-bezier(0.22,1,0.36,1)]",
+          "hover:border-white/20 hover:bg-white/[0.07]",
+          "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-iris-300",
+          className,
+        )}
+      >
+        <LanguageFlag language={interfaceLanguage.id} size="sm" />
+        <TriggerCode>{shortCodeFor(interfaceLanguage.id)}</TriggerCode>
+      </button>
+
+      <LanguageSettingsSheet open={open} onOpenChange={setOpen} />
+    </>
+  );
+}
+
+/**
+ * What `SiteHeader` renders: two focused controls where there is room, a single
+ * combined control where there is not, and the sheet-backed trigger on phones.
  */
 export function HeaderLanguageControls() {
   return (
@@ -270,6 +312,9 @@ export function HeaderLanguageControls() {
        * `inline-flex` sits in the same CSS layer and would win. */}
       <span className="hidden lg:inline-flex 2xl:hidden">
         <CombinedLanguageControl />
+      </span>
+      <span className="inline-flex lg:hidden">
+        <MobileLanguageControl />
       </span>
     </>
   );
