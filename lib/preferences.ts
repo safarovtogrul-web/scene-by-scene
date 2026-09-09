@@ -85,10 +85,15 @@ export function getServerPreferencesSnapshot(): string {
 
 export function subscribeToPreferences(onChange: () => void): () => void {
   listeners.add(onChange);
-  window.addEventListener("storage", onChange);
+  const onStorage = (event: StorageEvent) => {
+    if (event.key !== null && event.key !== STORAGE_KEY && event.key !== LEGACY_STORAGE_KEY) return;
+    memoryValue = null;
+    onChange();
+  };
+  window.addEventListener("storage", onStorage);
   return () => {
     listeners.delete(onChange);
-    window.removeEventListener("storage", onChange);
+    window.removeEventListener("storage", onStorage);
   };
 }
 
@@ -132,7 +137,7 @@ export function hasStoredPreferences(value: unknown): boolean {
 }
 
 export function writePreferences(preferences: AppPreferences): void {
-  const next = JSON.stringify(preferences);
+  const next = JSON.stringify(parsePreferences(preferences));
   memoryValue = next;
   try {
     window.localStorage.setItem(STORAGE_KEY, next);
@@ -142,4 +147,16 @@ export function writePreferences(preferences: AppPreferences): void {
   // Kept in step with the local copy so the next server render already knows.
   writePreferencesCookie(next);
   listeners.forEach((listener) => listener());
+}
+
+/** Apply a patch to the latest store value, including multiple changes before a render. */
+export function patchPreferences(patch: Partial<AppPreferences>, fallback: AppPreferences = EMPTY_PREFERENCES): AppPreferences {
+  const current = parsePreferences(getPreferencesSnapshot() || fallback);
+  const next = {
+    interfaceLanguage: isLanguageId(patch.interfaceLanguage) ? patch.interfaceLanguage : current.interfaceLanguage,
+    learningLanguage: isLanguageId(patch.learningLanguage) ? patch.learningLanguage : current.learningLanguage,
+    showTranslations: typeof patch.showTranslations === "boolean" ? patch.showTranslations : current.showTranslations,
+  };
+  writePreferences(next);
+  return next;
 }

@@ -1,6 +1,7 @@
 import type { LanguageId } from "@/lib/languages";
 import { TRANSLATIONS } from "./translations";
 import { PAGE_TRANSLATIONS } from "./pageTranslations";
+import { READER_TRANSLATIONS } from "./readerTranslations";
 
 /**
  * UI message catalogue.
@@ -138,6 +139,26 @@ const EN_MESSAGES = {
   moreLikeThis: "More like this",
   storyOptions: "Story options",
   storyScenes: "Story scenes",
+  startStory: "Start story",
+  previousScene: "Previous scene",
+  nextScene: "Next scene",
+  readerHelp: "Swipe or drag to explore · Use the arrow keys",
+  readerTranslation: "Translation",
+  readerSettings: "Reader settings",
+  exitFullscreen: "Exit fullscreen",
+  fullscreenExitFailed: "Could not exit fullscreen. Tap exit to try again, or use the browser's back/escape control.",
+  readerFullscreenHelp: "Tap a photo or press Enter for fullscreen. Tap again to show controls. Press Escape to exit.",
+  readerScenes: "Scenes",
+  preferencesSyncFailed: "Your choices are saved on this device. Account sync failed; your next change will try again.",
+  uiMessageUnavailable: "This label is unavailable.",
+  translationUnavailable: "Translation is not available in {language} yet.",
+  translationSameLanguage: "Both languages match. Choose a different interface or learning language to see a translation.",
+  tryTranslationDemo: "Try demo: Spanish + Turkish translation",
+  storyEnd: "End of story",
+  restartStory: "Read again",
+  readerSkip: "Skip to the scene",
+  sceneImageUnavailable: "This scene image could not be loaded.",
+  developmentFixture: "DEVELOPMENT FIXTURE · Test artwork and copy",
 
   /* --- Shelves and menus --- */
   seeAll: "See all",
@@ -232,12 +253,23 @@ function mergeCatalogues(
 }
 
 export const UI_MESSAGES: Partial<Record<LanguageId, Partial<Messages>>> = {
-  ...mergeCatalogues(TRANSLATIONS, PAGE_TRANSLATIONS),
+  ...mergeCatalogues(TRANSLATIONS, PAGE_TRANSLATIONS, READER_TRANSLATIONS),
   en: EN_MESSAGES,
 };
 
+const reportedFallbackLocales = new Set<LanguageId>();
+
 export function messageFor(language: LanguageId, key: MessageKey): string {
-  return UI_MESSAGES[language]?.[key] ?? EN_MESSAGES[key];
+  const localized = UI_MESSAGES[language]?.[key];
+  if (typeof localized === "string" && localized.trim()) return localized;
+  if (process.env.NODE_ENV === "development" && !reportedFallbackLocales.has(language)) {
+    reportedFallbackLocales.add(language);
+    console.warn(`[i18n] Missing UI message "${key}" for "${language}"; using English. Other missing messages in this locale also fall back to English.`);
+  }
+  const fallback = EN_MESSAGES[key];
+  if (typeof fallback === "string") return fallback;
+  console.error("[i18n] Unknown UI message key.", { key });
+  return EN_MESSAGES.uiMessageUnavailable;
 }
 
 export function formatMessage(
@@ -246,6 +278,6 @@ export function formatMessage(
   values: Record<string, string | number> = {},
 ): string {
   return messageFor(language, key).replace(/\{(\w+)\}/g, (_match, name: string) =>
-    String(values[name] ?? `{${name}}`),
+    String(values?.[name] ?? `{${name}}`),
   );
 }

@@ -7,7 +7,7 @@ import { useState, type ReactNode } from "react";
 import { LanguageFlag } from "@/components/ui/FlagIcon";
 import { PlanetIcon } from "@/components/ui/PlanetIcon";
 import { usePreferences } from "@/components/preferences/PreferencesProvider";
-import { getLanguage, shortCodeFor, type LanguageId } from "@/lib/languages";
+import { getLanguage, shortCodeFor } from "@/lib/languages";
 import { cn } from "@/lib/cn";
 import { LanguagePicker } from "./LanguagePicker";
 import { LanguageSettingsSheet } from "./LanguageSettingsSheet";
@@ -168,95 +168,6 @@ export function LearningLanguageControl({ className }: { className?: string }) {
 }
 
 /**
- * The narrower desktop fallback: one trigger showing interface → learning, for
- * viewports where two separate controls would crowd the navigation.
- */
-export function CombinedLanguageControl({ className }: { className?: string }) {
-  const { preferences, updatePreferences, t } = usePreferences();
-  const [open, setOpen] = useState(false);
-  const [target, setTarget] = useState<"interface" | "learning">("learning");
-  const interfaceLanguage = getLanguage(preferences.interfaceLanguage);
-  const learningLanguage = getLanguage(preferences.learningLanguage);
-
-  const apply = (id: LanguageId) => {
-    void updatePreferences(target === "interface" ? { interfaceLanguage: id } : { learningLanguage: id });
-    setOpen(false);
-  };
-
-  return (
-    <Popover.Root open={open} onOpenChange={setOpen}>
-      <Popover.Trigger asChild>
-        <TriggerShell
-          open={open}
-          emphasis
-          aria-label={`${t("languageSettings")} — ${interfaceLanguage.englishName}, ${learningLanguage.englishName}`}
-          className={className}
-        >
-          <PlanetIcon className="text-mist-400 transition-colors duration-200 group-hover:text-iris-200" />
-          <LanguageFlag language={interfaceLanguage.id} size="sm" />
-          <TriggerChevron open={open} />
-        </TriggerShell>
-      </Popover.Trigger>
-
-      <Popover.Portal>
-        <Popover.Content align="end" sideOffset={10} collisionPadding={12} className={POPOVER_CLASSES}>
-          <div className="flex gap-1 border-b border-white/[0.06] p-1.5">
-            <PanelTab active={target === "learning"} onClick={() => setTarget("learning")} icon={<BookOpen aria-hidden strokeWidth={2} className="size-[15px]" />}>
-              {t("learningShort")}
-            </PanelTab>
-            <PanelTab active={target === "interface"} onClick={() => setTarget("interface")} icon={<PlanetIcon className="size-[15px]" />}>
-              {t("interfaceShort")}
-            </PanelTab>
-          </div>
-
-          <LanguagePicker
-            key={target}
-            label={target === "interface" ? t("interfaceLanguage") : t("learningLanguage")}
-            value={target === "interface" ? preferences.interfaceLanguage : preferences.learningLanguage}
-            listClassName="max-h-[248px]"
-            onSelect={apply}
-          />
-
-          <div className="border-t border-white/[0.06] px-3.5 py-2.5">
-            <SubtitlesToggle compact />
-          </div>
-        </Popover.Content>
-      </Popover.Portal>
-    </Popover.Root>
-  );
-}
-
-function PanelTab({
-  active,
-  onClick,
-  icon,
-  children,
-}: {
-  active: boolean;
-  onClick: () => void;
-  icon: ReactNode;
-  children: ReactNode;
-}) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-pressed={active}
-      className={cn(
-        "inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl px-2 py-2 text-[12px] font-medium",
-        "transition-colors duration-200 ease-[cubic-bezier(0.22,1,0.36,1)]",
-        active
-          ? "bg-iris-500/[0.18] text-mist-100 ring-1 ring-iris-400/35 ring-inset"
-          : "text-mist-400 hover:bg-white/[0.05] hover:text-mist-200",
-      )}
-    >
-      <span className={active ? "text-iris-300" : "text-mist-500"}>{icon}</span>
-      <span className="truncate">{children}</span>
-    </button>
-  );
-}
-
-/**
  * The phone header control.
  *
  * Deliberately not a popover: anchored to a 44px trigger at the very edge of a
@@ -270,7 +181,6 @@ export function MobileLanguageControl({ className }: { className?: string }) {
   const { preferences, t } = usePreferences();
   const [open, setOpen] = useState(false);
   const interfaceLanguage = getLanguage(preferences.interfaceLanguage);
-  const learningLanguage = getLanguage(preferences.learningLanguage);
 
   return (
     <>
@@ -279,7 +189,7 @@ export function MobileLanguageControl({ className }: { className?: string }) {
         onClick={() => setOpen(true)}
         aria-haspopup="dialog"
         aria-expanded={open}
-        aria-label={`${t("languageSettings")} — ${interfaceLanguage.englishName}, ${learningLanguage.englishName}`}
+        aria-label={`${t("interfaceLanguage")}: ${interfaceLanguage.englishName}`}
         className={cn(
           "inline-flex h-11 items-center gap-1.5 rounded-full border border-white/10 bg-ink-950/45 ps-2 pe-2.5",
           "text-mist-200 backdrop-blur-md transition-colors duration-200 ease-[cubic-bezier(0.22,1,0.36,1)]",
@@ -298,21 +208,15 @@ export function MobileLanguageControl({ className }: { className?: string }) {
 }
 
 /**
- * What `SiteHeader` renders: two focused controls where there is room, a single
- * combined control where there is not, and the sheet-backed trigger on phones.
+ * The site header exposes interface language only. Learning language remains a
+ * separate preference and is selected in story-specific reader controls.
  */
 export function HeaderLanguageControls() {
   return (
     <>
-      <div className="hidden items-center gap-1 2xl:flex">
+      <div className="hidden items-center lg:flex">
         <InterfaceLanguageControl />
-        <LearningLanguageControl />
       </div>
-      {/* Wrapped rather than given a `hidden` class: the trigger's own
-       * `inline-flex` sits in the same CSS layer and would win. */}
-      <span className="hidden lg:inline-flex 2xl:hidden">
-        <CombinedLanguageControl />
-      </span>
       <span className="inline-flex lg:hidden">
         <MobileLanguageControl />
       </span>

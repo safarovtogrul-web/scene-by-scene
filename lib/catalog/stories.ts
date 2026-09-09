@@ -1,4 +1,6 @@
 import { createStoryShell, type Story, type StorySeed } from "./types";
+import { STORY_PACKAGES } from "../story-packages/registry";
+import { packageToStory } from "../story-packages/schema";
 
 /**
  * Demo catalogue.
@@ -269,8 +271,16 @@ const STORY_SEEDS: StorySeed[] = [
 ];
 
 /**
- * Existing catalogue entries remain metadata-only until verified source PDFs
- * and scene images are supplied. `createStoryShell` gives each one a truthful
+ * Existing catalogue entries remain metadata-only until reviewed story packages
+ * and original scene images are supplied. `createStoryShell` gives each one a truthful
  * empty language availability declaration and both Easy/Hard containers.
  */
-export const STORIES: Story[] = STORY_SEEDS.map(createStoryShell);
+export const STORY_SHELLS: Story[] = STORY_SEEDS.map(createStoryShell);
+
+// A reviewed package can replace an existing demo by id. New identities append
+// naturally; the build validator prevents collisions between unrelated stories.
+const published = STORY_PACKAGES.map(packageToStory);
+export const STORIES: Story[] = [
+  ...STORY_SHELLS.filter((shell) => !published.some((story) => story.id === shell.id)),
+  ...published,
+];

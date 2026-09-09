@@ -39,7 +39,7 @@ export function StoryCard({
 
   return (
     <Link
-      href={`/stories/${story.id}`}
+      href={`/stories/${story.slug}`}
       className={cn("group block focus-visible:outline-none", className)}
     >
       <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-ink-800 shadow-[0_20px_40px_-24px_rgba(0,0,0,0.9)] ring-1 ring-white/[0.08] transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:-translate-y-1 group-hover:shadow-[0_28px_60px_-24px_rgba(76,29,149,0.7)] group-hover:ring-iris-400/40 group-focus-visible:ring-2 group-focus-visible:ring-iris-400">

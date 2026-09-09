@@ -1,7 +1,7 @@
 "use client";
 
 import * as Dialog from "@radix-ui/react-dialog";
-import { ArrowLeft, BookOpen, ChevronRight, X } from "lucide-react";
+import { ArrowLeft, ChevronRight, X } from "lucide-react";
 import { useState } from "react";
 
 import { LanguageFlag } from "@/components/ui/FlagIcon";
@@ -10,12 +10,11 @@ import { usePreferences } from "@/components/preferences/PreferencesProvider";
 import { getLanguage, type Language, type LanguageId } from "@/lib/languages";
 import { cn } from "@/lib/cn";
 import { LanguagePicker } from "./LanguagePicker";
-import { SubtitlesToggle } from "./SubtitlesToggle";
 
-type View = "root" | "interface" | "learning";
+type View = "root" | "interface";
 
 /**
- * The full language surface. One component serves both sizes: a bottom sheet
+ * The site-language surface. One component serves both sizes: a bottom sheet
  * with generous touch targets on phones, and a centred panel from `sm` up.
  *
  * Radix's Dialog supplies the focus trap, ESC handling, scroll lock and
@@ -40,21 +39,16 @@ export function LanguageSettingsSheet({
   };
 
   const interfaceLanguage = getLanguage(preferences.interfaceLanguage);
-  const learningLanguage = getLanguage(preferences.learningLanguage);
 
   const select = (id: LanguageId) => {
-    void updatePreferences(
-      view === "interface" ? { interfaceLanguage: id } : { learningLanguage: id },
-    );
+    void updatePreferences({ interfaceLanguage: id });
     setView("root");
   };
 
   const title =
     view === "interface"
       ? t("interfaceLanguage")
-      : view === "learning"
-        ? t("learningLanguage")
-        : t("languageSettings");
+      : t("languageSettings");
 
   return (
     <Dialog.Root open={open} onOpenChange={handleOpenChange}>
@@ -125,16 +119,6 @@ export function LanguageSettingsSheet({
                 language={interfaceLanguage}
                 onClick={() => setView("interface")}
               />
-              <SummaryRow
-                icon={<BookOpen aria-hidden strokeWidth={1.9} className="size-[17px]" />}
-                label={t("learningLanguage")}
-                language={learningLanguage}
-                onClick={() => setView("learning")}
-              />
-
-              <div className="mt-1 h-px bg-white/[0.06]" />
-
-              <SubtitlesToggle />
 
               {!interfaceLanguage.hasInterfaceMessages && (
                 <p className="px-1 pt-1 text-[12.5px] leading-relaxed text-mist-500">
@@ -154,7 +138,7 @@ export function LanguageSettingsSheet({
             >
               <LanguagePicker
                 label={title}
-                value={view === "interface" ? preferences.interfaceLanguage : preferences.learningLanguage}
+                value={preferences.interfaceLanguage}
                 onSelect={select}
                 // A phone would open the on-screen keyboard over the list.
                 autoFocusSearch={typeof window !== "undefined" && window.matchMedia("(min-width: 640px)").matches}

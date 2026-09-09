@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useState, useSyncExternalStore, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
 
 import { DirectionProvider } from "@radix-ui/react-direction";
 
@@ -13,6 +13,7 @@ import {
   getPreferencesSnapshot,
   hasStoredPreferences,
   parsePreferences,
+  patchPreferences,
   readPreferencesCookie,
   subscribeToPreferences,
   writePreferences,
@@ -25,6 +26,7 @@ type PreferencesContextValue = {
   preferences: AppPreferences;
   updatePreferences: (patch: Partial<AppPreferences>) => Promise<void>;
   isSaving: boolean;
+  syncFailed: boolean;
   t: (key: MessageKey, values?: Record<string, string | number>) => string;
 };
 
@@ -32,6 +34,7 @@ const PreferencesContext = createContext<PreferencesContextValue>({
   preferences: EMPTY_PREFERENCES,
   updatePreferences: async () => {},
   isSaving: false,
+  syncFailed: false,
   t: (key) => messageFor("en", key),
 });
 
@@ -64,28 +67,23 @@ export function PreferencesProvider({
     () => serverSnapshot,
   );
   const localPreferences = useMemo(() => parsePreferences(rawLocal), [rawLocal]);
-  const [authenticatedPreferences, setAuthenticatedPreferences] = useState<AppPreferences | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [syncFailed, setSyncFailed] = useState(false);
+  const pendingWrites = useRef(0);
+  const syncQueue = useRef(Promise.resolve());
 
   useEffect(() => {
-    if (status !== "authenticated" || !user) {
-      setAuthenticatedPreferences(null);
-      return;
-    }
+    if (status !== "authenticated" || !user || pendingWrites.current > 0) return;
     const metadata = user.user_metadata as Record<string, unknown> | undefined;
     const stored =
       metadata?.[PREFERENCES_METADATA_KEY] ?? metadata?.[LEGACY_PREFERENCES_METADATA_KEY];
     if (hasStoredPreferences(stored)) {
-      const next = parsePreferences(stored);
-      setAuthenticatedPreferences(next);
-      writePreferences(next);
-      return;
+      writePreferences(parsePreferences(stored));
     }
-    // Choices made before sign-in remain meaningful when a session appears.
-    setAuthenticatedPreferences(localPreferences);
-  }, [localPreferences, status, user]);
+    // With no remote copy, choices made before sign-in remain authoritative.
+  }, [status, user]);
 
-  const preferences = authenticatedPreferences ?? localPreferences;
+  const preferences = localPreferences;
 
   useEffect(() => {
     const language = getLanguage(preferences.interfaceLanguage);
@@ -101,27 +99,42 @@ export function PreferencesProvider({
   }, []);
 
   const updatePreferences = useCallback(async (patch: Partial<AppPreferences>) => {
-    const next = { ...preferences, ...patch };
-    writePreferences(next);
+    const next = patchPreferences(patch, preferences);
     if (status !== "authenticated" || !user) return;
 
-    setAuthenticatedPreferences(next);
     const supabase = getSupabaseBrowserClient();
     if (!supabase) return;
 
+    pendingWrites.current += 1;
     setIsSaving(true);
-    await supabase.auth.updateUser({ data: { [PREFERENCES_METADATA_KEY]: next } });
-    setIsSaving(false);
+    // Serial writes prevent a slower response overwriting a newer language choice.
+    // Only the external sync is caught; rendering/programming errors stay visible.
+    const sync = async () => {
+      try {
+        const { error } = await supabase.auth.updateUser({ data: { [PREFERENCES_METADATA_KEY]: next } });
+        setSyncFailed(Boolean(error));
+        if (error) console.warn("[preferences] Account sync failed; local choices retained.", { code: error.code, status: error.status });
+      } catch (error) {
+        setSyncFailed(true);
+        console.warn("[preferences] Account sync rejected; local choices retained.", { name: error instanceof Error ? error.name : "UnknownError" });
+      } finally {
+        pendingWrites.current -= 1;
+        if (pendingWrites.current === 0) setIsSaving(false);
+      }
+    };
+    syncQueue.current = syncQueue.current.then(sync, sync);
+    await syncQueue.current;
   }, [preferences, status, user]);
 
   const value = useMemo<PreferencesContextValue>(() => ({
     preferences,
     updatePreferences,
     isSaving,
+    syncFailed,
     t: (key, values) => values
       ? formatMessage(preferences.interfaceLanguage, key, values)
       : messageFor(preferences.interfaceLanguage, key),
-  }), [isSaving, preferences, updatePreferences]);
+  }), [isSaving, syncFailed, preferences, updatePreferences]);
 
   // Radix primitives read their writing direction from context, not from the
   // document, so the two are kept in step here rather than in each component.

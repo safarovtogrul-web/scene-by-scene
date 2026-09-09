@@ -20,16 +20,20 @@ import { cn } from "@/lib/cn";
 export function SubtitlesToggle({
   compact = false,
   className,
+  label,
 }: {
   compact?: boolean;
   className?: string;
+  label?: string;
 }) {
   const { preferences, updatePreferences, t } = usePreferences();
   const labelId = useId();
+  const controlId = useId();
   const on = preferences.showTranslations;
 
   const control = (
     <Switch
+      id={controlId}
       checked={on}
       onCheckedChange={(checked) => void updatePreferences({ showTranslations: checked })}
       aria-labelledby={labelId}
@@ -38,7 +42,7 @@ export function SubtitlesToggle({
 
   if (compact) {
     return (
-      <div className={cn("flex items-center justify-between gap-3", className)}>
+      <label htmlFor={controlId} className={cn("flex min-h-11 cursor-pointer items-center justify-between gap-3", className)}>
         <span
           id={labelId}
           className={cn(
@@ -46,29 +50,30 @@ export function SubtitlesToggle({
             on ? "text-mist-200" : "text-mist-400",
           )}
         >
-          {t("subtitles")}
+          {label ?? t("subtitles")}
         </span>
         {control}
-      </div>
+      </label>
     );
   }
 
   return (
-    <div
+    <label
+      htmlFor={controlId}
       className={cn(
-        "flex items-center justify-between gap-4 rounded-2xl border border-white/[0.08] bg-white/[0.03] px-4 py-3.5",
+        "flex min-h-11 cursor-pointer items-center justify-between gap-4 rounded-2xl border border-white/[0.08] bg-white/[0.03] px-4 py-3.5",
         className,
       )}
     >
       <span className="min-w-0">
         <span id={labelId} className="block text-[14.5px] font-medium text-mist-100">
-          {t("subtitles")}
+          {label ?? t("subtitles")}
         </span>
         <span className="mt-0.5 block text-[12.5px] text-mist-500">
           {on ? t("subtitlesShown") : t("subtitlesHidden")}
         </span>
       </span>
       {control}
-    </div>
+    </label>
   );
 }

@@ -4,11 +4,15 @@ import { GENRES, bucketForMinutes } from "./taxonomy";
 import type { MessageKey } from "@/lib/i18n/messages";
 import type { Difficulty, GenreId, LengthBucket, Story, StoryLanguageVariant, StoryProgress } from "./types";
 import type { LanguageId } from "@/lib/languages";
+import { getStoryPackage } from "../story-packages/registry";
+import { sceneCopy, sceneImageSources } from "../story-packages/schema";
 
 const BY_ID = new Map(STORIES.map((story) => [story.id, story]));
+const BY_SLUG = new Map(STORIES.map((story) => [story.slug, story]));
 const PROGRESS_BY_ID = new Map(MOCK_PROGRESS.map((entry) => [entry.storyId, entry]));
 
 export function getStory(id: string): Story | undefined { return BY_ID.get(id); }
+export function getStoryBySlug(slug: string): Story | undefined { return BY_SLUG.get(slug); }
 export function requireStory(id: string): Story {
   const story = BY_ID.get(id);
   if (!story) throw new Error(`Unknown story: ${id}`);
@@ -32,7 +36,18 @@ export function resolveStoryLanguageVariant(
   learningLanguage: LanguageId,
 ): StoryLanguageVariant | null {
   if (!story.availableLanguages.includes(learningLanguage)) return null;
-  return story.levels[difficulty].languageVariants[learningLanguage] ?? null;
+  const authored = getStoryPackage(story.slug);
+  if (authored && !authored.scenes.every((scene) => sceneCopy(scene, difficulty, learningLanguage, learningLanguage).primary)) return null;
+  if (authored) return {
+    scenes: authored.scenes.map((scene) => ({
+      id: scene.id, order: scene.order, image: sceneImageSources(scene.image).desktop,
+      text: sceneCopy(scene, difficulty, learningLanguage, learningLanguage).primary!,
+      translations: scene.translation?.hide ? undefined : {
+        ...scene.text[difficulty], ...scene.translation?.text?.[difficulty],
+      },
+    })),
+  };
+  return story.levels?.[difficulty]?.languageVariants?.[learningLanguage] ?? null;
 }
 
 export function getProgress(storyId: string): StoryProgress | undefined { return PROGRESS_BY_ID.get(storyId); }

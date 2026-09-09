@@ -1,6 +1,6 @@
 "use client";
 
-import { BookOpen, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { useState } from "react";
 
 import { LanguageSettingsSheet } from "@/components/language/LanguageSettingsSheet";
@@ -16,7 +16,7 @@ export { HeaderLanguageControls } from "@/components/language/LanguageControls";
 type Variant = "pill" | "row";
 
 /**
- * Opens the shared language surface. The two variants exist because the same
+ * Opens the interface-language surface. The two variants exist because the same
  * action appears as a compact pill beside other controls and as a full-width
  * row inside menus — the panel behind them is identical either way.
  */
@@ -30,7 +30,6 @@ export function LanguageSettingsButton({
   const { preferences, t } = usePreferences();
   const [open, setOpen] = useState(false);
   const interfaceLanguage = getLanguage(preferences.interfaceLanguage);
-  const learningLanguage = getLanguage(preferences.learningLanguage);
 
   return (
     <>
@@ -39,7 +38,7 @@ export function LanguageSettingsButton({
           type="button"
           onClick={() => setOpen(true)}
           aria-haspopup="dialog"
-          aria-label={`${t("languageSettings")} — ${interfaceLanguage.englishName}, ${learningLanguage.englishName}`}
+          aria-label={`${t("interfaceLanguage")}: ${interfaceLanguage.englishName}`}
           className={cn(
             "inline-flex h-9 items-center gap-2 rounded-full border border-white/[0.1] bg-white/[0.04] ps-2.5 pe-3",
             "text-[13px] font-medium text-mist-200 transition-colors duration-200 ease-[cubic-bezier(0.22,1,0.36,1)]",
@@ -69,13 +68,11 @@ export function LanguageSettingsButton({
 
           <span className="min-w-0 flex-1">
             <span className="block text-[12px] leading-tight text-mist-500">
-              {t("languageSettings")}
+              {t("interfaceLanguage")}
             </span>
             <span className="mt-1 flex items-center gap-2 text-[14px] leading-tight font-medium text-mist-200">
               <LanguageFlag language={interfaceLanguage.id} size="xs" />
-              <BookOpen aria-hidden strokeWidth={1.9} className="size-3.5 shrink-0 text-mist-500" />
-              <LanguageFlag language={learningLanguage.id} size="xs" />
-              <span className="truncate">{learningLanguage.englishName}</span>
+              <span className="truncate">{interfaceLanguage.englishName}</span>
             </span>
           </span>
 

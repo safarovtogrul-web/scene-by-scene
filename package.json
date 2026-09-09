@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test:stories": "tsc -p tsconfig.story-tests.json && node --test .next/story-tests/tests/story-packages.test.js",
+    "validate:stories": "tsc -p tsconfig.story-tests.json && node .next/story-tests/scripts/validate-stories.js"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.23",
@@ -18,7 +20,7 @@
     "@supabase/supabase-js": "^2.112.3",
     "framer-motion": "^13.1.0",
     "lucide-react": "^1.33.0",
-    "next": "16.3.1",
+    "next": "16.3.4",
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },

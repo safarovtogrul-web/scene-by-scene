@@ -1,4 +1,7 @@
 import type { NextConfig } from "next";
+import { validateRegisteredStories } from "./lib/story-packages/validate-files";
+
+validateRegisteredStories();
 
 const nextConfig: NextConfig = {
   allowedDevOrigins: ["192.168.0.189"],

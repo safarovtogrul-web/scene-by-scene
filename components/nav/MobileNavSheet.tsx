@@ -12,7 +12,6 @@ import {
   useAuth,
 } from "@/components/auth/AuthProvider";
 import { LOGIN_PATH } from "@/lib/auth/redirects";
-import { LanguageSettingsButton } from "@/components/preferences/LanguageSettings";
 import type { NavItem } from "@/lib/navigation";
 import { usePreferences } from "@/components/preferences/PreferencesProvider";
 
@@ -105,7 +104,6 @@ export function MobileNavSheet({
             </motion.nav>
 
             <div className="mt-auto space-y-3 pt-10">
-              <LanguageSettingsButton variant="row" />
               {status === "authenticated" && user ? (
                 <>
                   <div className="flex items-center gap-3 rounded-2xl border border-white/[0.08] bg-white/[0.04] px-4 py-3.5">

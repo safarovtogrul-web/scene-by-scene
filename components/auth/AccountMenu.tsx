@@ -141,7 +141,7 @@ export function AccountMenu({ user }: { user: User }) {
                 className="mb-0.5 flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-left text-[14px] text-mist-200 transition-colors duration-200 hover:bg-white/[0.06] hover:text-mist-100"
               >
                 <PlanetIcon className="size-4 text-mist-400" />
-                <span className="flex-1 truncate">{t("languageSettings")}</span>
+                <span className="flex-1 truncate">{t("interfaceLanguage")}</span>
                 <LanguageFlag
                   language={preferences.interfaceLanguage}
                   size="xs"

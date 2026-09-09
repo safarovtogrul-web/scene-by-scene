@@ -24,9 +24,10 @@ export type StoryVocabulary = {
   sceneId?: string;
 };
 
-/** One independently renderable scene from a PDF/story source. */
+/** Resolved view of one scene, retained for existing catalogue consumers. */
 export type StoryScene = {
   id: string;
+  order: number;
   image: string;
   /** The sentence in the selected learning language. */
   text: string;
@@ -35,14 +36,14 @@ export type StoryScene = {
   vocabulary?: StoryVocabulary[];
 };
 
-/** The complete authored variant for one learning language at one difficulty. */
+/** Derived on demand from the canonical package for one language/difficulty. */
 export type StoryLanguageVariant = {
   scenes: StoryScene[];
   vocabulary?: StoryVocabulary[];
 };
 
 export type StoryDifficultyContent = {
-  /** A story can have a different scene count and content in each level. */
+  /** Legacy catalogue container; new authored content lives in StoryPackage. */
   languageVariants: Partial<Record<LanguageId, StoryLanguageVariant>>;
 };
 
@@ -55,9 +56,11 @@ export type StoryBackground = {
 };
 
 export type Story = {
-  /** URL slug and stable identifier. */
+  /** Stable identifier, independent of the URL. */
   id: string;
+  slug: string;
   title: string;
+  subtitle?: string;
   /** The initially highlighted reader version; the reader can switch either way. */
   defaultDifficulty: Difficulty;
   genre: GenreId;
@@ -85,18 +88,20 @@ export type Story = {
   premium?: boolean;
 };
 
-export type StorySeed = Omit<Story, "background" | "availableLanguages" | "levels"> & {
+export type StorySeed = Omit<Story, "slug" | "background" | "availableLanguages" | "levels"> & {
+  slug?: string;
   background?: StoryBackground;
 };
 
 /**
- * Current catalogue cards have no trusted PDF-backed scene data. This helper
+ * Current catalogue cards have no reviewed scene data. This helper
  * makes their explicit empty availability honest while giving every story the
- * permanent two-level content shape needed for future imports.
+ * existing two-difficulty availability shape.
  */
 export function createStoryShell(seed: StorySeed): Story {
   return {
     ...seed,
+    slug: seed.slug ?? seed.id,
     background: seed.background ?? { image: seed.cover, accent: "violet" },
     availableLanguages: [],
     levels: {

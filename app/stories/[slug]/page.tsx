@@ -2,21 +2,20 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { SiteHeader } from "@/components/landing/SiteHeader";
-import { SiteFooter } from "@/components/landing/SiteFooter";
 import { StoryDetail } from "@/components/story-ui/StoryDetail";
-import { STORIES, genreSlugLabel, getStory } from "@/lib/catalog";
+import { STORIES, genreSlugLabel, getStoryBySlug } from "@/lib/catalog";
 
 type PageProps = { params: Promise<{ slug: string }> };
 
 export function generateStaticParams() {
-  return STORIES.map((story) => ({ slug: story.id }));
+  return STORIES.map((story) => ({ slug: story.slug }));
 }
 
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const story = getStory(slug);
+  const story = getStoryBySlug(slug);
   if (!story) return { title: "Story not found" };
 
   return {
@@ -27,7 +26,7 @@ export async function generateMetadata({
 
 export default async function StoryPage({ params }: PageProps) {
   const { slug } = await params;
-  const story = getStory(slug);
+  const story = getStoryBySlug(slug);
   if (!story) notFound();
 
   return (
@@ -38,7 +37,6 @@ export default async function StoryPage({ params }: PageProps) {
         <StoryDetail story={story} />
       </main>
 
-      <SiteFooter />
     </>
   );
 }

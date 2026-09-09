@@ -1,0 +1,155 @@
+{
+  "title": "The Lost Map",
+  "slug": "the-lost-map",
+  "primaryLanguage": "es",
+  "source": "The_Lost_Map_24-Scene_Production_Storyboard_v1.1",
+  "status": "production-approved",
+  "note": "These Easy/Hard Spanish lines are copied from the approved storyboard source. The approved S10 Hard wardrobe correction uses 'chaleco' to match the final Lucía v04 artwork.",
+  "knownReview": [],
+  "scenes": [
+    {
+      "sceneId": "S01",
+      "easy": "Lucía abre la puerta del ático.",
+      "hard": "Lucía abre despacio la puerta del ático, cubierta de polvo.",
+      "mode": "narration"
+    },
+    {
+      "sceneId": "S02",
+      "easy": "Lucía mira una foto de su abuela.",
+      "hard": "Junto a la ventana redonda, Lucía observa una fotografía antigua de su abuela.",
+      "mode": "narration"
+    },
+    {
+      "sceneId": "S03",
+      "easy": "Lucía busca algo dentro del cajón.",
+      "hard": "Lucía busca con cuidado en el cajón abierto de la mesa.",
+      "mode": "narration"
+    },
+    {
+      "sceneId": "S04",
+      "easy": "Lucía encuentra un cuaderno verde.",
+      "hard": "Lucía encuentra un cuaderno verde escondido al fondo del cajón.",
+      "mode": "narration"
+    },
+    {
+      "sceneId": "S05",
+      "easy": "Lucía abre el cuaderno y encuentra un mapa.",
+      "hard": "Al abrir el cuaderno, Lucía encuentra un mapa doblado entre las páginas.",
+      "mode": "narration"
+    },
+    {
+      "sceneId": "S06",
+      "easy": "Lucía mira el mapa abierto sobre la mesa.",
+      "hard": "Lucía observa la ruta azul del mapa abierto sobre la mesa.",
+      "mode": "narration"
+    },
+    {
+      "sceneId": "S07",
+      "easy": "Lucía saca una llave del sobre.",
+      "hard": "Lucía saca del sobre una pequeña llave de latón con un símbolo.",
+      "mode": "narration"
+    },
+    {
+      "sceneId": "S08",
+      "easy": "Lucía compara el símbolo de la llave con el del mapa.",
+      "hard": "Lucía compara el sello de la Estrella Polar de la llave con el del mapa.",
+      "mode": "narration"
+    },
+    {
+      "sceneId": "S09",
+      "easy": "Lucía guarda el mapa en la mochila.",
+      "hard": "Lucía guarda el mapa en la mochila, junto a la llave y la linterna.",
+      "mode": "narration"
+    },
+    {
+      "sceneId": "S10",
+      "easy": "Lucía sale de la casa con su mochila.",
+      "hard": "Con el chaleco puesto y la mochila a la espalda, Lucía sale de la casa.",
+      "mode": "narration"
+    },
+    {
+      "sceneId": "S11",
+      "easy": "Lucía saca el mapa de la mochila junto al camino.",
+      "hard": "A la salida del pueblo, Lucía saca de la mochila el mapa de la ruta azul.",
+      "mode": "narration"
+    },
+    {
+      "sceneId": "S12",
+      "easy": "Lucía sigue el camino hacia el bosque.",
+      "hard": "Lucía sigue el camino de tierra desde el pueblo hasta el bosque.",
+      "mode": "narration"
+    },
+    {
+      "sceneId": "S13",
+      "easy": "Lucía encuentra un hito de piedra junto al camino.",
+      "hard": "Lucía encuentra el primer hito de piedra junto a la bifurcación del camino.",
+      "mode": "narration"
+    },
+    {
+      "sceneId": "S14",
+      "easy": "Lucía compara la marca del hito con el sello del mapa.",
+      "hard": "Lucía compara la marca tallada en el hito con el sello del mapa.",
+      "mode": "narration"
+    },
+    {
+      "sceneId": "S15",
+      "easy": "Lucía sigue los hitos entre los árboles.",
+      "hard": "Lucía sigue los hitos de piedra por un camino cada vez más estrecho entre los árboles.",
+      "mode": "narration"
+    },
+    {
+      "sceneId": "S16",
+      "easy": "¿Dónde está el siguiente hito?",
+      "hard": "¿Dónde debo buscar el siguiente hito si el camino está bloqueado?",
+      "mode": "speech"
+    },
+    {
+      "sceneId": "S17",
+      "easy": "Lucía compara el puente con el dibujo del mapa.",
+      "hard": "Lucía compara el viejo puente de piedra con el dibujo del mapa.",
+      "mode": "narration"
+    },
+    {
+      "sceneId": "S18",
+      "easy": "Lucía cruza el puente hacia las ruinas.",
+      "hard": "Lucía cruza con cuidado el estrecho puente de piedra que lleva a las ruinas.",
+      "mode": "narration"
+    },
+    {
+      "sceneId": "S19",
+      "easy": "Lucía compara las ruinas con el dibujo del mapa.",
+      "hard": "Lucía compara la silueta de las ruinas con el dibujo del mapa.",
+      "mode": "narration"
+    },
+    {
+      "sceneId": "S20",
+      "easy": "Aquí está la entrada.",
+      "hard": "Aquí está la entrada, escondida detrás de la hiedra y bajo el sello de la Estrella Polar.",
+      "mode": "speech"
+    },
+    {
+      "sceneId": "S21",
+      "easy": "Lucía entra en el pasadizo con la linterna.",
+      "hard": "Lucía entra en el pasadizo con la linterna encendida, que ilumina los escalones de piedra.",
+      "mode": "narration"
+    },
+    {
+      "sceneId": "S22",
+      "easy": "Lucía sigue el pasadizo hasta una sala.",
+      "hard": "Lucía sigue el pasadizo hasta una pequeña sala donde hay una caja de madera.",
+      "mode": "narration"
+    },
+    {
+      "sceneId": "S23",
+      "easy": "Lucía abre la caja con la llave.",
+      "hard": "Con la llave de latón en la cerradura, Lucía abre con cuidado la caja de madera.",
+      "mode": "narration"
+    },
+    {
+      "sceneId": "S24",
+      "easy": "Lucía encuentra una foto de su abuela.",
+      "hard": "Entre los documentos, Lucía encuentra una fotografía en la que su abuela aparece junto al mismo puente de piedra.",
+      "mode": "narration"
+    }
+  ]
+}
