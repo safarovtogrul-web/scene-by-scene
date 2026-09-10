@@ -1,4 +1,4 @@
-import type { LanguageId } from "@/lib/languages";
+import type { CatalogueLanguageId } from "@/lib/languages";
 import type { Messages } from "./messages";
 
 /**
@@ -10,7 +10,7 @@ import type { Messages } from "./messages";
  *
  * Product UI only — story text and scene subtitles come from the catalogue.
  */
-export const TRANSLATIONS: Partial<Record<LanguageId, Partial<Messages>>> = {
+export const TRANSLATIONS: Partial<Record<CatalogueLanguageId, Partial<Messages>>> = {
   es: {
     interfaceLanguage: "Idioma de la interfaz",
     learningLanguage: "Idioma que aprendes",
@@ -353,7 +353,7 @@ export const TRANSLATIONS: Partial<Record<LanguageId, Partial<Messages>>> = {
     sceneOf: "Szene {done} von {total}",
   },
 
-  pt: {
+  "pt-BR": {
     interfaceLanguage: "Idioma da interface",
     learningLanguage: "Idioma de aprendizagem",
     interfaceShort: "Interface",
@@ -743,7 +743,7 @@ export const TRANSLATIONS: Partial<Record<LanguageId, Partial<Messages>>> = {
     sceneOf: "{total}シーン中 {done}",
   },
 
-  zh: {
+  "zh-CN": {
     interfaceLanguage: "界面语言", learningLanguage: "学习语言", interfaceShort: "界面", learningShort: "学习",
     languageSettings: "语言设置", chooseLanguage: "选择语言", searchLanguages: "搜索语言", noLanguageFound: "未找到语言",
     subtitles: "字幕", subtitlesShown: "以你的语言显示", subtitlesHidden: "已隐藏",

@@ -37,7 +37,7 @@ export function SceneCard({ scene, difficulty, active, nearby, total, visualOffs
   const learning = getLanguage(preferences.learningLanguage);
   const translation = getLanguage(preferences.translationLanguage);
   const ui = getLanguage(preferences.interfaceLanguage);
-  const copy = sceneCopy(scene, difficulty, learning.id, translation.id);
+  const copy = sceneCopy(scene, difficulty, preferences.learningLanguage, preferences.translationLanguage);
   const speech = useSpeechSynthesis(active);
   const [failedImage, setFailedImage] = useState<string | null>(null);
   const focal = scene.visual?.focalPoint ?? { x: 0.5, y: 0.5 };
@@ -72,7 +72,7 @@ export function SceneCard({ scene, difficulty, active, nearby, total, visualOffs
       <div className={styles.artwork}>
         {nearby && failedImage !== imageKey && <>
           <SceneArtwork image={scene.image} ambient />
-          <SceneArtwork image={scene.image} alt={scene.alt?.[ui.id] ?? ""} active={active} onError={() => setFailedImage(imageKey)} />
+          <SceneArtwork image={scene.image} alt={scene.alt?.[preferences.interfaceLanguage] ?? ""} active={active} onError={() => setFailedImage(imageKey)} />
         </>}
         <span className={styles.pageFold} aria-hidden />
         {(failedImage === imageKey || !images.desktop) && <p className={styles.imageError}>{t("sceneImageUnavailable")}</p>}
@@ -90,7 +90,7 @@ export function SceneCard({ scene, difficulty, active, nearby, total, visualOffs
                     aria-label={speech.supported ? t(speech.speaking ? "stopSpeaking" : "speakSentence") : t("audioUnavailable")}
                     title={speech.supported ? t(speech.speaking ? "stopSpeaking" : "speakSentence") : t("audioUnavailable")}
                     aria-pressed={speech.speaking}
-                    onClick={() => speech.speaking ? speech.cancel() : speech.speak(copy.primary ?? "", learning.locale)}>
+                    onClick={() => speech.speaking ? speech.cancel() : speech.speak(copy.primary ?? "", learning.speechLocale)}>
                     {speech.speaking
                       ? <svg viewBox="0 0 24 24" fill="none" aria-hidden><rect x="7" y="7" width="10" height="10" rx="1.5" fill="currentColor" /></svg>
                       : <svg viewBox="0 0 24 24" fill="none" aria-hidden><path d="M5 10v4h3l4 3V7l-4 3H5Z" fill="currentColor" /><path d="M15.5 9.1a4 4 0 0 1 0 5.8M18 6.8a7.2 7.2 0 0 1 0 10.4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" /></svg>}

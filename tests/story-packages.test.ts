@@ -7,22 +7,25 @@ import { THE_LOST_MAP_ASSET_MANIFEST, THE_LOST_MAP_ASSET_SCENES } from "../lib/s
 import { THE_LOST_MAP_COPY_MANIFEST, THE_LOST_MAP_REGISTRATION_BLOCKERS, THE_LOST_MAP_SCENES } from "../lib/story-packages/manifests/the-lost-map-copy";
 import { THE_LOST_MAP } from "../lib/story-packages/manifests/the-lost-map";
 import { STORY_PACKAGES, getStoryPackage } from "../lib/story-packages/registry";
-import { LANGUAGE_IDS } from "../lib/languages";
-import { formatMessage, messageFor, UI_MESSAGES, type MessageKey } from "../lib/i18n/messages";
+import {
+  LANGUAGE_IDS, RETIRED_LANGUAGE_IDS, enabledLanguages, getLanguage, isLanguageId,
+  normalizeLanguageId, shortCodeFor, speechLocaleFor,
+} from "../lib/languages";
+import { MESSAGE_KEYS, formatMessage, messageFor, missingMessageKeys, validateMessageCatalogue, UI_MESSAGES, type MessageKey } from "../lib/i18n/messages";
 import { EMPTY_PREFERENCES, getPreferencesSnapshot, parsePreferences, patchPreferences } from "../lib/preferences";
 import { bubbleCopySize, readerPagePose } from "../lib/reader/presentation";
 
 /** Synthetic validation input stays test-local; no fixture route or public fixture assets ship. */
 const TEST_EASY_TEXT: SceneLanguageText = {
   en: "This is a test image.", es: "Esta es una imagen de prueba.",
-  tr: "Bu bir test görselidir.", ar: "هذه صورة اختبار.", ur: "یہ ایک آزمائشی تصویر ہے۔",
+  tr: "Bu bir test görselidir.", ar: "هذه صورة اختبار.", fa: "این یک تصویر آزمایشی است.",
 };
 const TEST_HARD_TEXT: SceneLanguageText = {
   en: "This image is used to check that a longer sentence remains readable at every screen size.",
   es: "Esta imagen sirve para comprobar que una frase más larga sigue siendo legible en todas las pantallas.",
   tr: "Bu görsel, daha uzun bir cümlenin her ekran boyutunda okunabilir kaldığını kontrol etmek için kullanılır.",
   ar: "تُستخدم هذه الصورة للتحقق من أن الجملة الطويلة تظل واضحة ومقروءة على جميع أحجام الشاشات.",
-  ur: "اس تصویر کا مقصد یہ جانچنا ہے کہ ایک طویل جملہ ہر سائز کی اسکرین پر واضح اور پڑھنے کے قابل رہے۔",
+  fa: "این تصویر برای بررسی این است که یک جمله‌ی بلندتر در هر اندازه‌ی صفحه خوانا بماند.",
 };
 const TEST_READER_PACKAGE = {
   schemaVersion: 1, status: "development",
@@ -32,7 +35,7 @@ const TEST_READER_PACKAGE = {
   cover: "/reader-fixtures/frame-01.svg", heroScene: "/reader-fixtures/frame-02.svg",
   background: { image: "/reader-fixtures/frame-02.svg", color: "#141c25", accent: "#a69a83" },
   defaultDifficulty: "easy", estimatedReadingMinutes: 1,
-  availableLanguages: ["en", "es", "tr", "ar", "ur"], addedAt: "2026-09-03",
+  availableLanguages: ["en", "es", "tr", "ar", "fa"], addedAt: "2026-09-03",
   scenes: [
     { id: "light", order: 1, image: { desktop: "/reader-fixtures/frame-01-desktop.svg", mobile: "/reader-fixtures/frame-01-mobile.svg" }, text: { easy: TEST_EASY_TEXT, hard: TEST_HARD_TEXT }, bubble: { type: "narration", preset: "bottom-left", maxWidth: 0.65, alignment: "start" }, mobileBubble: { preset: "bottom-left", maxWidth: 0.95, alignment: "start" } },
     { id: "shade", order: 2, image: { desktop: "/reader-fixtures/frame-02-desktop.svg", mobile: "/reader-fixtures/frame-02-mobile.svg" }, text: { easy: TEST_EASY_TEXT, hard: TEST_HARD_TEXT }, bubble: { type: "speech", preset: "top-right", maxWidth: 0.55, alignment: "start" }, mobileBubble: { preset: "top-right", maxWidth: 0.95, alignment: "start" } },
@@ -147,8 +150,8 @@ test("fixture switching supports all demo variants and never substitutes unsuppo
   for (const scene of fixture().scenes) {
     for (const difficulty of ["easy", "hard"] as const) {
       for (const learning of LANGUAGE_IDS) {
-        for (const ui of ["tr", "en", "ar", "ur"] as const) {
-          const copy = sceneCopy(scene, difficulty, learning, ui);
+        for (const translation of ["tr", "en", "ar", "fa"] as const) {
+          const copy = sceneCopy(scene, difficulty, learning, translation);
           assert.equal(copy.primary, scene.text[difficulty][learning]);
           if (learning === "ja") assert.equal(copy.primary, undefined);
         }
@@ -323,4 +326,86 @@ test("the active page follows drag progressively and returns to its single neutr
   assert.ok(near.scale > far.scale && far.scale >= 0.994);
   assert.equal(readerPagePose(0, -100).yaw, -far.yaw);
   assert.deepEqual(readerPagePose(0, 10000), readerPagePose(0, 200));
+});
+
+/** The catalogue the product promises: exactly nineteen, in a fixed order. */
+const REQUIRED_LANGUAGES = [
+  "en", "es", "fr", "de", "pt-BR", "it", "tr", "ru", "uk", "ar",
+  "fa", "zh-CN", "ja", "ko", "id", "vi", "th", "hi", "sw",
+] as const;
+
+test("the shipped catalogue is exactly the nineteen required languages, in order", () => {
+  assert.deepEqual([...LANGUAGE_IDS], [...REQUIRED_LANGUAGES]);
+  assert.deepEqual(enabledLanguages().map((language) => language.id), [...REQUIRED_LANGUAGES]);
+  // Persian is the required second right-to-left language; Urdu is not a stand-in.
+  assert.ok(LANGUAGE_IDS.includes("fa"));
+  assert.equal(LANGUAGE_IDS.includes("ur" as never), false);
+  assert.deepEqual(
+    enabledLanguages().filter((language) => language.dir === "rtl").map((language) => language.id),
+    ["ar", "fa"],
+  );
+});
+
+test("retired languages keep their data but can never be selected", () => {
+  for (const id of RETIRED_LANGUAGE_IDS) {
+    assert.equal(isLanguageId(id), false, `${id} must not be selectable`);
+    assert.equal(enabledLanguages().some((language) => (language.id as string) === id), false);
+    // Metadata still resolves, so previously authored content keeps rendering.
+    assert.equal(getLanguage(id).id, id);
+    assert.equal(getLanguage(id).status, "retired");
+  }
+});
+
+test("stored preferences migrate: renamed ids keep their language, retired ids fall back", () => {
+  assert.equal(normalizeLanguageId("pt"), "pt-BR");
+  assert.equal(normalizeLanguageId("pt-PT"), "pt-BR");
+  assert.equal(normalizeLanguageId("zh"), "zh-CN");
+  assert.equal(normalizeLanguageId("zh-Hans"), "zh-CN");
+  // A retired id must never be silently re-pointed at a different living language.
+  for (const id of RETIRED_LANGUAGE_IDS) assert.equal(normalizeLanguageId(id), "en");
+  assert.equal(normalizeLanguageId("ur"), "en", "Urdu must not become Persian");
+  assert.equal(normalizeLanguageId("not-a-language"), null);
+  assert.equal(normalizeLanguageId(42), null);
+
+  assert.equal(parsePreferences({ interfaceLanguage: "pt", learningLanguage: "zh", translationLanguage: "ur" }).interfaceLanguage, "pt-BR");
+  assert.equal(parsePreferences({ interfaceLanguage: "pt", learningLanguage: "zh", translationLanguage: "ur" }).learningLanguage, "zh-CN");
+  assert.equal(parsePreferences({ interfaceLanguage: "pt", learningLanguage: "zh", translationLanguage: "ur" }).translationLanguage, "en");
+});
+
+test("every selectable language carries complete, renderable metadata", () => {
+  for (const id of LANGUAGE_IDS) {
+    const language = getLanguage(id);
+    assert.equal(language.status, "supported", id);
+    assert.ok(language.nativeName.trim(), `${id} nativeName`);
+    assert.ok(language.englishName.trim(), `${id} englishName`);
+    assert.ok(language.locale.trim(), `${id} locale`);
+    assert.ok(/^[a-z]{2,3}(-[A-Za-z]{2,4})?$/.test(language.locale), `${id} locale is BCP 47: ${language.locale}`);
+    // The badge sits in a fixed-width trigger, so a regional tag must still fit.
+    assert.ok(shortCodeFor(id).length <= 3, `${id} short code ${shortCodeFor(id)}`);
+    assert.equal(shortCodeFor(id), shortCodeFor(id).toUpperCase(), id);
+  }
+  // Short codes identify a language on their own, so they cannot collide.
+  assert.equal(new Set(LANGUAGE_IDS.map(shortCodeFor)).size, LANGUAGE_IDS.length);
+});
+
+test("speech synthesis has a sensible locale for every learning language", () => {
+  const expected: Record<string, string> = {
+    en: "en-GB", es: "es-ES", fr: "fr-FR", de: "de-DE", "pt-BR": "pt-BR", it: "it-IT",
+    tr: "tr-TR", ru: "ru-RU", uk: "uk-UA", ar: "ar", fa: "fa-IR", "zh-CN": "zh-CN",
+    ja: "ja-JP", ko: "ko-KR", id: "id-ID", vi: "vi-VN", th: "th-TH", hi: "hi-IN", sw: "sw",
+  };
+  for (const id of LANGUAGE_IDS) assert.equal(speechLocaleFor(id), expected[id], id);
+  // The voice locale must stay a superset of the content locale's language.
+  for (const id of LANGUAGE_IDS) {
+    assert.equal(speechLocaleFor(id).split("-")[0], getLanguage(id).locale.split("-")[0], id);
+  }
+});
+
+test("the message catalogue reports its own gaps instead of hiding them", () => {
+  // English is the key set, so it can never be the thing that is missing.
+  assert.deepEqual(missingMessageKeys("en"), []);
+  assert.ok(MESSAGE_KEYS.length > 0);
+  // Placeholders must agree with English wherever a language has translated a key.
+  const placeholderProblems = validateMessageCatalogue().filter((issue) => issue.problem !== "missing translation");
+  assert.deepEqual(placeholderProblems, []);
 });

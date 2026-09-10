@@ -1,4 +1,4 @@
-import type { LanguageId } from "@/lib/languages";
+import { LANGUAGE_IDS, type CatalogueLanguageId } from "../languages";
 import { TRANSLATIONS } from "./translations";
 import { PAGE_TRANSLATIONS } from "./pageTranslations";
 import { READER_TRANSLATIONS } from "./readerTranslations";
@@ -249,13 +249,13 @@ export type Messages = Record<MessageKey, string>;
  * file and not the other still ends up with everything it has.
  */
 function mergeCatalogues(
-  ...catalogues: Array<Partial<Record<LanguageId, Partial<Messages>>>>
-): Partial<Record<LanguageId, Partial<Messages>>> {
-  const merged: Partial<Record<LanguageId, Partial<Messages>>> = {};
+  ...catalogues: Array<Partial<Record<CatalogueLanguageId, Partial<Messages>>>>
+): Partial<Record<CatalogueLanguageId, Partial<Messages>>> {
+  const merged: Partial<Record<CatalogueLanguageId, Partial<Messages>>> = {};
   for (const catalogue of catalogues) {
     for (const [language, entries] of Object.entries(catalogue)) {
-      merged[language as LanguageId] = {
-        ...merged[language as LanguageId],
+      merged[language as CatalogueLanguageId] = {
+        ...merged[language as CatalogueLanguageId],
         ...entries,
       };
     }
@@ -263,14 +263,14 @@ function mergeCatalogues(
   return merged;
 }
 
-export const UI_MESSAGES: Partial<Record<LanguageId, Partial<Messages>>> = {
+export const UI_MESSAGES: Partial<Record<CatalogueLanguageId, Partial<Messages>>> = {
   ...mergeCatalogues(TRANSLATIONS, PAGE_TRANSLATIONS, READER_TRANSLATIONS),
   en: EN_MESSAGES,
 };
 
-const reportedFallbackLocales = new Set<LanguageId>();
+const reportedFallbackLocales = new Set<CatalogueLanguageId>();
 
-export function messageFor(language: LanguageId, key: MessageKey): string {
+export function messageFor(language: CatalogueLanguageId, key: MessageKey): string {
   const localized = UI_MESSAGES[language]?.[key];
   if (typeof localized === "string" && localized.trim()) return localized;
   if (process.env.NODE_ENV === "development" && !reportedFallbackLocales.has(language)) {
@@ -284,11 +284,66 @@ export function messageFor(language: LanguageId, key: MessageKey): string {
 }
 
 export function formatMessage(
-  language: LanguageId,
+  language: CatalogueLanguageId,
   key: MessageKey,
   values: Record<string, string | number> = {},
 ): string {
   return messageFor(language, key).replace(/\{(\w+)\}/g, (_match, name: string) =>
     String(values?.[name] ?? `{${name}}`),
   );
+}
+
+/** Every message key, in the order English declares them. */
+export const MESSAGE_KEYS = Object.keys(EN_MESSAGES) as MessageKey[];
+
+/**
+ * Keys a shipped language has not translated yet.
+ *
+ * Lookup falls back per key, so a gap is never a crash — but it is still an
+ * English word in the middle of someone else's interface, which is exactly what
+ * a release check should be able to see rather than discover in production.
+ */
+export function missingMessageKeys(language: CatalogueLanguageId): MessageKey[] {
+  const catalogue = UI_MESSAGES[language];
+  return MESSAGE_KEYS.filter((key) => {
+    const value = catalogue?.[key];
+    return typeof value !== "string" || !value.trim();
+  });
+}
+
+/**
+ * Placeholders each side of a translation must agree on. A locale that drops
+ * `{language}` or invents `{count}` produces a visibly broken sentence, and
+ * that is worth failing a build over rather than shipping.
+ */
+function placeholdersIn(message: string): string[] {
+  return [...message.matchAll(/\{(\w+)\}/g)].map((match) => match[1]).sort();
+}
+
+export type MessageCatalogueIssue = { language: CatalogueLanguageId; key: MessageKey; problem: string };
+
+/**
+ * Validates the shipped catalogue: every selectable language must translate
+ * every key, and every translation must carry exactly English's placeholders.
+ * Retired languages are reported on placeholders only — they are data kept for
+ * saved preferences, not copy anyone can still choose.
+ */
+export function validateMessageCatalogue(languages: readonly CatalogueLanguageId[] = LANGUAGE_IDS): MessageCatalogueIssue[] {
+  const issues: MessageCatalogueIssue[] = [];
+  for (const language of languages) {
+    const catalogue = UI_MESSAGES[language];
+    for (const key of MESSAGE_KEYS) {
+      const value = catalogue?.[key];
+      if (typeof value !== "string" || !value.trim()) {
+        issues.push({ language, key, problem: "missing translation" });
+        continue;
+      }
+      const expected = placeholdersIn(EN_MESSAGES[key]).join(",");
+      const actual = placeholdersIn(value).join(",");
+      if (expected !== actual) {
+        issues.push({ language, key, problem: `placeholders differ: expected {${expected}} got {${actual}}` });
+      }
+    }
+  }
+  return issues;
 }

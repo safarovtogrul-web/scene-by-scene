@@ -1,4 +1,4 @@
-import type { LanguageId } from "@/lib/languages";
+import type { CatalogueLanguageId } from "@/lib/languages";
 import type { Messages } from "./messages";
 
 /**
@@ -12,7 +12,7 @@ import type { Messages } from "./messages";
  * the onboarding questions in particular are re-split so the emphasised closing
  * fragment lands on the natural stress of the sentence in that language.
  */
-export const PAGE_TRANSLATIONS: Partial<Record<LanguageId, Partial<Messages>>> = {
+export const PAGE_TRANSLATIONS: Partial<Record<CatalogueLanguageId, Partial<Messages>>> = {
   es: {
     tagline: "Aprende idiomas, escena a escena.",
     metaLanguageSetup: "Configuración de idioma",
@@ -151,7 +151,7 @@ export const PAGE_TRANSLATIONS: Partial<Record<LanguageId, Partial<Messages>>> =
     errSignInFailed: "Wir konnten diese Anmeldung nicht abschließen. Bitte versuch es noch einmal.",
   },
 
-  pt: {
+  "pt-BR": {
     tagline: "Aprenda idiomas, cena a cena.",
     metaLanguageSetup: "Configuração de idioma",
     stepOf: "Passo {step} de {total}",
@@ -335,7 +335,7 @@ export const PAGE_TRANSLATIONS: Partial<Record<LanguageId, Partial<Messages>>> =
     errSignInFailed: "そのログインを完了できませんでした。もう一度お試しください。",
   },
 
-  zh: {
+  "zh-CN": {
     tagline: "一幕一幕，学会语言。",
     metaLanguageSetup: "语言设置",
     stepOf: "第 {step} 步，共 {total} 步",

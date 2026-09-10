@@ -13,7 +13,7 @@ export function StoryExperience({ story, readerBase }: { story: Story; readerBas
   const { preferences, t } = usePreferences();
   const [difficulty, setDifficulty] = useState<Difficulty>(story.defaultDifficulty);
   const language = getLanguage(preferences.learningLanguage);
-  const available = story.availableLanguages.includes(language.id);
+  const available = story.availableLanguages.includes(preferences.learningLanguage);
 
   return (
     <section className="mt-8 border-t border-white/[0.07] pt-6 md:mt-9" aria-label={t("storyOptions")}>

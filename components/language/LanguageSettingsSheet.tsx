@@ -7,7 +7,7 @@ import { useState } from "react";
 import { LanguageFlag } from "@/components/ui/FlagIcon";
 import { PlanetIcon } from "@/components/ui/PlanetIcon";
 import { usePreferences } from "@/components/preferences/PreferencesProvider";
-import { getLanguage, type Language, type LanguageId } from "@/lib/languages";
+import { getLanguage, type CatalogueLanguage, type LanguageId } from "@/lib/languages";
 import { cn } from "@/lib/cn";
 import { LanguagePicker } from "./LanguagePicker";
 
@@ -160,7 +160,7 @@ function SummaryRow({
 }: {
   icon: React.ReactNode;
   label: string;
-  language: Language;
+  language: CatalogueLanguage;
   onClick: () => void;
 }) {
   return (

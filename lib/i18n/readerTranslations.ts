@@ -1,8 +1,8 @@
-import type { LanguageId } from "@/lib/languages";
+import type { CatalogueLanguageId } from "@/lib/languages";
 import type { Messages } from "./messages";
 
 /** Product UI only. Story sentences never come from this catalogue. */
-export const READER_TRANSLATIONS: Partial<Record<LanguageId, Partial<Messages>>> = {
+export const READER_TRANSLATIONS: Partial<Record<CatalogueLanguageId, Partial<Messages>>> = {
   es: {
     translationLanguage: "Idioma de traducción",
     exitFullscreen: "Salir de pantalla completa",

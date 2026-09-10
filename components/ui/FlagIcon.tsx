@@ -76,6 +76,56 @@ const FLAGS: Record<string, React.ReactNode> = {
       <rect x="20" width="10" height="22" fill="#CD212A" />
     </>
   ),
+  BR: (
+    <>
+      <rect width="30" height="22" fill="#009B3A" />
+      <path d="M15 2.6 27.4 11 15 19.4 2.6 11Z" fill="#FEDF00" />
+      <circle cx="15" cy="11" r="4.6" fill="#002776" />
+      <path d="M10.7 9.6a12 12 0 0 1 8.7 2.3" stroke="#fff" strokeWidth="1.3" fill="none" />
+    </>
+  ),
+  UA: (
+    <>
+      <rect width="30" height="22" fill="#FFD700" />
+      <rect width="30" height="11" fill="#0057B7" />
+    </>
+  ),
+  IR: (
+    <>
+      <rect width="30" height="22" fill="#fff" />
+      <rect width="30" height="7.33" fill="#239F40" />
+      <rect y="14.67" width="30" height="7.33" fill="#DA0000" />
+      <path d="M15 9.3c-.9.5-1.3 1.5-1 2.4.3.8 1 1.3 1.9 1.3-.6-.4-.9-1-.8-1.6.1-.7.6-1.2 1.3-1.4-.5-.5-1-.7-1.4-.7Z" fill="#DA0000" />
+    </>
+  ),
+  KR: (
+    <>
+      <rect width="30" height="22" fill="#fff" />
+      <path d="M11 11a4 4 0 0 1 8 0 4 4 0 0 0-8 0Z" fill="#CD2E3A" />
+      <path d="M11 11a4 4 0 0 0 8 0 4 4 0 0 1-8 0Z" fill="#0047A0" />
+      <g stroke="#000" strokeWidth="0.85" strokeLinecap="round">
+        <path d="M4.6 5.4 6.9 8.6M6 4.5 8.3 7.7M7.4 3.6 9.7 6.8" />
+        <path d="M20.3 15.2 22.6 18.4M21.7 14.3 24 17.5M23.1 13.4 25.4 16.6" />
+      </g>
+    </>
+  ),
+  TH: (
+    <>
+      <rect width="30" height="22" fill="#A51931" />
+      <rect y="3.7" width="30" height="14.6" fill="#F4F5F8" />
+      <rect y="7.3" width="30" height="7.4" fill="#2D2A4A" />
+    </>
+  ),
+  KE: (
+    <>
+      <rect width="30" height="22" fill="#fff" />
+      <rect width="30" height="6.2" fill="#000" />
+      <rect y="7.4" width="30" height="7.2" fill="#BB0000" />
+      <rect y="15.8" width="30" height="6.2" fill="#006600" />
+      <ellipse cx="15" cy="11" rx="2.6" ry="5.2" fill="#BB0000" stroke="#fff" strokeWidth="0.8" />
+      <path d="M15 6.6v8.8" stroke="#fff" strokeWidth="0.8" />
+    </>
+  ),
   JP: (
     <>
       <rect width="30" height="22" fill="#fff" />

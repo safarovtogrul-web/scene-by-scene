@@ -1,7 +1,7 @@
 import {
   DEFAULT_INTERFACE_LANGUAGE,
   DEFAULT_LEARNING_LANGUAGE,
-  isLanguageId,
+  normalizeLanguageId,
   type LanguageId,
 } from "./languages";
 
@@ -113,23 +113,21 @@ export function parsePreferences(raw: string | unknown): AppPreferences {
   }
   if (!parsed) return EMPTY_PREFERENCES;
 
-  const interfaceLanguage = isLanguageId(parsed.interfaceLanguage)
-    ? parsed.interfaceLanguage
-    : isLanguageId(parsed.speaking)
-      ? parsed.speaking
-      : DEFAULT_INTERFACE_LANGUAGE;
+  // Normalised rather than merely validated: a preference saved under a renamed
+  // id (pt, zh) keeps its language, and one saved under a retired id resolves to
+  // the default instead of leaving the reader on a language no picker offers.
+  const interfaceLanguage = normalizeLanguageId(parsed.interfaceLanguage)
+    ?? normalizeLanguageId(parsed.speaking)
+    ?? DEFAULT_INTERFACE_LANGUAGE;
 
   return {
     interfaceLanguage,
-    learningLanguage: isLanguageId(parsed.learningLanguage)
-      ? parsed.learningLanguage
-      : isLanguageId(parsed.learning)
-        ? parsed.learning
-        : DEFAULT_LEARNING_LANGUAGE,
+    learningLanguage: normalizeLanguageId(parsed.learningLanguage)
+      ?? normalizeLanguageId(parsed.learning)
+      ?? DEFAULT_LEARNING_LANGUAGE,
     // Older preferences used the interface language as the subtitle target.
-    translationLanguage: isLanguageId(parsed.translationLanguage)
-      ? parsed.translationLanguage
-      : interfaceLanguage,
+    translationLanguage: normalizeLanguageId(parsed.translationLanguage)
+      ?? interfaceLanguage,
     showTranslations:
       typeof parsed.showTranslations === "boolean" ? parsed.showTranslations : true,
   };
@@ -161,9 +159,9 @@ export function writePreferences(preferences: AppPreferences): void {
 export function patchPreferences(patch: Partial<AppPreferences>, fallback: AppPreferences = EMPTY_PREFERENCES): AppPreferences {
   const current = parsePreferences(getPreferencesSnapshot() || fallback);
   const next = {
-    interfaceLanguage: isLanguageId(patch.interfaceLanguage) ? patch.interfaceLanguage : current.interfaceLanguage,
-    learningLanguage: isLanguageId(patch.learningLanguage) ? patch.learningLanguage : current.learningLanguage,
-    translationLanguage: isLanguageId(patch.translationLanguage) ? patch.translationLanguage : current.translationLanguage,
+    interfaceLanguage: normalizeLanguageId(patch.interfaceLanguage) ?? current.interfaceLanguage,
+    learningLanguage: normalizeLanguageId(patch.learningLanguage) ?? current.learningLanguage,
+    translationLanguage: normalizeLanguageId(patch.translationLanguage) ?? current.translationLanguage,
     showTranslations: typeof patch.showTranslations === "boolean" ? patch.showTranslations : current.showTranslations,
   };
   writePreferences(next);

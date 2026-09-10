@@ -2,94 +2,211 @@
  * The single registry for every language Scene by Scene can present, learn, or use
  * for scene translations. Components should always resolve language metadata
  * from here instead of carrying their own display-name lists.
+ *
+ * One catalogue serves all three independent language concepts — interface,
+ * learning and translation — plus writing direction and speech-synthesis
+ * locales, so the three can never drift apart.
  */
 export type TextDirection = "ltr" | "rtl";
 
-export type Language = {
+/**
+ * The shipped catalogue. Every language picker — interface, learning and
+ * translation — offers exactly these, in this order.
+ */
+export const LANGUAGE_IDS = [
+  "en", "es", "fr", "de", "pt-BR", "it", "tr", "ru", "uk", "ar",
+  "fa", "zh-CN", "ja", "ko", "id", "vi", "th", "hi", "sw",
+] as const;
+
+export type LanguageId = (typeof LANGUAGE_IDS)[number];
+
+/**
+ * Ids that shipped before the catalogue was finalised.
+ *
+ * They are no longer selectable anywhere, but their metadata and their
+ * translated interface copy are deliberately kept: authored content and saved
+ * reader preferences that reference them still resolve to a real language
+ * instead of throwing, and nothing already written is thrown away. A saved
+ * preference pointing at one is migrated on read — see `normalizeLanguageId`.
+ */
+export const RETIRED_LANGUAGE_IDS = ["bn", "ur", "pcm", "mr", "te", "ta", "yue"] as const;
+
+export type RetiredLanguageId = (typeof RETIRED_LANGUAGE_IDS)[number];
+
+/** Anything that may still appear in stored preferences or authored content. */
+export type CatalogueLanguageId = LanguageId | RetiredLanguageId;
+
+type LanguageEntry<Id extends CatalogueLanguageId> = {
   /** Stable product identifier, also used in story language maps. */
-  id: LanguageId;
+  id: Id;
   /** BCP 47 locale used for document and content language attributes. */
   locale: string;
+  /**
+   * BCP 47 locale preferred when choosing a speech-synthesis voice. It is kept
+   * apart from `locale` because the best available voice is often a regional
+   * one (`en-GB`) for a language whose content tag is plain (`en`).
+   */
+  speechLocale: string;
+  /** Compact uppercase badge for tight triggers; never more than three characters. */
+  shortCode: string;
   nativeName: string;
   englishName: string;
   dir: TextDirection;
-  /** Lets product rollout be managed without changing consumers. */
-  enabled: boolean;
+  /** `retired` languages keep their data but are never offered in a picker. */
+  status: "supported" | "retired";
   /** A compact visual marker; it is decorative, never the language identity. */
   flag: string;
   /** Proper UI copy currently exists only where explicitly supplied. */
   hasInterfaceMessages: boolean;
 };
 
-export const LANGUAGE_IDS = [
-  "en", "zh", "hi", "es", "fr", "ar", "bn", "pt", "ru", "ur",
-  "id", "de", "ja", "pcm", "mr", "te", "tr", "ta", "vi", "yue",
-] as const;
+/**
+ * A selectable language. Its `id` is narrowed to the shipped catalogue, so a
+ * retired id can never reach a picker, a story text map or a preference by
+ * simply travelling through `Language`.
+ */
+export type Language = LanguageEntry<LanguageId> & { status: "supported" };
+export type RetiredLanguage = LanguageEntry<RetiredLanguageId> & { status: "retired" };
+export type CatalogueLanguage = Language | RetiredLanguage;
 
-export type LanguageId = (typeof LANGUAGE_IDS)[number];
+const supported = (
+  id: LanguageId, locale: string, speechLocale: string, shortCode: string,
+  nativeName: string, englishName: string, flag: string,
+  dir: TextDirection = "ltr", hasInterfaceMessages = true,
+): Language => ({ id, locale, speechLocale, shortCode, nativeName, englishName, dir, status: "supported", flag, hasInterfaceMessages });
 
-export const LANGUAGE_REGISTRY: readonly Language[] = [
-  { id: "en", locale: "en", nativeName: "English", englishName: "English", dir: "ltr", enabled: true, flag: "GB", hasInterfaceMessages: true },
-  { id: "zh", locale: "zh-Hans", nativeName: "中文（普通话）", englishName: "Mandarin Chinese", dir: "ltr", enabled: true, flag: "CN", hasInterfaceMessages: true },
-  { id: "hi", locale: "hi", nativeName: "हिन्दी", englishName: "Hindi", dir: "ltr", enabled: true, flag: "IN", hasInterfaceMessages: true },
-  { id: "es", locale: "es", nativeName: "Español", englishName: "Spanish", dir: "ltr", enabled: true, flag: "ES", hasInterfaceMessages: true },
-  { id: "fr", locale: "fr", nativeName: "Français", englishName: "French", dir: "ltr", enabled: true, flag: "FR", hasInterfaceMessages: true },
-  { id: "ar", locale: "ar", nativeName: "العربية", englishName: "Arabic", dir: "rtl", enabled: true, flag: "SA", hasInterfaceMessages: true },
-  { id: "bn", locale: "bn", nativeName: "বাংলা", englishName: "Bengali", dir: "ltr", enabled: true, flag: "BD", hasInterfaceMessages: true },
-  { id: "pt", locale: "pt", nativeName: "Português", englishName: "Portuguese", dir: "ltr", enabled: true, flag: "PT", hasInterfaceMessages: true },
-  { id: "ru", locale: "ru", nativeName: "Русский", englishName: "Russian", dir: "ltr", enabled: true, flag: "RU", hasInterfaceMessages: true },
-  { id: "ur", locale: "ur", nativeName: "اردو", englishName: "Urdu", dir: "rtl", enabled: true, flag: "PK", hasInterfaceMessages: true },
-  { id: "id", locale: "id", nativeName: "Bahasa Indonesia", englishName: "Indonesian", dir: "ltr", enabled: true, flag: "ID", hasInterfaceMessages: true },
-  { id: "de", locale: "de", nativeName: "Deutsch", englishName: "German", dir: "ltr", enabled: true, flag: "DE", hasInterfaceMessages: true },
-  { id: "ja", locale: "ja", nativeName: "日本語", englishName: "Japanese", dir: "ltr", enabled: true, flag: "JP", hasInterfaceMessages: true },
-  { id: "pcm", locale: "pcm", nativeName: "Naijá", englishName: "Nigerian Pidgin", dir: "ltr", enabled: true, flag: "NG", hasInterfaceMessages: true },
-  { id: "mr", locale: "mr", nativeName: "मराठी", englishName: "Marathi", dir: "ltr", enabled: true, flag: "IN", hasInterfaceMessages: true },
-  { id: "te", locale: "te", nativeName: "తెలుగు", englishName: "Telugu", dir: "ltr", enabled: true, flag: "IN", hasInterfaceMessages: true },
-  { id: "tr", locale: "tr", nativeName: "Türkçe", englishName: "Turkish", dir: "ltr", enabled: true, flag: "TR", hasInterfaceMessages: true },
-  { id: "ta", locale: "ta", nativeName: "தமிழ்", englishName: "Tamil", dir: "ltr", enabled: true, flag: "IN", hasInterfaceMessages: true },
-  { id: "vi", locale: "vi", nativeName: "Tiếng Việt", englishName: "Vietnamese", dir: "ltr", enabled: true, flag: "VN", hasInterfaceMessages: true },
-  { id: "yue", locale: "yue-Hant", nativeName: "粵語", englishName: "Yue Chinese / Cantonese", dir: "ltr", enabled: true, flag: "HK", hasInterfaceMessages: true },
+const retired = (
+  id: RetiredLanguageId, locale: string, speechLocale: string, shortCode: string,
+  nativeName: string, englishName: string, flag: string, dir: TextDirection = "ltr",
+): RetiredLanguage => ({ id, locale, speechLocale, shortCode, nativeName, englishName, dir, status: "retired", flag, hasInterfaceMessages: true });
+
+export const LANGUAGE_REGISTRY: readonly CatalogueLanguage[] = [
+  supported("en", "en", "en-GB", "EN", "English", "English", "GB"),
+  supported("es", "es", "es-ES", "ES", "Español", "Spanish", "ES"),
+  supported("fr", "fr", "fr-FR", "FR", "Français", "French", "FR"),
+  supported("de", "de", "de-DE", "DE", "Deutsch", "German", "DE"),
+  supported("pt-BR", "pt-BR", "pt-BR", "PT", "Português (Brasil)", "Portuguese (Brazil)", "BR"),
+  supported("it", "it", "it-IT", "IT", "Italiano", "Italian", "IT"),
+  supported("tr", "tr", "tr-TR", "TR", "Türkçe", "Turkish", "TR"),
+  supported("ru", "ru", "ru-RU", "RU", "Русский", "Russian", "RU"),
+  supported("uk", "uk", "uk-UA", "UK", "Українська", "Ukrainian", "UA"),
+  supported("ar", "ar", "ar", "AR", "العربية", "Arabic", "SA", "rtl"),
+  supported("fa", "fa", "fa-IR", "FA", "فارسی", "Persian", "IR", "rtl"),
+  supported("zh-CN", "zh-CN", "zh-CN", "ZH", "简体中文", "Chinese (Simplified)", "CN"),
+  supported("ja", "ja", "ja-JP", "JA", "日本語", "Japanese", "JP"),
+  supported("ko", "ko", "ko-KR", "KO", "한국어", "Korean", "KR"),
+  supported("id", "id", "id-ID", "ID", "Bahasa Indonesia", "Indonesian", "ID"),
+  supported("vi", "vi", "vi-VN", "VI", "Tiếng Việt", "Vietnamese", "VN"),
+  supported("th", "th", "th-TH", "TH", "ไทย", "Thai", "TH"),
+  supported("hi", "hi", "hi-IN", "HI", "हिन्दी", "Hindi", "IN"),
+  supported("sw", "sw", "sw", "SW", "Kiswahili", "Swahili", "KE"),
+
+  // Retired — kept for saved preferences and previously authored content only.
+  retired("bn", "bn", "bn-IN", "BN", "বাংলা", "Bengali", "BD"),
+  retired("ur", "ur", "ur-PK", "UR", "اردو", "Urdu", "PK", "rtl"),
+  retired("pcm", "pcm", "en-NG", "PCM", "Naijá", "Nigerian Pidgin", "NG"),
+  retired("mr", "mr", "mr-IN", "MR", "मराठी", "Marathi", "IN"),
+  retired("te", "te", "te-IN", "TE", "తెలుగు", "Telugu", "IN"),
+  retired("ta", "ta", "ta-IN", "TA", "தமிழ்", "Tamil", "IN"),
+  retired("yue", "yue-Hant", "zh-HK", "YUE", "粵語", "Yue Chinese / Cantonese", "HK"),
 ];
 
+function isSupported(language: CatalogueLanguage): language is Language {
+  return language.status === "supported";
+}
+
 const LANGUAGE_BY_ID = new Map(LANGUAGE_REGISTRY.map((language) => [language.id, language]));
+const SUPPORTED_IDS = new Set<string>(LANGUAGE_IDS);
+const RETIRED_IDS = new Set<string>(RETIRED_LANGUAGE_IDS);
+
+/**
+ * Earlier spellings of ids that are still supported under a more precise tag.
+ * They are renamed rather than retired, so a reader who chose Portuguese or
+ * Chinese keeps the language they picked.
+ */
+const LANGUAGE_ALIASES: Readonly<Record<string, LanguageId>> = {
+  pt: "pt-BR", "pt-pt": "pt-BR", "pt-br": "pt-BR",
+  zh: "zh-CN", "zh-hans": "zh-CN", "zh-cn": "zh-CN",
+};
 
 export const DEFAULT_INTERFACE_LANGUAGE: LanguageId = "en";
 export const DEFAULT_LEARNING_LANGUAGE: LanguageId = "en";
+/**
+ * The translation bubble is its own choice, independent of the interface and of
+ * the story. Readers who saved preferences before it existed inherit the
+ * language their captions were already rendered in — see `parsePreferences`.
+ */
+export const DEFAULT_TRANSLATION_LANGUAGE: LanguageId = "en";
 
 /** Kept as aliases while existing onboarding presentation components migrate. */
-export const LEARNING_LANGUAGES = LANGUAGE_REGISTRY;
-export const SPOKEN_LANGUAGES = LANGUAGE_REGISTRY;
+export const LEARNING_LANGUAGES: readonly Language[] = LANGUAGE_REGISTRY.filter(isSupported);
+export const SPOKEN_LANGUAGES = LEARNING_LANGUAGES;
 
+/** True only for the shipped, selectable catalogue. */
 export function isLanguageId(value: unknown): value is LanguageId {
-  return typeof value === "string" && LANGUAGE_BY_ID.has(value as LanguageId);
+  return typeof value === "string" && SUPPORTED_IDS.has(value);
 }
 
-export function getLanguage(id: LanguageId | string | null | undefined): Language {
-  return LANGUAGE_BY_ID.get(id as LanguageId) ?? LANGUAGE_BY_ID.get(DEFAULT_INTERFACE_LANGUAGE)!;
+/** True for a retired id that still resolves to real metadata and copy. */
+export function isRetiredLanguageId(value: unknown): value is RetiredLanguageId {
+  return typeof value === "string" && RETIRED_IDS.has(value);
 }
 
-export function languageLabel(id: LanguageId | string | null | undefined): string {
+/**
+ * Resolves anything that could have been stored to a currently selectable
+ * language, or `null` when it is not a language at all.
+ *
+ * Renamed ids keep their language; retired ids fall back to the default rather
+ * than to a neighbouring language, because guessing a replacement would put
+ * words in a reader's mouth that they never chose.
+ */
+export function normalizeLanguageId(value: unknown): LanguageId | null {
+  if (typeof value !== "string") return null;
+  const trimmed = value.trim();
+  if (SUPPORTED_IDS.has(trimmed)) return trimmed as LanguageId;
+  const alias = LANGUAGE_ALIASES[trimmed.toLowerCase()];
+  if (alias) return alias;
+  if (RETIRED_IDS.has(trimmed)) return DEFAULT_INTERFACE_LANGUAGE;
+  return null;
+}
+
+export function getLanguage(id: CatalogueLanguageId | string | null | undefined): CatalogueLanguage {
+  if (typeof id === "string") {
+    const direct = LANGUAGE_BY_ID.get(id as CatalogueLanguageId);
+    if (direct) return direct;
+    const alias = LANGUAGE_ALIASES[id.trim().toLowerCase()];
+    if (alias) return LANGUAGE_BY_ID.get(alias)!;
+  }
+  return LANGUAGE_BY_ID.get(DEFAULT_INTERFACE_LANGUAGE)!;
+}
+
+export function languageLabel(id: CatalogueLanguageId | string | null | undefined): string {
   return getLanguage(id).nativeName;
 }
 
 /** Every language currently exposed to readers, in registry order. */
 export function enabledLanguages(): Language[] {
-  return LANGUAGE_REGISTRY.filter((language) => language.enabled);
+  return LANGUAGE_REGISTRY.filter(isSupported);
 }
 
 /**
  * The compact badge used in header triggers — always uppercase, never longer
- * than three characters because every id in the registry is a short subtag.
+ * than three characters, so a regional tag like `pt-BR` still fits.
  */
-export function shortCodeFor(id: LanguageId | string | null | undefined): string {
-  return getLanguage(id).id.toUpperCase();
+export function shortCodeFor(id: CatalogueLanguageId | string | null | undefined): string {
+  return getLanguage(id).shortCode;
+}
+
+/** The locale a speech-synthesis voice should be chosen for. */
+export function speechLocaleFor(id: CatalogueLanguageId | string | null | undefined): string {
+  return getLanguage(id).speechLocale;
 }
 
 /**
  * Search lives here rather than in the picker so every surface matches on the
  * same three things: English name, native name, and language code.
  */
-export function languageMatches(language: Language, query: string): boolean {
+export function languageMatches(language: CatalogueLanguage, query: string): boolean {
   const needle = query.trim().toLowerCase();
   if (!needle) return true;
   return (
@@ -105,7 +222,7 @@ export function languageMatches(language: Language, query: string): boolean {
  * so "es" leads with Español rather than with Chinese, Portuguese and the rest
  * of the languages whose English names happen to contain those two letters.
  */
-function matchRank(language: Language, needle: string): number {
+function matchRank(language: CatalogueLanguage, needle: string): number {
   if (language.id.toLowerCase() === needle || language.locale.toLowerCase() === needle) return 0;
   if (language.id.toLowerCase().startsWith(needle) || language.locale.toLowerCase().startsWith(needle)) return 1;
   if (
