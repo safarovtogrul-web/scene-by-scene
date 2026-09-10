@@ -142,8 +142,10 @@ test("every selectable interface locale resolves all UI messages and interpolati
       assert.equal(typeof formatMessage(language, key, { language: "日本語", done: 1, total: 3 }), "string");
     }
   }
-  // The fixture intentionally has no Japanese story variant or Japanese reader copy.
-  assert.equal(messageFor("ja", "translationSameLanguage"), messageFor("en", "translationSameLanguage"));
+  // Every shipped language now has its own copy, so nothing falls through to
+  // English. A retired language still falls back per key rather than breaking.
+  assert.notEqual(messageFor("ja", "translationSameLanguage"), messageFor("en", "translationSameLanguage"));
+  assert.equal(messageFor("pcm", "translationSameLanguage"), messageFor("en", "translationSameLanguage"));
 });
 
 test("fixture switching supports all demo variants and never substitutes unsupported primary text", () => {
@@ -408,4 +410,37 @@ test("the message catalogue reports its own gaps instead of hiding them", () => 
   // Placeholders must agree with English wherever a language has translated a key.
   const placeholderProblems = validateMessageCatalogue().filter((issue) => issue.problem !== "missing translation");
   assert.deepEqual(placeholderProblems, []);
+});
+
+test("every shipped language translates every message key, with English's placeholders", () => {
+  // The whole point of the catalogue check: a required language with a gap is a
+  // release blocker, not something a reader discovers as English mid-sentence.
+  assert.deepEqual(validateMessageCatalogue(), []);
+  for (const id of LANGUAGE_IDS) {
+    assert.deepEqual(missingMessageKeys(id), [], `${id} must translate every key`);
+  }
+  // Retired languages are data, not shipped copy, so they are exempt by design.
+  assert.ok(missingMessageKeys("pcm").length > 0);
+});
+
+test("the product name is never translated away", () => {
+  const en = UI_MESSAGES.en as Record<MessageKey, string>;
+  // Split headlines carry the brand across two keys, so they are checked joined.
+  const pairs: Array<[MessageKey, MessageKey]> = [["onbUseQuestion", "onbUseEmphasis"]];
+  for (const id of LANGUAGE_IDS) {
+    for (const [head, tail] of pairs) {
+      assert.ok(
+        `${messageFor(id, head)} ${messageFor(id, tail)}`.includes("Scene by Scene"),
+        `${id} onboarding headline must keep the product name`,
+      );
+    }
+    for (const key of MESSAGE_KEYS) {
+      if (pairs.some(([a, b]) => key === a || key === b)) continue;
+      // `ja.noPasswordNeeded` conveys the sentence without naming the product;
+      // it is reviewed copy that predates this catalogue and is left as written.
+      if (id === "ja" && key === "noPasswordNeeded") continue;
+      if (!en[key].includes("Scene by Scene")) continue;
+      assert.ok(messageFor(id, key).includes("Scene by Scene"), `${id}.${key}`);
+    }
+  }
 });
