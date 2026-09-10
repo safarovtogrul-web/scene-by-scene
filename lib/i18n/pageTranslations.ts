@@ -14,6 +14,8 @@ import type { Messages } from "./messages";
  */
 export const PAGE_TRANSLATIONS: Partial<Record<CatalogueLanguageId, Partial<Messages>>> = {
   es: {
+    exploreIntroOne: "{count} historia ilustrada, en Fácil y Difícil. Un mundo en el que vale la pena quedarse.",
+    storiesMetaOne: "{count} historia · Fácil y Difícil · escenas nuevas cada semana",
     tagline: "Aprende idiomas, escena a escena.",
     metaLanguageSetup: "Configuración de idioma",
     stepOf: "Paso {step} de {total}",
@@ -60,6 +62,8 @@ export const PAGE_TRANSLATIONS: Partial<Record<CatalogueLanguageId, Partial<Mess
   },
 
   fr: {
+    exploreIntroOne: "{count} histoire illustrée, en Facile et Difficile. Un monde où passer du temps.",
+    storiesMetaOne: "{count} histoire · Facile et Difficile · de nouvelles scènes chaque semaine",
     tagline: "Apprenez les langues, scène après scène.",
     metaLanguageSetup: "Choix des langues",
     stepOf: "Étape {step} sur {total}",
@@ -106,6 +110,8 @@ export const PAGE_TRANSLATIONS: Partial<Record<CatalogueLanguageId, Partial<Mess
   },
 
   de: {
+    exploreIntroOne: "{count} illustrierte Geschichte, in Einfach und Schwer. Eine Welt, in der es sich zu bleiben lohnt.",
+    storiesMetaOne: "{count} Geschichte · Einfach und Schwer · jede Woche neue Szenen",
     tagline: "Sprachen lernen, Szene für Szene.",
     metaLanguageSetup: "Spracheinrichtung",
     stepOf: "Schritt {step} von {total}",
@@ -152,6 +158,8 @@ export const PAGE_TRANSLATIONS: Partial<Record<CatalogueLanguageId, Partial<Mess
   },
 
   "pt-BR": {
+    exploreIntroOne: "{count} história ilustrada, em Fácil e Difícil. Um mundo onde vale a pena ficar.",
+    storiesMetaOne: "{count} história · Fácil e Difícil · cenas novas todas as semanas",
     tagline: "Aprenda idiomas, cena a cena.",
     metaLanguageSetup: "Configuração de idioma",
     stepOf: "Passo {step} de {total}",
@@ -198,6 +206,8 @@ export const PAGE_TRANSLATIONS: Partial<Record<CatalogueLanguageId, Partial<Mess
   },
 
   ru: {
+    exploreIntroOne: "{count} иллюстрированная история, в лёгком и сложном варианте. Мир, в котором стоит задержаться.",
+    storiesMetaOne: "{count} история · Лёгкий и Сложный · новые сцены каждую неделю",
     tagline: "Учите языки — сцена за сценой.",
     metaLanguageSetup: "Настройка языка",
     stepOf: "Шаг {step} из {total}",
@@ -244,6 +254,8 @@ export const PAGE_TRANSLATIONS: Partial<Record<CatalogueLanguageId, Partial<Mess
   },
 
   tr: {
+    exploreIntroOne: "Kolay ve Zor seviyeleriyle {count} resimli hikaye. Vakit geçirmeye değer bir dünya.",
+    storiesMetaOne: "{count} hikaye · Kolay ve Zor · her hafta yeni sahneler",
     tagline: "Sahne sahne dil öğrenin.",
     metaLanguageSetup: "Dil kurulumu",
     stepOf: "Adım {step} / {total}",
@@ -290,6 +302,8 @@ export const PAGE_TRANSLATIONS: Partial<Record<CatalogueLanguageId, Partial<Mess
   },
 
   ja: {
+    exploreIntroOne: "やさしい版とむずかしい版がある、イラスト付きストーリーが{count}本。過ごす価値のある世界です。",
+    storiesMetaOne: "{count}本のストーリー · やさしい／むずかしい · 毎週新しいシーン",
     tagline: "シーンごとに、言語を学ぶ。",
     metaLanguageSetup: "言語の設定",
     stepOf: "ステップ {step}／{total}",
@@ -336,6 +350,8 @@ export const PAGE_TRANSLATIONS: Partial<Record<CatalogueLanguageId, Partial<Mess
   },
 
   "zh-CN": {
+    exploreIntroOne: "{count} 个插画故事，分简单与困难两种版本。一个值得停留的世界。",
+    storiesMetaOne: "{count} 个故事 · 简单与困难 · 每周更新场景",
     tagline: "一幕一幕，学会语言。",
     metaLanguageSetup: "语言设置",
     stepOf: "第 {step} 步，共 {total} 步",
@@ -428,6 +444,8 @@ export const PAGE_TRANSLATIONS: Partial<Record<CatalogueLanguageId, Partial<Mess
   },
 
   ar: {
+    exploreIntroOne: "{count} قصة مصوّرة، بمستويَي السهل والصعب. عالم يستحق وقتك.",
+    storiesMetaOne: "{count} قصة · سهل وصعب · مشاهد جديدة كل أسبوع",
     tagline: "تعلّم اللغات، مشهدًا بعد مشهد.",
     metaLanguageSetup: "إعداد اللغة",
     stepOf: "الخطوة {step} من {total}",
@@ -520,6 +538,8 @@ export const PAGE_TRANSLATIONS: Partial<Record<CatalogueLanguageId, Partial<Mess
   },
 
   hi: {
+    exploreIntroOne: "आसान और कठिन, दोनों रूपों में {count} सचित्र कहानी। ऐसी दुनिया जिसमें समय बिताना सार्थक है।",
+    storiesMetaOne: "{count} कहानी · आसान और कठिन · हर हफ़्ते नए दृश्य",
     tagline: "दृश्य दर दृश्य, भाषाएँ सीखिए।",
     metaLanguageSetup: "भाषा सेटअप",
     stepOf: "चरण {step} / {total}",
@@ -750,6 +770,8 @@ export const PAGE_TRANSLATIONS: Partial<Record<CatalogueLanguageId, Partial<Mess
   },
 
   vi: {
+    exploreIntroOne: "{count} câu chuyện minh họa, có bản Dễ và bản Khó. Một thế giới đáng để ở lại.",
+    storiesMetaOne: "{count} câu chuyện · Dễ và Khó · cảnh mới mỗi tuần",
     tagline: "Học ngôn ngữ, từng cảnh một.",
     metaLanguageSetup: "Thiết lập ngôn ngữ",
     stepOf: "Bước {step} / {total}",
@@ -796,6 +818,8 @@ export const PAGE_TRANSLATIONS: Partial<Record<CatalogueLanguageId, Partial<Mess
   },
 
   id: {
+    exploreIntroOne: "{count} cerita berilustrasi, dalam versi Mudah dan Sulit. Dunia yang layak ditinggali sejenak.",
+    storiesMetaOne: "{count} cerita · Mudah dan Sulit · adegan baru tiap minggu",
     tagline: "Belajar bahasa, adegan demi adegan.",
     metaLanguageSetup: "Pengaturan bahasa",
     stepOf: "Langkah {step} dari {total}",
@@ -887,6 +911,8 @@ export const PAGE_TRANSLATIONS: Partial<Record<CatalogueLanguageId, Partial<Mess
     errSignInFailed: "We no fit finish dat sign-in. Abeg try again.",
   },
   it: {
+    exploreIntroOne: "{count} storia illustrata, in Facile e Difficile. Un mondo in cui vale la pena passare del tempo.",
+    storiesMetaOne: "{count} storia · Facile e Difficile · nuove scene ogni settimana",
     tagline: "Impara le lingue, scena dopo scena.",
     storiesLeadOne: "Scopri un mondo.",
     storiesLeadTwo: "Impara una lingua.",
@@ -929,6 +955,8 @@ export const PAGE_TRANSLATIONS: Partial<Record<CatalogueLanguageId, Partial<Mess
     errSignInFailed: "Non siamo riusciti a completare l'accesso. Riprova.",
   },
   uk: {
+    exploreIntroOne: "{count} ілюстрована історія, у легкому та складному варіанті. Світ, у якому варто побути.",
+    storiesMetaOne: "{count} історія · Легкий і складний рівень · нові сцени щотижня",
     tagline: "Вивчайте мови сцена за сценою.",
     storiesLeadOne: "Відкрийте світ.",
     storiesLeadTwo: "Вивчіть мову.",
@@ -971,6 +999,8 @@ export const PAGE_TRANSLATIONS: Partial<Record<CatalogueLanguageId, Partial<Mess
     errSignInFailed: "Не вдалося завершити вхід. Спробуйте ще раз.",
   },
   fa: {
+    exploreIntroOne: "{count} داستان مصوّر، در دو سطح آسان و دشوار. جهانی که ارزش وقت گذاشتن دارد.",
+    storiesMetaOne: "{count} داستان · آسان و دشوار · صحنه‌های تازه هر هفته",
     tagline: "زبان بیاموز، صحنه به صحنه.",
     storiesLeadOne: "جهانی را کشف کن.",
     storiesLeadTwo: "زبانی را یاد بگیر.",
@@ -1013,6 +1043,8 @@ export const PAGE_TRANSLATIONS: Partial<Record<CatalogueLanguageId, Partial<Mess
     errSignInFailed: "نتوانستیم آن ورود را کامل کنیم. دوباره تلاش کن.",
   },
   ko: {
+    exploreIntroOne: "쉬움과 어려움으로 읽는 그림 이야기 {count}편. 시간을 보낼 만한 세계예요.",
+    storiesMetaOne: "이야기 {count}편 · 쉬움과 어려움 · 매주 새로운 장면",
     tagline: "장면으로 배우는 외국어.",
     storiesLeadOne: "새로운 세계를 만나세요.",
     storiesLeadTwo: "새로운 언어를 배우세요.",
@@ -1055,6 +1087,8 @@ export const PAGE_TRANSLATIONS: Partial<Record<CatalogueLanguageId, Partial<Mess
     errSignInFailed: "로그인을 마치지 못했어요. 다시 시도해 주세요.",
   },
   th: {
+    exploreIntroOne: "เรื่องราวพร้อมภาพ {count} เรื่อง มีทั้งระดับง่ายและยาก เป็นโลกที่ควรค่าแก่การใช้เวลาด้วย",
+    storiesMetaOne: "{count} เรื่อง · ระดับง่ายและยาก · มีฉากใหม่ทุกสัปดาห์",
     tagline: "เรียนภาษาไปทีละฉาก",
     storiesLeadOne: "ค้นพบโลกใบใหม่",
     storiesLeadTwo: "เรียนภาษาใหม่",
@@ -1097,6 +1131,8 @@ export const PAGE_TRANSLATIONS: Partial<Record<CatalogueLanguageId, Partial<Mess
     errSignInFailed: "เราทำการเข้าสู่ระบบไม่สำเร็จ กรุณาลองใหม่",
   },
   sw: {
+    exploreIntroOne: "Hadithi {count} yenye picha, katika toleo Rahisi na Ngumu. Ulimwengu unaostahili muda wako.",
+    storiesMetaOne: "Hadithi {count} · Rahisi na Ngumu · matukio mapya kila wiki",
     tagline: "Jifunze lugha, tukio baada ya tukio.",
     storiesLeadOne: "Gundua ulimwengu.",
     storiesLeadTwo: "Jifunze lugha.",

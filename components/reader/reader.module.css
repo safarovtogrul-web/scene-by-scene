@@ -51,12 +51,12 @@
 .bubble[data-bubble-type="speech"]::after { content: ""; position: absolute; bottom: -6px; inset-inline-end: 18px; width: 10px; height: 10px; background: var(--bubble-surface); border-bottom: 1px solid rgb(239 238 246 / 14%); border-right: 1px solid rgb(239 238 246 / 14%); transform: skewY(30deg); clip-path: polygon(0 0, 100% 0, 100% 100%); }
 .bubbleHeader { min-height: 0; padding-inline-end: 28px; }
 .bubbleCopy { min-height: 0; overflow: auto; overscroll-behavior: contain; scrollbar-width: thin; padding-inline-end: 25px; }
-.primary { font-family: var(--font-display); font-size: clamp(21px, 1.85vw, 28px); line-height: 1.38; font-weight: 400; text-align: var(--bubble-align); text-wrap: pretty; overflow-wrap: anywhere; color: #fff; }
+.primary { font-family: var(--font-display); font-size: calc(clamp(21px, 1.85vw, 28px) * var(--bubble-text-scale, 1)); line-height: 1.38; font-weight: 400; text-align: var(--bubble-align); text-wrap: pretty; overflow-wrap: anywhere; color: #fff; }
 .translationBubble { position: relative; padding: 9px 13px; border: 1px solid rgb(226 220 245 / 14%); border-radius: 6px; background: rgb(20 28 39 / 38%); backdrop-filter: blur(5px); box-shadow: 0 8px 20px rgb(2 7 12 / 10%); }
 .translationBubble::before, .translationBubble::after { content: "✦"; position: absolute; color: rgb(220 207 255 / 74%); font-size: 7px; line-height: 1; text-shadow: 0 0 7px rgb(184 156 245 / 70%); pointer-events: none; }
 .translationBubble::before { top: 7px; inset-inline-start: -4px; }
 .translationBubble::after { right: 8px; bottom: -4px; transform: scale(0.72); }
-.caption { font-size: clamp(13px, 0.92vw, 14.5px); font-weight: 450; line-height: 1.48; text-align: var(--bubble-align); overflow-wrap: anywhere; color: rgb(240 243 247 / 88%); }
+.caption { font-size: calc(clamp(13px, 0.92vw, 14.5px) * var(--bubble-text-scale, 1)); font-weight: 450; line-height: 1.48; text-align: var(--bubble-align); overflow-wrap: anywhere; color: rgb(240 243 247 / 88%); }
 .captionNotice { color: #cbd2da; font-size: clamp(12px, 0.9vw, 14px); font-weight: 400; }
 .bubbleStack[data-compact="true"] { gap: 5px; }
 .bubbleStack[data-compact="true"] .bubble { padding: 10px 13px; }
@@ -149,6 +149,7 @@
 .sceneGrid .thumbnail { width: 100%; height: auto; aspect-ratio: 4 / 5; }
 .sceneGrid .thumbnailNumber { font-size: 12px; }
 @media (max-width: 767px), (max-height: 500px) and (orientation: landscape) {
+  .bubbleStack { --bubble-text-scale: var(--mobile-bubble-text-scale, 1); }
   .shell { grid-template-rows: calc(64px + env(safe-area-inset-top)) minmax(0, 1fr); }
   .header { gap: 8px; padding-inline: 10px; }
   .identity h1 { font-size: 18px; }

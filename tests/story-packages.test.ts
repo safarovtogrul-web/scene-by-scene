@@ -2,6 +2,9 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { BUBBLE_PRESETS, READER_MOBILE_MEDIA, packageToStory, readerHref, sceneCopy, sceneImageSources, storyDisplay, type PackageScene, type SceneLanguageText, type StoryPackage } from "../lib/story-packages/schema";
 import { auditStoryParity } from "../scripts/audit-story-parity";
+import { THE_LOST_MAP_OVERLAY } from "../lib/story-packages/manifests/the-lost-map-overlay";
+import { worstCaseHeight } from "../lib/story-packages/manifests/the-lost-map-copy";
+import { MIN_TEXT_SCALE, bubbleRect, resolveBubblePlacement } from "../lib/reader/bubbleLayout";
 import { assertStoryPackages, validateStoryPackages } from "../lib/story-packages/validation";
 import { storyAssetExists } from "../lib/story-packages/validate-files";
 import { THE_LOST_MAP_ASSET_MANIFEST, THE_LOST_MAP_ASSET_SCENES } from "../lib/story-packages/manifests/the-lost-map-assets";
@@ -509,4 +512,62 @@ test("story metadata follows the interface language and never the story language
   assert.notEqual(storyDisplay(THE_LOST_MAP, "ja").title, THE_LOST_MAP.title);
   // An unlocalised language falls back to the canonical English rather than blank.
   assert.equal(storyDisplay({ ...THE_LOST_MAP, localized: {} }, "th").title, "The Lost Map");
+});
+
+test("no bubble covers a face, an active hand, or a scene's own critical prop", () => {
+  // The audit is what found these regions; this is what keeps them protected
+  // when copy, a language, or a placement changes later.
+  const failures: string[] = [];
+  for (const scene of THE_LOST_MAP_SCENES) {
+    const overlay = THE_LOST_MAP_OVERLAY[scene.id];
+    assert.ok(overlay, `${scene.id} needs an audited overlay`);
+    for (const orientation of ["wide", "portrait"] as const) {
+      // Assert the placement the reader actually renders, not the authored
+      // starting point: the resolver is allowed to move or shrink to get clear.
+      const resolved = resolveBubblePlacement(overlay[orientation], undefined, worstCaseHeight(scene.id, orientation));
+      for (const region of resolved.blocked ?? []) {
+        failures.push(`${scene.id} ${orientation}: bubble covers ${region.role} (${region.note})`);
+      }
+    }
+  }
+  assert.deepEqual(failures, []);
+});
+
+test("every scene declares what its artwork protects, and stays inside the frame", () => {
+  for (const scene of THE_LOST_MAP_SCENES) {
+    const overlay = THE_LOST_MAP_OVERLAY[scene.id];
+    for (const orientation of ["wide", "portrait"] as const) {
+      const layout = overlay[orientation];
+      assert.ok(layout.avoid.length > 0, `${scene.id} ${orientation} declares no protected region`);
+      assert.ok(layout.preferred.length > 0, `${scene.id} ${orientation} declares no safe region`);
+      for (const region of [...layout.avoid, ...layout.preferred]) {
+        for (const [name, value] of Object.entries({ x: region.x, y: region.y, width: region.width, height: region.height })) {
+          assert.ok(Number.isFinite(value) && value >= 0 && value <= 1, `${scene.id} ${orientation} ${name} must be a normalized fraction`);
+        }
+        assert.ok(region.x + region.width <= 1.001, `${scene.id} ${orientation} region overflows horizontally`);
+        assert.ok(region.y + region.height <= 1.001, `${scene.id} ${orientation} region overflows vertically`);
+      }
+      // The bubble itself must sit inside the frame at its worst-case height.
+      const rect = bubbleRect(layout, worstCaseHeight(scene.id, orientation));
+      assert.ok(rect.x >= -0.001 && rect.x + rect.width <= 1.001, `${scene.id} ${orientation} bubble leaves the frame`);
+      assert.ok(rect.y >= -0.001 && rect.y + rect.height <= 1.001, `${scene.id} ${orientation} bubble leaves the frame`);
+      // Text may shrink to clear a face, but never below the readable floor.
+      if (layout.minTextScale !== undefined) assert.ok(layout.minTextScale >= MIN_TEXT_SCALE);
+    }
+  }
+});
+
+test("text may shrink to clear a face, but never below the readable floor", () => {
+  let shrunk = 0;
+  for (const scene of THE_LOST_MAP_SCENES) {
+    for (const orientation of ["wide", "portrait"] as const) {
+      const resolved = resolveBubblePlacement(THE_LOST_MAP_OVERLAY[scene.id][orientation], undefined, worstCaseHeight(scene.id, orientation));
+      if (resolved.textScale === undefined) continue;
+      shrunk += 1;
+      assert.ok(resolved.textScale >= MIN_TEXT_SCALE, `${scene.id} ${orientation} text below the readable floor`);
+      assert.ok(resolved.textScale <= 1, `${scene.id} ${orientation} must not enlarge text`);
+    }
+  }
+  // Some scene must be exercising the mechanism, or it is dead code.
+  assert.ok(shrunk > 0, "no scene uses the text-scale allowance");
 });

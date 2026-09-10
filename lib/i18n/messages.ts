@@ -67,6 +67,9 @@ const EN_MESSAGES = {
   exploreStories: "Explore stories",
   exploreIntro:
     "{count} illustrated stories across genres and levels. Pick a world worth spending time in.",
+  /** The library is young; "1 stories" is the one count a reader will actually see. */
+  exploreIntroOne:
+    "{count} illustrated story, in Easy and Hard. A world worth spending time in.",
   browseAllStories: "Browse all stories",
 
   /* --- Method --- */
@@ -189,6 +192,7 @@ const EN_MESSAGES = {
   storiesLeadOne: "Discover a world.",
   storiesLeadTwo: "Learn a language.",
   storiesMeta: "{count} stories · Easy and Hard · new scenes every week",
+  storiesMetaOne: "{count} story · Easy and Hard · new scenes every week",
 
   /* --- Pricing page --- */
   pricingTitle: "Still being",

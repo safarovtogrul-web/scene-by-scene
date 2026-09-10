@@ -12,7 +12,6 @@ import {
   type FeaturedSlot,
 } from "./heroFeature";
 import type { ParallaxField } from "@/lib/usePointerParallax";
-import { genreSlugLabel, type Story } from "@/lib/catalog";
 import { cn } from "@/lib/cn";
 
 /**
@@ -64,7 +63,10 @@ export type CardFeatureState = {
 };
 
 export type FloatingStoryCardProps = {
-  story: Story;
+  /** Decorative artwork path. The tile is not a catalogue entry. */
+  artwork: string;
+  /** Layout slot id, kept for the presentation sequence. */
+  slot: string;
 
   /* --- Placement, as a percentage of the parent scene box --- */
   left: number;
@@ -134,7 +136,8 @@ const FEATURED_Z = 45;
  * pose with no accumulated drift.
  */
 export function FloatingStoryCard({
-  story,
+  artwork,
+  slot,
   left,
   top,
   width,
@@ -314,7 +317,7 @@ export function FloatingStoryCard({
   return (
     <motion.div
       className={cn("absolute", className)}
-      data-story-id={story.id}
+      data-story-id={slot}
       data-feature-phase={phase}
       style={{
         left: `${left}%`,
@@ -367,8 +370,9 @@ export function FloatingStoryCard({
                 }}
               >
                 <Image
-                  src={story.heroScene ?? story.cover}
-                  alt={`${story.title} — ${genreSlugLabel(story.genre)} story`}
+                  src={artwork}
+                  // The hero is one composite role="img"; each tile is decorative.
+                  alt=""
                   fill
                   sizes={sizes}
                   priority={priority}

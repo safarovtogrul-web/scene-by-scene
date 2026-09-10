@@ -16,7 +16,7 @@ export function StoriesHeader() {
         <span className="text-emphasis">{t("storiesLeadTwo")}</span>
       </p>
       <p className="mt-3 text-[14.5px] text-mist-500">
-        {t("storiesMeta", { count: TOTAL_STORY_COUNT })}
+        {t(TOTAL_STORY_COUNT === 1 ? "storiesMetaOne" : "storiesMeta", { count: TOTAL_STORY_COUNT })}
       </p>
     </header>
   );

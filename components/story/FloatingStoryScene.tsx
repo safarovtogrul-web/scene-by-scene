@@ -7,7 +7,7 @@ import {
   type FeaturedSlot,
 } from "./heroFeature";
 import { usePointerParallax } from "@/lib/usePointerParallax";
-import { requireStory } from "@/lib/catalog";
+import { heroArtwork } from "@/lib/catalog/heroArtwork";
 import { cn } from "@/lib/cn";
 
 /**
@@ -220,7 +220,8 @@ export function FloatingStoryScene({ className }: { className?: string }) {
         <FloatingStoryCard
           key={card.storyId}
           {...card}
-          story={requireStory(card.storyId)}
+          artwork={heroArtwork(card.storyId)}
+          slot={card.storyId}
           parallax={parallax}
           feature={{
             phase: card.storyId === activeStoryId ? phase : "resting",

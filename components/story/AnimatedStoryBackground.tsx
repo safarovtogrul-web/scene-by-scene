@@ -9,7 +9,7 @@ import {
   type FeaturePhase,
   type FeaturedSlot,
 } from "./heroFeature";
-import { requireStory } from "@/lib/catalog";
+import { heroArtwork } from "@/lib/catalog/heroArtwork";
 import { cn } from "@/lib/cn";
 
 /**
@@ -186,7 +186,8 @@ export function AnimatedStoryBackground({
             {...card}
             width={MOBILE_CARD_FRAME.width}
             aspect={MOBILE_CARD_FRAME.aspect}
-            story={requireStory(card.storyId)}
+            artwork={heroArtwork(card.storyId)}
+            slot={card.storyId}
             sizes="80vw"
             feature={{
               phase: card.storyId === activeStoryId ? phase : "resting",

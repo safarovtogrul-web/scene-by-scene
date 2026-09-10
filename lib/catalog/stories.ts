@@ -277,10 +277,12 @@ const STORY_SEEDS: StorySeed[] = [
  */
 export const STORY_SHELLS: Story[] = STORY_SEEDS.map(createStoryShell);
 
-// A reviewed package can replace an existing demo by id. New identities append
-// naturally; the build validator prevents collisions between unrelated stories.
-const published = STORY_PACKAGES.map(packageToStory);
-export const STORIES: Story[] = [
-  ...STORY_SHELLS.filter((shell) => !published.some((story) => story.id === shell.id)),
-  ...published,
-];
+/**
+ * The reader-facing catalogue: reviewed story packages only.
+ *
+ * The seeds above stay in the repository so their ids remain reserved and the
+ * build validator can still catch a collision, but a story nobody can open must
+ * never appear in a shelf, a filter, a genre count or a recommendation. Adding
+ * a reviewed package is what publishes a story — nothing else does.
+ */
+export const STORIES: Story[] = STORY_PACKAGES.map(packageToStory);

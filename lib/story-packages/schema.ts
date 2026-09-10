@@ -31,6 +31,12 @@ export type BubblePlacement = (
   maxWidth?: number;
   alignment?: "start" | "center" | "end";
   tone?: "glass" | "ink";
+  /**
+   * Multiplier on the bubble's text size, between 0 and 1. A scene sets it only
+   * when a full-size bubble would reach a face; the reader keeps a readable
+   * floor, so this nudges rather than shrinks copy away.
+   */
+  textScale?: number;
 };
 
 export type SceneLanguageText = Partial<Record<LanguageId, string>>;

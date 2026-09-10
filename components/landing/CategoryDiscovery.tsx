@@ -35,7 +35,7 @@ export function CategoryDiscovery() {
               {t("exploreStories")}
             </h2>
             <p className="mt-3 max-w-[43ch] text-[clamp(0.95rem,1.1vw,1.05rem)] leading-relaxed text-mist-400">
-              {t("exploreIntro", { count: TOTAL_STORY_COUNT })}
+              {t(TOTAL_STORY_COUNT === 1 ? "exploreIntroOne" : "exploreIntro", { count: TOTAL_STORY_COUNT })}
             </p>
           </div>
 

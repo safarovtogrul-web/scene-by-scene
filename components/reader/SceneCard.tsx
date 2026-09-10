@@ -26,6 +26,8 @@ function placementVariables(placement: BubblePlacement | undefined, prefix: stri
     [`--${prefix}-width`]: `${(value.maxWidth ?? adaptiveSafeWidth) * 100}%`,
     [`--${prefix}-align`]: value.alignment ?? "center",
     [`--${prefix}-surface`]: value.tone === "ink" ? "rgb(15 22 31 / 72%)" : "rgb(15 22 31 / 57%)",
+    // Only set when the scene caps its bubble height to protect a face.
+    [`--${prefix}-text-scale`]: value.textScale ?? 1,
   } as CSSProperties;
 }
 
