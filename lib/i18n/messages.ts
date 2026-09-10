@@ -157,7 +157,12 @@ const EN_MESSAGES = {
   backToStory: "Back to story",
   continueBrowsing: "Continue browsing",
   speakSentence: "Read the learning sentence aloud",
+  speakTranslationSentence: "Read the translation aloud",
   stopSpeaking: "Stop reading aloud",
+  /* The sentence card has two sides; each label names what the reader will get. */
+  showTranslation: "Show translation",
+  showLearningSentence: "Show the learning sentence",
+  translationUnavailableShort: "Translation unavailable",
   audioUnavailable: "Audio is unavailable in this browser",
   exitFullscreen: "Exit fullscreen",
   fullscreenExitFailed: "Could not exit fullscreen. Tap exit to try again, or use the browser's back/escape control.",

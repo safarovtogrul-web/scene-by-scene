@@ -32,7 +32,8 @@ export function bubbleRect(placement: BubblePlacement | undefined, orientation: 
   return { x, y, width, height: heightFraction };
 }
 
-const SCENE_INSET = 0.045; // The stage pads the artwork slightly on every side.
+/** The reader insets its bubble layer inside the frame; these are those insets. */
+const SCENE_INSET = { wide: { x: 0.05, y: 0.06 }, portrait: { x: 0.05, y: 0.05 } } as const;
 
 type Measured = Record<"wide" | "portrait", Record<string, { w: number; h: number }>>;
 
@@ -60,7 +61,8 @@ async function render(outDir: string, measuredPath: string) {
 
       // Inset matches the reader's own padding so the overlay lands where the
       // bubble actually sits rather than flush against the raw image edge.
-      const inner = { x: SCENE_INSET * W, y: SCENE_INSET * H, w: (1 - 2 * SCENE_INSET) * W, h: (1 - 2 * SCENE_INSET) * H };
+      const inset = SCENE_INSET[orientation];
+      const inner = { x: inset.x * W, y: inset.y * H, w: (1 - 2 * inset.x) * W, h: (1 - 2 * inset.y) * H };
       const px = Math.round(inner.x + rect.x * inner.w);
       const py = Math.round(inner.y + rect.y * inner.h);
       const pw = Math.round(rect.width * inner.w);

@@ -4,6 +4,8 @@ import type { Messages } from "./messages";
 /** Product UI only. Story sentences never come from this catalogue. */
 export const READER_TRANSLATIONS: Partial<Record<CatalogueLanguageId, Partial<Messages>>> = {
   es: {
+    showTranslation: "Mostrar la traducción", showLearningSentence: "Mostrar la frase de aprendizaje",
+    translationUnavailableShort: "Traducción no disponible", speakTranslationSentence: "Leer en voz alta la traducción",
     translationLanguage: "Idioma de traducción",
     exitFullscreen: "Salir de pantalla completa",
     fullscreenExitFailed: "No se pudo salir. Vuelve a pulsar Salir o usa Atrás/Escape del navegador.",
@@ -24,6 +26,8 @@ export const READER_TRANSLATIONS: Partial<Record<CatalogueLanguageId, Partial<Me
     tryTranslationDemo: "Probar demo: español + traducción al turco",
   },
   tr: {
+    showTranslation: "Çeviriyi göster", showLearningSentence: "Öğrenme cümlesini göster",
+    translationUnavailableShort: "Çeviri mevcut değil", speakTranslationSentence: "Çeviriyi sesli oku",
     translationLanguage: "Çeviri dili",
     exitFullscreen: "Tam ekrandan çık",
     fullscreenExitFailed: "Tam ekrandan çıkılamadı. Çıkış düğmesini tekrar dene veya tarayıcının Geri/Escape kontrolünü kullan.",
@@ -44,6 +48,8 @@ export const READER_TRANSLATIONS: Partial<Record<CatalogueLanguageId, Partial<Me
     tryTranslationDemo: "Demoyu dene: İspanyolca + Türkçe çeviri",
   },
   ar: {
+    showTranslation: "إظهار الترجمة", showLearningSentence: "إظهار جملة التعلّم",
+    translationUnavailableShort: "الترجمة غير متاحة", speakTranslationSentence: "اقرأ الترجمة بصوت عالٍ",
     fullscreenExitFailed: "تعذّر الخروج من ملء الشاشة. اضغط على الخروج مرة أخرى، أو استخدم زر الرجوع أو Escape في المتصفح.",
     translationLanguage: "لغة الترجمة",
     exitFullscreen: "الخروج من ملء الشاشة",
@@ -83,6 +89,8 @@ export const READER_TRANSLATIONS: Partial<Record<CatalogueLanguageId, Partial<Me
     tryTranslationDemo: "نمونہ آزمائیں: ہسپانوی اور ترکی ترجمہ",
   },
   fr: {
+    showTranslation: "Afficher la traduction", showLearningSentence: "Afficher la phrase d’apprentissage",
+    translationUnavailableShort: "Traduction indisponible", speakTranslationSentence: "Lire la traduction à voix haute",
     translationLanguage: "Langue de traduction",
     startStory: "Démarrer l'histoire",
     previousScene: "Scène précédente",
@@ -115,6 +123,8 @@ export const READER_TRANSLATIONS: Partial<Record<CatalogueLanguageId, Partial<Me
     developmentFixture: "MODÈLE DE DÉVELOPPEMENT · Images et textes de test",
   },
   de: {
+    showTranslation: "Übersetzung anzeigen", showLearningSentence: "Lernsatz anzeigen",
+    translationUnavailableShort: "Übersetzung nicht verfügbar", speakTranslationSentence: "Übersetzung vorlesen",
     translationLanguage: "Übersetzungssprache",
     startStory: "Geschichte starten",
     previousScene: "Vorherige Szene",
@@ -147,6 +157,8 @@ export const READER_TRANSLATIONS: Partial<Record<CatalogueLanguageId, Partial<Me
     developmentFixture: "ENTWICKLUNGSMUSTER · Testbilder und Testtexte",
   },
   "pt-BR": {
+    showTranslation: "Mostrar a tradução", showLearningSentence: "Mostrar a frase de aprendizado",
+    translationUnavailableShort: "Tradução indisponível", speakTranslationSentence: "Ler a tradução em voz alta",
     translationLanguage: "Idioma da tradução",
     startStory: "Começar a história",
     previousScene: "Cena anterior",
@@ -179,6 +191,8 @@ export const READER_TRANSLATIONS: Partial<Record<CatalogueLanguageId, Partial<Me
     developmentFixture: "AMOSTRA DE DESENVOLVIMENTO · Imagens e textos de teste",
   },
   it: {
+    showTranslation: "Mostra la traduzione", showLearningSentence: "Mostra la frase di apprendimento",
+    translationUnavailableShort: "Traduzione non disponibile", speakTranslationSentence: "Leggi la traduzione ad alta voce",
     translationLanguage: "Lingua della traduzione",
     startStory: "Inizia la storia",
     previousScene: "Scena precedente",
@@ -211,6 +225,8 @@ export const READER_TRANSLATIONS: Partial<Record<CatalogueLanguageId, Partial<Me
     developmentFixture: "MODELLO DI SVILUPPO · Immagini e testi di prova",
   },
   ru: {
+    showTranslation: "Показать перевод", showLearningSentence: "Показать фразу для изучения",
+    translationUnavailableShort: "Перевод недоступен", speakTranslationSentence: "Прочитать перевод вслух",
     translationLanguage: "Язык перевода",
     startStory: "Начать историю",
     previousScene: "Предыдущая сцена",
@@ -243,6 +259,8 @@ export const READER_TRANSLATIONS: Partial<Record<CatalogueLanguageId, Partial<Me
     developmentFixture: "ТЕСТОВЫЙ ОБРАЗЕЦ · Пробные изображения и тексты",
   },
   uk: {
+    showTranslation: "Показати переклад", showLearningSentence: "Показати фразу для вивчення",
+    translationUnavailableShort: "Переклад недоступний", speakTranslationSentence: "Прочитати переклад уголос",
     translationLanguage: "Мова перекладу",
     startStory: "Почати історію",
     previousScene: "Попередня сцена",
@@ -275,6 +293,8 @@ export const READER_TRANSLATIONS: Partial<Record<CatalogueLanguageId, Partial<Me
     developmentFixture: "ТЕСТОВИЙ ЗРАЗОК · Пробні зображення та тексти",
   },
   fa: {
+    showTranslation: "نمایش ترجمه", showLearningSentence: "نمایش جملهٔ یادگیری",
+    translationUnavailableShort: "ترجمه در دسترس نیست", speakTranslationSentence: "خواندن ترجمه با صدای بلند",
     translationLanguage: "زبان ترجمه",
     startStory: "شروع داستان",
     previousScene: "صحنه قبلی",
@@ -307,6 +327,8 @@ export const READER_TRANSLATIONS: Partial<Record<CatalogueLanguageId, Partial<Me
     developmentFixture: "نمونه‌ی توسعه · تصویرها و متن‌های آزمایشی",
   },
   "zh-CN": {
+    showTranslation: "显示翻译", showLearningSentence: "显示学习句子",
+    translationUnavailableShort: "暂无翻译", speakTranslationSentence: "朗读翻译",
     translationLanguage: "翻译语言",
     startStory: "开始故事",
     previousScene: "上一个场景",
@@ -339,6 +361,8 @@ export const READER_TRANSLATIONS: Partial<Record<CatalogueLanguageId, Partial<Me
     developmentFixture: "开发样例 · 测试图片与文字",
   },
   ja: {
+    showTranslation: "翻訳を表示", showLearningSentence: "学習文を表示",
+    translationUnavailableShort: "翻訳は利用できません", speakTranslationSentence: "翻訳を読み上げる",
     translationLanguage: "翻訳の言語",
     startStory: "ストーリーを始める",
     previousScene: "前のシーン",
@@ -371,6 +395,8 @@ export const READER_TRANSLATIONS: Partial<Record<CatalogueLanguageId, Partial<Me
     developmentFixture: "開発用サンプル · テスト画像とテキスト",
   },
   ko: {
+    showTranslation: "번역 보기", showLearningSentence: "학습 문장 보기",
+    translationUnavailableShort: "번역을 사용할 수 없음", speakTranslationSentence: "번역 읽어주기",
     translationLanguage: "번역 언어",
     startStory: "이야기 시작",
     previousScene: "이전 장면",
@@ -403,6 +429,8 @@ export const READER_TRANSLATIONS: Partial<Record<CatalogueLanguageId, Partial<Me
     developmentFixture: "개발용 샘플 · 테스트 이미지와 문구",
   },
   id: {
+    showTranslation: "Tampilkan terjemahan", showLearningSentence: "Tampilkan kalimat pembelajaran",
+    translationUnavailableShort: "Terjemahan tidak tersedia", speakTranslationSentence: "Bacakan terjemahan",
     translationLanguage: "Bahasa terjemahan",
     startStory: "Mulai cerita",
     previousScene: "Adegan sebelumnya",
@@ -435,6 +463,8 @@ export const READER_TRANSLATIONS: Partial<Record<CatalogueLanguageId, Partial<Me
     developmentFixture: "CONTOH PENGEMBANGAN · Gambar dan teks uji",
   },
   vi: {
+    showTranslation: "Hiện bản dịch", showLearningSentence: "Hiện câu đang học",
+    translationUnavailableShort: "Bản dịch không khả dụng", speakTranslationSentence: "Đọc to bản dịch",
     translationLanguage: "Ngôn ngữ dịch",
     startStory: "Bắt đầu câu chuyện",
     previousScene: "Cảnh trước",
@@ -467,6 +497,8 @@ export const READER_TRANSLATIONS: Partial<Record<CatalogueLanguageId, Partial<Me
     developmentFixture: "MẪU PHÁT TRIỂN · Ảnh và nội dung thử nghiệm",
   },
   th: {
+    showTranslation: "แสดงคำแปล", showLearningSentence: "แสดงประโยคที่กำลังเรียน",
+    translationUnavailableShort: "ไม่มีคำแปล", speakTranslationSentence: "อ่านออกเสียงคำแปล",
     translationLanguage: "ภาษาที่ใช้แปล",
     startStory: "เริ่มเรื่อง",
     previousScene: "ฉากก่อนหน้า",
@@ -499,6 +531,8 @@ export const READER_TRANSLATIONS: Partial<Record<CatalogueLanguageId, Partial<Me
     developmentFixture: "ตัวอย่างสำหรับพัฒนา · ภาพและข้อความทดสอบ",
   },
   hi: {
+    showTranslation: "अनुवाद दिखाएँ", showLearningSentence: "सीखने वाला वाक्य दिखाएँ",
+    translationUnavailableShort: "अनुवाद उपलब्ध नहीं है", speakTranslationSentence: "अनुवाद ज़ोर से पढ़ें",
     translationLanguage: "अनुवाद की भाषा",
     startStory: "कहानी शुरू करें",
     previousScene: "पिछला दृश्य",
@@ -531,6 +565,8 @@ export const READER_TRANSLATIONS: Partial<Record<CatalogueLanguageId, Partial<Me
     developmentFixture: "डेवलपमेंट नमूना · परीक्षण तस्वीरें और पाठ",
   },
   sw: {
+    showTranslation: "Onyesha tafsiri", showLearningSentence: "Onyesha sentensi ya kujifunza",
+    translationUnavailableShort: "Tafsiri haipatikani", speakTranslationSentence: "Soma tafsiri kwa sauti",
     translationLanguage: "Lugha ya tafsiri",
     startStory: "Anza hadithi",
     previousScene: "Tukio lililotangulia",

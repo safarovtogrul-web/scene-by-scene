@@ -98,23 +98,31 @@ function languageText(record: Record<string, string>, field: string): SceneLangu
   return text;
 }
 
-/** Complete production scene records built from the approved copy and asset manifests. */
 /**
- * The tallest each bubble actually grows, measured in the reader at the worst
- * case that ships — Hard copy with the translation shown, German primary with a
- * Russian caption — plus 8% headroom for a longer language pair.
+ * The tallest each card actually grows, measured in the production reader at
+ * the width its scene authorises: the worst of all nineteen languages at Hard,
+ * with one side of the card visible, at the tightest viewport of each
+ * orientation (360x800 portrait, 1024x768 wide).
  *
- * Measured rather than assumed: a bubble shrinks to fit its own text, so using
- * one pessimistic number for all 24 scenes would force placements that solve a
- * problem no reader has.
+ * Measured rather than assumed, and re-measured for the one-sided card: a
+ * bubble takes the height its own words need at its own width, so one
+ * pessimistic number for all 24 scenes would force placements that solve a
+ * problem no reader has — and one optimistic number would let a bubble grow
+ * over a face that a test believed was clear.
  */
 const MEASURED = {
-  wide: { S01: 0.134, S02: 0.176, S03: 0.134, S04: 0.176, S05: 0.176, S06: 0.176, S07: 0.176, S08: 0.176,
-          S09: 0.176, S10: 0.176, S11: 0.176, S12: 0.134, S13: 0.134, S14: 0.176, S15: 0.176, S16: 0.176,
-          S17: 0.176, S18: 0.176, S19: 0.176, S20: 0.176, S21: 0.176, S22: 0.176, S23: 0.176, S24: 0.176 },
-  portrait: { S01: 0.292, S02: 0.339, S03: 0.292, S04: 0.339, S05: 0.339, S06: 0.292, S07: 0.339, S08: 0.339,
-              S09: 0.292, S10: 0.339, S11: 0.292, S12: 0.246, S13: 0.292, S14: 0.339, S15: 0.385, S16: 0.292,
-              S17: 0.292, S18: 0.292, S19: 0.339, S20: 0.339, S21: 0.374, S22: 0.292, S23: 0.328, S24: 0.374 },
+  wide: {
+    S01: 0.2192, S02: 0.2611, S03: 0.2118, S04: 0.2611, S05: 0.1921, S06: 0.2611,
+    S07: 0.2611, S08: 0.3276, S09: 0.2611, S10: 0.2611, S11: 0.1921, S12: 0.2118,
+    S13: 0.2118, S14: 0.1921, S15: 0.2857, S16: 0.2118, S17: 0.2611, S18: 0.1921,
+    S19: 0.2118, S20: 0.2611, S21: 0.2611, S22: 0.1921, S23: 0.1921, S24: 0.1921,
+  },
+  portrait: {
+    S01: 0.2222, S02: 0.2804, S03: 0.2222, S04: 0.2222, S05: 0.2804, S06: 0.2222,
+    S07: 0.2487, S08: 0.2804, S09: 0.2222, S10: 0.2804, S11: 0.2804, S12: 0.2222,
+    S13: 0.336, S14: 0.2804, S15: 0.5635, S16: 0.2222, S17: 0.2222, S18: 0.2804,
+    S19: 0.2804, S20: 0.336, S21: 0.6772, S22: 0.336, S23: 0.2804, S24: 0.336,
+  },
 } as const;
 
 const HEADROOM = 1.08;
@@ -127,6 +135,7 @@ export function worstCaseHeight(sceneId: string, orientation: "wide" | "portrait
 /** Kept for callers that want a single pessimistic bound across the story. */
 export const WORST_CASE_HEIGHT = { wide: 0.19, portrait: 0.416 } as const;
 
+/** Complete production scene records built from the approved copy and asset manifests. */
 export const THE_LOST_MAP_SCENES: TheLostMapScene[] = THE_LOST_MAP_ASSET_SCENES.map((asset, index) => {
   const scene = texts.scenes[index];
   const overlay = THE_LOST_MAP_OVERLAY[asset.id];

@@ -1,7 +1,6 @@
 "use client";
 
 import { LearningLanguageControl } from "@/components/language/LanguageControls";
-import { SubtitlesToggle } from "@/components/language/SubtitlesToggle";
 import { usePreferences } from "@/components/preferences/PreferencesProvider";
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import type { Difficulty } from "@/lib/catalog/types";
@@ -17,7 +16,6 @@ export function ReaderControls({ difficulty, onDifficultyChange }: { difficulty:
         className={styles.difficulty}
       />
       <LearningLanguageControl className={styles.language} />
-      <SubtitlesToggle compact label={t("readerTranslation")} className={styles.translationControl} />
     </div>
   );
 }

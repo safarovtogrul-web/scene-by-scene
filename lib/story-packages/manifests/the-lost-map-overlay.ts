@@ -10,8 +10,17 @@ import type { SceneOverlay } from "../../reader/bubbleLayout";
  *
  * `avoid` records what the audit found worth protecting in that frame; a test
  * asserts the resolved bubble clears all of it at the worst-case bubble height.
- * `preferred` records the regions judged free, best first, so a later copy change
- * can be re-resolved against the same judgement rather than re-eyeballed.
+ * `preferred` records the region the card actually occupies once resolved, so a
+ * later copy change can be re-resolved against the same judgement rather than
+ * re-eyeballed.
+ *
+ * The anchors and widths were re-derived when the sentence card became
+ * one-sided. Each `maxWidth` is now the width at which that scene's longest
+ * sentence — the worst of nineteen languages at Hard — fits inside a band this
+ * frame actually has free, measured in the reader at the tightest viewport of
+ * each orientation (360x800 portrait, 1024x768 wide). A card that is too narrow
+ * is not a smaller card: it is the same words in a taller column, which is how
+ * a phone ended up with a bubble taller than its own artwork.
  */
 export type SceneOrientation = "wide" | "portrait";
 
@@ -23,10 +32,10 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "activeHand", note: "right hand on the door handle", x: 0.28, y: 0.48, width: 0.08, height: 0.1 },
       ],
       preferred: [
-        { x: 0.36, y: 0.02, width: 0.62, height: 0.34 },
+        { x: 0.54, y: 0, width: 0.46, height: 0.237 },
       ],
       anchor: "top-right",
-      maxWidth: 0.5,
+      maxWidth: 0.46,
     },
     portrait: {
       avoid: [
@@ -34,10 +43,10 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "activeHand", note: "right hand on the door handle", x: 0.31, y: 0.4, width: 0.08, height: 0.08 },
       ],
       preferred: [
-        { x: 0.44, y: 0.02, width: 0.54, height: 0.3 },
+        { x: 0.12, y: 0.494, width: 0.88, height: 0.24 },
       ],
-      anchor: "top-right",
-      maxWidth: 0.52,
+      anchor: { x: 1, y: 0.65 },
+      maxWidth: 0.88,
     },
   },
   S02: {
@@ -47,10 +56,10 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "importantProp", note: "grandmother photograph", x: 0.44, y: 0.38, width: 0.1, height: 0.2 },
       ],
       preferred: [
-        { x: 0.02, y: 0.02, width: 0.56, height: 0.3 },
+        { x: 0, y: 0, width: 0.52, height: 0.282 },
       ],
       anchor: "top-left",
-      maxWidth: 0.56,
+      maxWidth: 0.52,
     },
     portrait: {
       avoid: [
@@ -58,10 +67,10 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "importantProp", note: "grandmother photograph", x: 0.34, y: 0.45, width: 0.16, height: 0.16 },
       ],
       preferred: [
-        { x: 0.02, y: 0.02, width: 0.5, height: 0.34 },
+        { x: 0, y: 0.627, width: 0.88, height: 0.303 },
       ],
-      anchor: "top-left",
-      maxWidth: 0.5,
+      anchor: { x: 0, y: 0.9 },
+      maxWidth: 0.88,
     },
   },
   S03: {
@@ -72,10 +81,10 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "importantProp", note: "open drawer contents", x: 0.22, y: 0.62, width: 0.2, height: 0.22 },
       ],
       preferred: [
-        { x: 0.42, y: 0.66, width: 0.56, height: 0.32 },
+        { x: 0.48, y: 0.771, width: 0.52, height: 0.229 },
       ],
       anchor: "bottom-right",
-      maxWidth: 0.56,
+      maxWidth: 0.52,
     },
     portrait: {
       avoid: [
@@ -83,10 +92,10 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "importantProp", note: "open drawer contents", x: 0.1, y: 0.38, width: 0.28, height: 0.14 },
       ],
       preferred: [
-        { x: 0.3, y: 0.66, width: 0.68, height: 0.32 },
+        { x: 0.12, y: 0.76, width: 0.88, height: 0.24 },
       ],
       anchor: "bottom-right",
-      maxWidth: 0.66,
+      maxWidth: 0.88,
     },
   },
   S04: {
@@ -97,10 +106,10 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "importantProp", note: "open drawer", x: 0.16, y: 0.62, width: 0.26, height: 0.2 },
       ],
       preferred: [
-        { x: 0.46, y: 0.02, width: 0.52, height: 0.3 },
+        { x: 0.54, y: 0, width: 0.46, height: 0.282 },
       ],
       anchor: "top-right",
-      maxWidth: 0.54,
+      maxWidth: 0.46,
     },
     portrait: {
       avoid: [
@@ -108,10 +117,10 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "importantProp", note: "green notebook in her raised hand", x: 0.24, y: 0.46, width: 0.16, height: 0.14 },
       ],
       preferred: [
-        { x: 0.02, y: 0.62, width: 0.62, height: 0.36 },
+        { x: 0, y: 0.76, width: 0.94, height: 0.24 },
       ],
       anchor: "bottom-left",
-      maxWidth: 0.62,
+      maxWidth: 0.94,
     },
   },
   S05: {
@@ -121,10 +130,10 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "importantProp", note: "notebook and folded map", x: 0.28, y: 0.6, width: 0.32, height: 0.32 },
       ],
       preferred: [
-        { x: 0.02, y: 0.02, width: 0.46, height: 0.24 },
+        { x: 0, y: 0, width: 0.64, height: 0.207 },
       ],
       anchor: "top-left",
-      maxWidth: 0.46,
+      maxWidth: 0.64,
     },
     portrait: {
       avoid: [
@@ -132,10 +141,10 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "importantProp", note: "notebook and folded map", x: 0.14, y: 0.68, width: 0.5, height: 0.24 },
       ],
       preferred: [
-        { x: 0.02, y: 0.02, width: 0.66, height: 0.34 },
+        { x: 0, y: 0, width: 0.88, height: 0.303 },
       ],
       anchor: "top-left",
-      maxWidth: 0.66,
+      maxWidth: 0.88,
     },
   },
   S06: {
@@ -145,10 +154,10 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "importantProp", note: "open map with blue route", x: 0.08, y: 0.6, width: 0.62, height: 0.38 },
       ],
       preferred: [
-        { x: 0.44, y: 0.02, width: 0.54, height: 0.22 },
+        { x: 0.54, y: 0, width: 0.46, height: 0.282 },
       ],
       anchor: "top-right",
-      maxWidth: 0.54,
+      maxWidth: 0.46,
     },
     portrait: {
       avoid: [
@@ -156,11 +165,10 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "importantProp", note: "open map with blue route", x: 0.02, y: 0.58, width: 0.94, height: 0.36 },
       ],
       preferred: [
-        { x: 0.02, y: 0.02, width: 0.66, height: 0.22 },
+        { x: 0, y: 0, width: 0.94, height: 0.24 },
       ],
       anchor: "top-left",
-      maxWidth: 0.66,
-      maxHeight: 0.22,
+      maxWidth: 0.94,
     },
   },
   S07: {
@@ -170,10 +178,10 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "importantProp", note: "brass key leaving the envelope", x: 0.6, y: 0.44, width: 0.1, height: 0.2 },
       ],
       preferred: [
-        { x: 0.02, y: 0.38, width: 0.56, height: 0.24 },
+        { x: 0, y: 0.359, width: 0.52, height: 0.282 },
       ],
       anchor: "center-left",
-      maxWidth: 0.56,
+      maxWidth: 0.52,
     },
     portrait: {
       avoid: [
@@ -182,10 +190,10 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "activeHand", note: "hand drawing the key out", x: 0.52, y: 0.48, width: 0.12, height: 0.14 },
       ],
       preferred: [
-        { x: 0.02, y: 0.34, width: 0.46, height: 0.32 },
+        { x: 0, y: 0.658, width: 0.94, height: 0.269 },
       ],
-      anchor: "center-left",
-      maxWidth: 0.46,
+      anchor: { x: 0, y: 0.9 },
+      maxWidth: 0.94,
     },
   },
   S08: {
@@ -195,10 +203,10 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "primaryAction", note: "key and map seal being compared", x: 0.08, y: 0.72, width: 0.3, height: 0.26 },
       ],
       preferred: [
-        { x: 0.02, y: 0.02, width: 0.56, height: 0.28 },
+        { x: 0, y: 0, width: 0.46, height: 0.354 },
       ],
       anchor: "top-left",
-      maxWidth: 0.56,
+      maxWidth: 0.46,
     },
     portrait: {
       avoid: [
@@ -206,10 +214,10 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "primaryAction", note: "key and map seal being compared", x: 0.06, y: 0.7, width: 0.42, height: 0.24 },
       ],
       preferred: [
-        { x: 0.02, y: 0.02, width: 0.5, height: 0.34 },
+        { x: 0, y: 0, width: 0.94, height: 0.303 },
       ],
       anchor: "top-left",
-      maxWidth: 0.5,
+      maxWidth: 0.94,
     },
   },
   S09: {
@@ -219,10 +227,10 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "importantProp", note: "open backpack mouth with map, lantern and key", x: 0.2, y: 0.48, width: 0.22, height: 0.3 },
       ],
       preferred: [
-        { x: 0.44, y: 0.7, width: 0.54, height: 0.28 },
+        { x: 0.54, y: 0.718, width: 0.46, height: 0.282 },
       ],
       anchor: "bottom-right",
-      maxWidth: 0.58,
+      maxWidth: 0.46,
     },
     portrait: {
       avoid: [
@@ -230,10 +238,10 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "importantProp", note: "open backpack with map, lantern and key", x: 0.16, y: 0.44, width: 0.34, height: 0.3 },
       ],
       preferred: [
-        { x: 0.32, y: 0.66, width: 0.66, height: 0.32 },
+        { x: 0.06, y: 0.76, width: 0.94, height: 0.24 },
       ],
       anchor: "bottom-right",
-      maxWidth: 0.66,
+      maxWidth: 0.94,
     },
   },
   S10: {
@@ -242,20 +250,20 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "face", note: "Lucia's face", x: 0.545, y: 0.14, width: 0.09, height: 0.14 },
       ],
       preferred: [
-        { x: 0.02, y: 0.02, width: 0.5, height: 0.26 },
+        { x: 0, y: 0, width: 0.52, height: 0.282 },
       ],
       anchor: "top-left",
-      maxWidth: 0.5,
+      maxWidth: 0.52,
     },
     portrait: {
       avoid: [
         { role: "face", note: "Lucia's face", x: 0.44, y: 0.25, width: 0.14, height: 0.13 },
       ],
       preferred: [
-        { x: 0.02, y: 0.02, width: 0.42, height: 0.34 },
+        { x: 0, y: 0.383, width: 0.88, height: 0.303 },
       ],
-      anchor: "top-left",
-      maxWidth: 0.42,
+      anchor: { x: 0, y: 0.55 },
+      maxWidth: 0.88,
     },
   },
   S11: {
@@ -265,10 +273,10 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "importantProp", note: "backpack and map", x: 0.16, y: 0.22, width: 0.18, height: 0.26 },
       ],
       preferred: [
-        { x: 0.42, y: 0.02, width: 0.56, height: 0.26 },
+        { x: 0.36, y: 0, width: 0.64, height: 0.207 },
       ],
       anchor: "top-right",
-      maxWidth: 0.56,
+      maxWidth: 0.64,
     },
     portrait: {
       avoid: [
@@ -276,10 +284,10 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "importantProp", note: "backpack and map", x: 0.16, y: 0.36, width: 0.2, height: 0.26 },
       ],
       preferred: [
-        { x: 0.52, y: 0.02, width: 0.46, height: 0.3 },
+        { x: 0.12, y: 0.627, width: 0.88, height: 0.303 },
       ],
-      anchor: "top-right",
-      maxWidth: 0.48,
+      anchor: { x: 1, y: 0.9 },
+      maxWidth: 0.88,
     },
   },
   S12: {
@@ -288,20 +296,20 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "face", note: "Lucia's face", x: 0.62, y: 0.1, width: 0.1, height: 0.14 },
       ],
       preferred: [
-        { x: 0.02, y: 0.02, width: 0.46, height: 0.24 },
+        { x: 0, y: 0, width: 0.52, height: 0.229 },
       ],
       anchor: "top-left",
-      maxWidth: 0.46,
+      maxWidth: 0.52,
     },
     portrait: {
       avoid: [
         { role: "face", note: "Lucia's face", x: 0.37, y: 0.15, width: 0.14, height: 0.14 },
       ],
       preferred: [
-        { x: 0.38, y: 0.72, width: 0.6, height: 0.26 },
+        { x: 0.12, y: 0.76, width: 0.88, height: 0.24 },
       ],
       anchor: "bottom-right",
-      maxWidth: 0.6,
+      maxWidth: 0.88,
     },
   },
   S13: {
@@ -311,10 +319,10 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "importantProp", note: "first stone marker and its carved seal", x: 0.4, y: 0.48, width: 0.14, height: 0.26 },
       ],
       preferred: [
-        { x: 0.02, y: 0.76, width: 0.52, height: 0.22 },
+        { x: 0, y: 0.771, width: 0.64, height: 0.229 },
       ],
       anchor: "bottom-left",
-      maxWidth: 0.52,
+      maxWidth: 0.64,
     },
     portrait: {
       avoid: [
@@ -322,10 +330,10 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "importantProp", note: "stone marker carved seal", x: 0.54, y: 0.28, width: 0.18, height: 0.22 },
       ],
       preferred: [
-        { x: 0.02, y: 0.54, width: 0.68, height: 0.32 },
+        { x: 0, y: 0.637, width: 0.7, height: 0.363 },
       ],
       anchor: "bottom-left",
-      maxWidth: 0.66,
+      maxWidth: 0.7,
     },
   },
   S14: {
@@ -336,10 +344,10 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "primaryAction", note: "marker seal and pointing finger", x: 0.08, y: 0.4, width: 0.26, height: 0.24 },
       ],
       preferred: [
-        { x: 0.44, y: 0.74, width: 0.54, height: 0.24 },
+        { x: 0.3, y: 0.793, width: 0.7, height: 0.207 },
       ],
       anchor: "bottom-right",
-      maxWidth: 0.56,
+      maxWidth: 0.7,
     },
     portrait: {
       avoid: [
@@ -348,10 +356,10 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "primaryAction", note: "marker seal and pointing finger", x: 0.04, y: 0.54, width: 0.24, height: 0.18 },
       ],
       preferred: [
-        { x: 0.38, y: 0.62, width: 0.6, height: 0.36 },
+        { x: 0.12, y: 0.721, width: 0.88, height: 0.279 },
       ],
       anchor: "bottom-right",
-      maxWidth: 0.62,
+      maxWidth: 0.88,
     },
   },
   S15: {
@@ -361,10 +369,10 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "importantProp", note: "stone markers along the path", x: 0.4, y: 0.34, width: 0.28, height: 0.28 },
       ],
       preferred: [
-        { x: 0.42, y: 0.02, width: 0.56, height: 0.24 },
+        { x: 0.42, y: 0, width: 0.58, height: 0.309 },
       ],
       anchor: "top-right",
-      maxWidth: 0.56,
+      maxWidth: 0.58,
     },
     portrait: {
       avoid: [
@@ -372,10 +380,10 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "importantProp", note: "stone markers along the path", x: 0.4, y: 0.6, width: 0.3, height: 0.24 },
       ],
       preferred: [
-        { x: 0.38, y: 0.02, width: 0.6, height: 0.4 },
+        { x: 0.36, y: 0, width: 0.64, height: 0.596 },
       ],
       anchor: "top-right",
-      maxWidth: 0.62,
+      maxWidth: 0.64,
     },
   },
   S16: {
@@ -386,10 +394,10 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "importantProp", note: "open map", x: 0.6, y: 0.42, width: 0.2, height: 0.16 },
       ],
       preferred: [
-        { x: 0.02, y: 0.02, width: 0.56, height: 0.24 },
+        { x: 0, y: 0, width: 0.58, height: 0.229 },
       ],
       anchor: "top-left",
-      maxWidth: 0.56,
+      maxWidth: 0.58,
     },
     portrait: {
       avoid: [
@@ -398,10 +406,10 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "importantProp", note: "open map", x: 0.46, y: 0.6, width: 0.3, height: 0.16 },
       ],
       preferred: [
-        { x: 0.02, y: 0.02, width: 0.52, height: 0.32 },
+        { x: 0, y: 0, width: 0.94, height: 0.216 },
       ],
       anchor: "top-left",
-      maxWidth: 0.52,
+      maxWidth: 0.94,
     },
   },
   S17: {
@@ -412,10 +420,10 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "importantProp", note: "old stone bridge", x: 0.34, y: 0.44, width: 0.42, height: 0.3 },
       ],
       preferred: [
-        { x: 0.42, y: 0.02, width: 0.56, height: 0.24 },
+        { x: 0.54, y: 0, width: 0.46, height: 0.282 },
       ],
       anchor: "top-right",
-      maxWidth: 0.56,
+      maxWidth: 0.46,
     },
     portrait: {
       avoid: [
@@ -424,10 +432,10 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "importantProp", note: "old stone bridge", x: 0.54, y: 0.4, width: 0.44, height: 0.34 },
       ],
       preferred: [
-        { x: 0.34, y: 0.02, width: 0.64, height: 0.32 },
+        { x: 0.12, y: 0.76, width: 0.88, height: 0.24 },
       ],
-      anchor: "top-right",
-      maxWidth: 0.64,
+      anchor: "bottom-right",
+      maxWidth: 0.88,
     },
   },
   S18: {
@@ -437,10 +445,10 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "importantProp", note: "narrow stone bridge", x: 0.18, y: 0.4, width: 0.68, height: 0.34 },
       ],
       preferred: [
-        { x: 0.02, y: 0.76, width: 0.58, height: 0.22 },
+        { x: 0, y: 0.793, width: 0.7, height: 0.207 },
       ],
       anchor: "bottom-left",
-      maxWidth: 0.58,
+      maxWidth: 0.7,
     },
     portrait: {
       avoid: [
@@ -448,10 +456,10 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "importantProp", note: "narrow stone bridge", x: 0.04, y: 0.26, width: 0.92, height: 0.28 },
       ],
       preferred: [
-        { x: 0.02, y: 0.58, width: 0.66, height: 0.36 },
+        { x: 0, y: 0.697, width: 0.88, height: 0.303 },
       ],
       anchor: "bottom-left",
-      maxWidth: 0.66,
+      maxWidth: 0.88,
     },
   },
   S19: {
@@ -462,10 +470,10 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "importantProp", note: "ruins silhouette", x: 0.18, y: 0.06, width: 0.48, height: 0.24 },
       ],
       preferred: [
-        { x: 0.02, y: 0.38, width: 0.42, height: 0.24 },
+        { x: 0, y: 0.578, width: 0.64, height: 0.229 },
       ],
-      anchor: "center-left",
-      maxWidth: 0.44,
+      anchor: { x: 0, y: 0.75 },
+      maxWidth: 0.64,
     },
     portrait: {
       avoid: [
@@ -474,10 +482,10 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "importantProp", note: "ruins silhouette", x: 0.16, y: 0.1, width: 0.42, height: 0.2 },
       ],
       preferred: [
-        { x: 0.02, y: 0.62, width: 0.5, height: 0.36 },
+        { x: 0, y: 0.697, width: 0.82, height: 0.303 },
       ],
       anchor: "bottom-left",
-      maxWidth: 0.5,
+      maxWidth: 0.82,
     },
   },
   S20: {
@@ -489,10 +497,10 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "activeHand", note: "hand holding the ivy back", x: 0.66, y: 0.13, width: 0.09, height: 0.11 },
       ],
       preferred: [
-        { x: 0.02, y: 0.02, width: 0.6, height: 0.26 },
+        { x: 0, y: 0, width: 0.64, height: 0.282 },
       ],
       anchor: "top-left",
-      maxWidth: 0.6,
+      maxWidth: 0.64,
     },
     portrait: {
       avoid: [
@@ -502,10 +510,10 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "activeHand", note: "hand holding the ivy back", x: 0.37, y: 0.29, width: 0.11, height: 0.11 },
       ],
       preferred: [
-        { x: 0.02, y: 0.62, width: 0.56, height: 0.34 },
+        { x: 0, y: 0.681, width: 0.82, height: 0.319 },
       ],
       anchor: "bottom-left",
-      maxWidth: 0.56,
+      maxWidth: 0.82,
     },
   },
   S21: {
@@ -516,10 +524,10 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "importantProp", note: "stone steps", x: 0.08, y: 0.6, width: 0.3, height: 0.38 },
       ],
       preferred: [
-        { x: 0.42, y: 0.02, width: 0.56, height: 0.26 },
+        { x: 0.36, y: 0, width: 0.64, height: 0.282 },
       ],
       anchor: "top-right",
-      maxWidth: 0.56,
+      maxWidth: 0.64,
     },
     portrait: {
       avoid: [
@@ -528,10 +536,10 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "importantProp", note: "lit stone treads beneath her", x: 0.04, y: 0.55, width: 0.38, height: 0.42 },
       ],
       preferred: [
-        { x: 0.46, y: 0.58, width: 0.52, height: 0.4 },
+        { x: 0.42, y: 0.327, width: 0.58, height: 0.673 },
       ],
       anchor: "bottom-right",
-      maxWidth: 0.52,
+      maxWidth: 0.58,
     },
   },
   S22: {
@@ -542,10 +550,10 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "importantProp", note: "lit lantern", x: 0.6, y: 0.44, width: 0.07, height: 0.14 },
       ],
       preferred: [
-        { x: 0.02, y: 0.02, width: 0.56, height: 0.26 },
+        { x: 0, y: 0, width: 0.64, height: 0.207 },
       ],
       anchor: "top-left",
-      maxWidth: 0.56,
+      maxWidth: 0.64,
     },
     portrait: {
       avoid: [
@@ -554,10 +562,10 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "importantProp", note: "lit lantern", x: 0.76, y: 0.46, width: 0.1, height: 0.16 },
       ],
       preferred: [
-        { x: 0.02, y: 0.02, width: 0.72, height: 0.22 },
+        { x: 0, y: 0, width: 0.76, height: 0.363 },
       ],
       anchor: "top-left",
-      maxWidth: 0.72,
+      maxWidth: 0.76,
     },
   },
   S23: {
@@ -568,10 +576,10 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "activeHand", note: "hands lifting the lid", x: 0.06, y: 0.2, width: 0.22, height: 0.16 },
       ],
       preferred: [
-        { x: 0.42, y: 0.34, width: 0.56, height: 0.3 },
+        { x: 0.36, y: 0.396, width: 0.64, height: 0.207 },
       ],
       anchor: "center-right",
-      maxWidth: 0.56,
+      maxWidth: 0.64,
     },
     portrait: {
       avoid: [
@@ -580,10 +588,10 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "activeHand", note: "hands lifting the lid", x: 0.1, y: 0.34, width: 0.24, height: 0.16 },
       ],
       preferred: [
-        { x: 0.46, y: 0.02, width: 0.52, height: 0.32 },
+        { x: 0.06, y: 0.627, width: 0.94, height: 0.303 },
       ],
-      anchor: "top-right",
-      maxWidth: 0.54,
+      anchor: { x: 1, y: 0.9 },
+      maxWidth: 0.94,
     },
   },
   S24: {
@@ -594,10 +602,10 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "importantProp", note: "open archive box", x: 0.53, y: 0.3, width: 0.24, height: 0.24 },
       ],
       preferred: [
-        { x: 0.21, y: 0.78, width: 0.58, height: 0.2 },
+        { x: 0.09, y: 0.793, width: 0.82, height: 0.207 },
       ],
       anchor: "bottom-center",
-      maxWidth: 0.58,
+      maxWidth: 0.82,
     },
     portrait: {
       avoid: [
@@ -606,10 +614,10 @@ export const THE_LOST_MAP_OVERLAY: Record<string, Record<SceneOrientation, Scene
         { role: "importantProp", note: "open archive box", x: 0.45, y: 0.42, width: 0.34, height: 0.24 },
       ],
       preferred: [
-        { x: 0.02, y: 0.62, width: 0.58, height: 0.34 },
+        { x: 0, y: 0.666, width: 0.94, height: 0.334 },
       ],
       anchor: "bottom-left",
-      maxWidth: 0.58,
+      maxWidth: 0.94,
     },
   },
 };

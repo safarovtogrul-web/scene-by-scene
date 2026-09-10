@@ -2,7 +2,6 @@
 
 import { useState, type ReactNode } from "react";
 import { LanguagePicker } from "@/components/language/LanguagePicker";
-import { SubtitlesToggle } from "@/components/language/SubtitlesToggle";
 import { usePreferences } from "@/components/preferences/PreferencesProvider";
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
 import { LanguageFlag } from "@/components/ui/FlagIcon";
@@ -43,11 +42,13 @@ export function ReaderSettings({ open, onOpenChange, difficulty, onDifficultyCha
       </button>
       <div className={styles.settingsRow}><span>{t("storyLevel")}</span><SegmentedControl label={t("storyLevel")} value={difficulty} onValueChange={onDifficultyChange} size="sm"
         options={[{ value: "easy", label: t("easy") }, { value: "hard", label: t("hard") }]} className={styles.difficulty} /></div>
-      <SubtitlesToggle label={t("readerTranslation")} className={styles.settingsTranslation} />
-      {preferences.showTranslations && <p className={styles.settingsHint}>
+      {/* No on/off switch here any more: the translation is a side of the
+          sentence card, reached by its own flip control. What is still worth
+          saying is why that control would be unavailable for these languages. */}
+      <p className={styles.settingsHint}>
         {preferences.learningLanguage === preferences.translationLanguage ? t("translationSameLanguage")
           : !copy.translation ? t("translationUnavailable", { language: translation.nativeName }) : null}
-      </p>}
+      </p>
       {isSaving && <p role="status" className={styles.settingsHint}>{t("saving")}</p>}
       {syncFailed && <p role="status" className={styles.settingsHint}>{t("preferencesSyncFailed")}</p>}
       {developmentTools}

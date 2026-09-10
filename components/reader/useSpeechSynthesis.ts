@@ -20,7 +20,17 @@ export function bestSpeechVoice(voices: readonly SpeechSynthesisVoice[], locale:
     ?? voices[0];
 }
 
-export function useSpeechSynthesis(active: boolean) {
+/**
+ * Speech for one sentence on screen.
+ *
+ * `sentence` is what is currently readable — the visible side of the card, not
+ * the scene. Passing it in is what makes "never read a sentence the reader can
+ * no longer see" a property of the hook rather than a rule every caller has to
+ * remember: a scene change, a level change, a language change and a flip all
+ * arrive here as a different string, and each ends the utterance before the new
+ * one can start. There is never more than one.
+ */
+export function useSpeechSynthesis(active: boolean, sentence = "") {
   const supported = useSyncExternalStore(subscribeToSpeechSupport, speechSupportSnapshot, serverSpeechSupportSnapshot);
   const [speaking, setSpeaking] = useState(false);
   const utterance = useRef<SpeechSynthesisUtterance | null>(null);
@@ -35,7 +45,10 @@ export function useSpeechSynthesis(active: boolean) {
 
   useEffect(() => {
     let resetTimer: number | undefined;
-    if (!active && supported) {
+    if (supported && (!active || sentence)) {
+      // Whatever was being read belonged to the previous sentence. Some engines
+      // do not fire `onend` for a cancelled utterance, so the speaking state is
+      // cleared here rather than left waiting for a callback that may not come.
       window.speechSynthesis.cancel();
       utterance.current = null;
       resetTimer = window.setTimeout(() => setSpeaking(false), 0);
@@ -44,7 +57,7 @@ export function useSpeechSynthesis(active: boolean) {
       if (resetTimer !== undefined) window.clearTimeout(resetTimer);
       if (supported) window.speechSynthesis.cancel();
     };
-  }, [active, supported]);
+  }, [active, sentence, supported]);
 
   const speak = useCallback((text: string, locale: string) => {
     if (!text.trim() || !("speechSynthesis" in window) || !("SpeechSynthesisUtterance" in window)) return;

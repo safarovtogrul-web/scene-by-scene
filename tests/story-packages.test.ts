@@ -1,4 +1,6 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { test } from "node:test";
 import { BUBBLE_PRESETS, READER_MOBILE_MEDIA, packageToStory, readerHref, sceneCopy, sceneImageSources, storyDisplay, type PackageScene, type SceneLanguageText, type StoryPackage } from "../lib/story-packages/schema";
 import { auditStoryParity } from "../scripts/audit-story-parity";
@@ -18,6 +20,7 @@ import {
 import { MESSAGE_KEYS, formatMessage, messageFor, missingMessageKeys, validateMessageCatalogue, UI_MESSAGES, type MessageKey } from "../lib/i18n/messages";
 import { EMPTY_PREFERENCES, getPreferencesSnapshot, parsePreferences, patchPreferences } from "../lib/preferences";
 import { bubbleCopySize, readerPagePose } from "../lib/reader/presentation";
+import { sentenceCard, sentenceKeyFor, toggleFlip, visibleSide } from "../lib/reader/sentenceCard";
 
 /** Synthetic validation input stays test-local; no fixture route or public fixture assets ship. */
 const TEST_EASY_TEXT: SceneLanguageText = {
@@ -570,4 +573,161 @@ test("text may shrink to clear a face, but never below the readable floor", () =
   }
   // Some scene must be exercising the mechanism, or it is dead code.
   assert.ok(shrunk > 0, "no scene uses the text-scale allowance");
+});
+
+/* --- The sentence card: one surface, two sides ------------------------------
+ *
+ * The reader shows one sentence at a time and turns it over on demand. These
+ * hold the model to that, and the last three hold the stylesheet to it: the
+ * pair of stacked bubbles this replaced must not come back, and the flip must
+ * have a still answer for a reader who has asked for less motion.
+ */
+
+const GERMAN = getLanguage("de");
+const ENGLISH = getLanguage("en");
+const ARABIC = getLanguage("ar");
+// Read from the repository root, the same way the asset checks above resolve
+// `public/`: the compiled tests run from there.
+const readerStyles = readFileSync(resolve(process.cwd(), "components/reader/reader.module.css"), "utf8");
+const cardKey = sentenceKeyFor("S01", "easy", "de");
+const bothSides = () => sentenceCard(
+  { primary: "Lucía öffnet die Tür.", translation: "Lucía opens the door." }, GERMAN, ENGLISH,
+)!;
+
+test("a card opens on the learning sentence, with the translation on its reverse", () => {
+  const card = bothSides();
+  assert.equal(card.front.text, "Lucía öffnet die Tür.");
+  assert.equal(card.front.locale, "de");
+  assert.equal(card.back?.text, "Lucía opens the door.");
+  assert.equal(card.back?.locale, "en");
+  // Nothing is turned over until the reader asks: the front is the learning side.
+  const opening = visibleSide(card, null, cardKey);
+  assert.equal(opening.side, "front");
+  assert.equal(opening.face.text, card.front.text);
+  assert.equal(opening.flipped, false);
+  assert.equal(opening.canFlip, true);
+});
+
+test("one press reveals the translation, a second returns the learning sentence", () => {
+  const card = bothSides();
+  const turned = toggleFlip(null, cardKey);
+  assert.equal(turned, cardKey);
+  const back = visibleSide(card, turned, cardKey);
+  assert.equal(back.side, "back");
+  assert.equal(back.face.text, "Lucía opens the door.");
+  assert.equal(back.flipped, true);
+  // And back again, by the same control rather than a second one.
+  const returned = toggleFlip(turned, cardKey);
+  assert.equal(returned, null);
+  assert.equal(visibleSide(card, returned, cardKey).side, "front");
+});
+
+test("only one side is ever the visible side", () => {
+  const card = bothSides();
+  for (const flipped of [null, cardKey]) {
+    const visible = visibleSide(card, flipped, cardKey);
+    // The other face still exists — it is what makes the card a card — but
+    // exactly one of them answers "what is the reader reading".
+    assert.equal(visible.face.text === card.front.text, !visible.flipped);
+    assert.equal(visible.face.text === card.back!.text, visible.flipped);
+  }
+});
+
+test("matching languages leave nothing to turn to, and say so", () => {
+  // `sceneCopy` already refuses to hand back a translation into the language
+  // being learned; the card must not invent a duplicate reverse side from it.
+  const copy = sceneCopy(fixture().scenes[0], "easy", "es", "es");
+  const card = sentenceCard(copy, getLanguage("es"), getLanguage("es"));
+  assert.ok(card);
+  assert.equal(card.back, undefined);
+  assert.equal(card.unavailable, "same-language");
+  const visible = visibleSide(card, cardKey, cardKey);
+  assert.equal(visible.canFlip, false);
+  // Even asked to turn over, it stays on the sentence that exists.
+  assert.equal(visible.side, "front");
+});
+
+test("a translation this story does not have is unavailable, never fabricated", () => {
+  const card = sentenceCard({ primary: "Lucía öffnet die Tür." }, GERMAN, ENGLISH);
+  assert.ok(card);
+  assert.equal(card.back, undefined);
+  assert.equal(card.unavailable, "missing");
+  assert.equal(visibleSide(card, cardKey, cardKey).canFlip, false);
+  // A scene with no learning sentence at all has no card, not an empty one.
+  assert.equal(sentenceCard({ primary: "   " }, GERMAN, ENGLISH), null);
+});
+
+test("the speaker reads the side that is face up, in that side's own language", () => {
+  const card = bothSides();
+  const front = visibleSide(card, null, cardKey);
+  assert.equal(front.face.text, "Lucía öffnet die Tür.");
+  assert.equal(front.face.speechLocale, speechLocaleFor("de"));
+  const back = visibleSide(card, cardKey, cardKey);
+  assert.equal(back.face.text, "Lucía opens the door.");
+  assert.equal(back.face.speechLocale, speechLocaleFor("en"));
+  // The two never resolve to one voice, which is the whole point of carrying
+  // the locale on the face rather than reading it off the reader's settings.
+  assert.notEqual(front.face.speechLocale, back.face.speechLocale);
+});
+
+test("a turned card returns to the front when the sentence under it changes", () => {
+  const card = bothSides();
+  // A new scene, a new level and a new learning language each mean a different
+  // sentence is on screen, so none of them may leave the card face down.
+  for (const next of [
+    sentenceKeyFor("S02", "easy", "de"),
+    sentenceKeyFor("S01", "hard", "de"),
+    sentenceKeyFor("S01", "easy", "ru"),
+  ]) {
+    assert.notEqual(next, cardKey);
+    assert.equal(visibleSide(card, cardKey, next).side, "front");
+  }
+  // Changing the *translation* language rewrites the back of the card the
+  // reader is already reading; it does not turn the card over.
+  const rewritten = sentenceCard({ primary: "Lucía öffnet die Tür.", translation: "لوسيا تفتح الباب." }, GERMAN, ARABIC)!;
+  const stillBack = visibleSide(rewritten, cardKey, cardKey);
+  assert.equal(stillBack.side, "back");
+  assert.equal(stillBack.face.text, "لوسيا تفتح الباب.");
+});
+
+test("each side carries its own script direction, and the artwork is never mirrored", () => {
+  const card = sentenceCard({ primary: "لوسيا تفتح الباب.", translation: "Lucía öffnet die Tür." }, ARABIC, GERMAN)!;
+  assert.equal(card.front.dir, "rtl");
+  assert.equal(card.front.locale, "ar");
+  assert.equal(card.back?.dir, "ltr");
+  assert.equal(card.back?.locale, "de");
+  // Direction belongs to the sentence, not to the reader's interface, so
+  // turning the card changes it and nothing else does.
+  assert.equal(visibleSide(card, null, cardKey).face.dir, "rtl");
+  assert.equal(visibleSide(card, cardKey, cardKey).face.dir, "ltr");
+  // Right-to-left moves the text, never the scene.
+  assert.doesNotMatch(readerStyles, /(card|artwork|sceneImage)[^{]*\{[^}]*scaleX\(-1\)/);
+});
+
+test("the reader shows one bubble, not a stacked pair", () => {
+  // The translation used to render as a second bubble beneath the first. It is
+  // a side of the card now, and the styles that drew it must be gone with it:
+  // a stale rule is how a removed surface quietly comes back.
+  for (const gone of ["translationBubble", "captionNotice", "bubbleHeader", "bubbleCopy"]) {
+    assert.doesNotMatch(readerStyles, new RegExp(`\\.${gone}\\b`), `${gone} should not survive the one-card reader`);
+  }
+  assert.match(readerStyles, /\.flipSurface\b/);
+  assert.match(readerStyles, /\.sentence\[data-face="back"\]/);
+});
+
+test("a reader who asked for less motion gets the same answer without the turn", () => {
+  const reduced = readerStyles.slice(readerStyles.indexOf("@media (prefers-reduced-motion: reduce)"));
+  assert.ok(reduced.startsWith("@media"), "the reader must answer prefers-reduced-motion");
+  // No rotation for the surface or for the pre-rotated reverse face, and the
+  // hidden side is taken out of sight outright rather than turned away.
+  assert.match(reduced, /flipSurface[^{]*\{[^}]*transform:\s*none\s*!important/);
+  assert.match(reduced, /sentence\[data-face="back"\][^{]*\{[^}]*transform:\s*none\s*!important/);
+  assert.match(reduced, /sentence\[data-hidden="true"\][^{]*\{[^}]*visibility:\s*hidden/);
+});
+
+test("the flip is quick enough to feel like a card and slow enough to read as one", () => {
+  const declared = readerStyles.match(/\.flipSurface[^{]*\{[^}]*transition:\s*transform\s+(\d+)ms/);
+  assert.ok(declared, "the flip surface must declare its own transition");
+  const ms = Number(declared[1]);
+  assert.ok(ms >= 260 && ms <= 380, `flip duration ${ms}ms is outside the intended 260-380ms`);
 });

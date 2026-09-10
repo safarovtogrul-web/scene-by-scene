@@ -11,7 +11,6 @@ import { getLanguage, shortCodeFor } from "@/lib/languages";
 import { cn } from "@/lib/cn";
 import { LanguagePicker } from "./LanguagePicker";
 import { LanguageSettingsSheet } from "./LanguageSettingsSheet";
-import { SubtitlesToggle } from "./SubtitlesToggle";
 
 const POPOVER_CLASSES = cn(
   "z-[80] w-[286px] overflow-hidden rounded-2xl border border-white/[0.08]",
@@ -158,9 +157,6 @@ export function LearningLanguageControl({ className }: { className?: string }) {
               setOpen(false);
             }}
           />
-          <div className="border-t border-white/[0.06] px-3.5 py-2.5">
-            <SubtitlesToggle compact />
-          </div>
         </Popover.Content>
       </Popover.Portal>
     </Popover.Root>

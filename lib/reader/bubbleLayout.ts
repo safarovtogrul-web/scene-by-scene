@@ -93,6 +93,30 @@ function anchorForTopLeft(x: number, y: number, width: number, height: number): 
 }
 
 /**
+ * A placement carrying exactly one kind of anchor.
+ *
+ * The authored hint this builds on may already name a preset, and the resolver
+ * is free to answer with normalized coordinates instead. Spreading one over the
+ * other would leave both on the object, which the schema rejects for good
+ * reason: a bubble with a preset *and* a point does not say where it goes.
+ */
+function withAnchor(
+  base: BubblePlacement | undefined,
+  anchor: SceneOverlay["anchor"],
+  maxWidth: number,
+): BubblePlacement {
+  const rest = { ...(base ?? {}) } as Record<string, unknown>;
+  delete rest.preset;
+  delete rest.x;
+  delete rest.y;
+  return {
+    ...rest,
+    ...(typeof anchor === "string" ? { preset: anchor } : { x: anchor.x, y: anchor.y }),
+    maxWidth,
+  } as BubblePlacement;
+}
+
+/**
  * Resolves the overlay to the placement the reader renders.
  *
  * The search follows the brief's priority order rather than taste: keep the
@@ -143,9 +167,7 @@ export function resolveBubblePlacement(
       if (blocked.length === 0) {
         const textScale = Math.min(1, scale);
         return {
-          ...base,
-          ...(typeof candidate.anchor === "string" ? { preset: candidate.anchor } : { x: candidate.anchor.x, y: candidate.anchor.y }),
-          maxWidth: candidate.width,
+          ...withAnchor(base, candidate.anchor, candidate.width),
           ...(textScale < 1 ? { textScale: Number(textScale.toFixed(3)) } : {}),
         } as BubblePlacement & { textScale?: number };
       }
@@ -155,9 +177,7 @@ export function resolveBubblePlacement(
 
   const chosen = fallback!;
   return {
-    ...base,
-    ...(typeof chosen.candidate.anchor === "string" ? { preset: chosen.candidate.anchor } : { x: chosen.candidate.anchor.x, y: chosen.candidate.anchor.y }),
-    maxWidth: chosen.candidate.width,
+    ...withAnchor(base, chosen.candidate.anchor, chosen.candidate.width),
     textScale: Number((chosen.height / naturalHeight).toFixed(3)),
     blocked: chosen.blocked,
   } as BubblePlacement & { textScale?: number; blocked?: ProtectedRegion[] };
