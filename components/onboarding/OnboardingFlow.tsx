@@ -64,7 +64,10 @@ export function OnboardingFlow() {
               hint={t("onbUseHint")}
               languages={SPOKEN_LANGUAGES}
               value={preferences.interfaceLanguage}
-              onChange={(code) => update({ interfaceLanguage: code as AppPreferences["interfaceLanguage"] })}
+              onChange={(code) => update({
+                interfaceLanguage: code as AppPreferences["interfaceLanguage"],
+                translationLanguage: code as AppPreferences["translationLanguage"],
+              })}
               onBack={goBack}
               onSubmit={() => setStep(3)}
               ctaLabel={`${t("startApp")} ✨`}

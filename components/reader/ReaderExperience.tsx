@@ -17,10 +17,13 @@ export function ReaderExperience({ story, initialDifficulty = story.defaultDiffi
 }) {
   const { preferences, t } = usePreferences();
   const [difficulty, setDifficulty] = useState(initialDifficulty);
-  const [index, setIndex] = useState(0);
+  const [index, setIndex] = useState(-1);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const safeIndex = Math.max(0, Math.min(index, story.scenes.length - 1));
   const ui = getLanguage(preferences.interfaceLanguage);
+  const progress = index < 0 ? t("readerOpening")
+    : index >= story.scenes.length ? t("readerCompleted")
+      : t("sceneOf", { done: safeIndex + 1, total: story.scenes.length });
   return <main className={styles.world} style={{ "--world-color": story.background.color ?? "#131b26", "--world-accent": story.background.accent ?? "#a78bfa" } as CSSProperties} dir={ui.dir} data-reader-mode="cinema">
     <div className={styles.atmosphere} aria-hidden>
       <Image src={story.background.image} alt="" fill unoptimized={story.background.image.endsWith(".svg")} sizes="100vw" className={styles.worldImage} loading="eager" fetchPriority="low" />
@@ -29,10 +32,11 @@ export function ReaderExperience({ story, initialDifficulty = story.defaultDiffi
       <a className={styles.skipLink} href="#story-scenes">{t("readerSkip")}</a>
       <header className={styles.header}>
         <Link href={exitHref ?? `/stories/${story.slug}`} className={styles.iconButton} aria-label={t("back")}><ReaderArrow left={ui.dir !== "rtl"} /></Link>
-        <div className={styles.identity}><h1>{story.title}</h1><p>{t("sceneOf", { done: story.scenes.length ? safeIndex + 1 : 0, total: story.scenes.length })}</p></div>
+        <div className={styles.identity}><h1>{story.title}</h1><p>{progress}</p></div>
         <ReaderSettings open={settingsOpen} onOpenChange={setSettingsOpen} difficulty={difficulty} onDifficultyChange={setDifficulty} scene={story.scenes[safeIndex]} developmentTools={developmentTools} />
       </header>
-      <StoryReader story={story} difficulty={difficulty} index={safeIndex} onIndexChange={setIndex} onOpenSettings={() => setSettingsOpen(true)} />
+      <StoryReader story={story} difficulty={difficulty} index={index} onIndexChange={setIndex}
+        onOpenSettings={() => setSettingsOpen(true)} exitHref={exitHref ?? `/stories/${story.slug}`} />
     </div>
   </main>;
 }

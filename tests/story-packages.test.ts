@@ -196,13 +196,13 @@ test("The Lost Map uses the approved wide and portrait bubble-safe presets", () 
   for (const scene of THE_LOST_MAP_ASSET_SCENES) {
     const source = THE_LOST_MAP_ASSET_MANIFEST.scenes[scene.order - 1];
     assert.equal(scene.bubble?.preset, source.bubbleSafeWide);
-    assert.equal(scene.mobileBubble?.preset, source.bubbleSafePortrait);
+    assert.equal(scene.mobileBubble?.preset, scene.id === "S24" ? "top-right" : source.bubbleSafePortrait);
   }
   assert.equal(THE_LOST_MAP_ASSET_SCENES[15].mobileBubble?.preset, "top-left");
   assert.equal(THE_LOST_MAP_ASSET_SCENES[19].mobileBubble?.preset, "top-left");
   assert.equal(THE_LOST_MAP_ASSET_SCENES[19].mobileBubble?.maxWidth, 0.42);
-  assert.equal(THE_LOST_MAP_ASSET_SCENES[23].mobileBubble?.preset, "top-center");
-  assert.equal(THE_LOST_MAP_ASSET_SCENES[23].mobileBubble?.maxWidth, 1);
+  assert.equal(THE_LOST_MAP_ASSET_SCENES[23].mobileBubble?.preset, "top-right");
+  assert.equal(THE_LOST_MAP_ASSET_SCENES[23].mobileBubble?.maxWidth, 0.82);
 });
 
 test("The Lost Map approved Spanish copy maps exactly onto all 24 asset scenes", () => {
@@ -280,13 +280,15 @@ test("rapid preference patches compose from the current store even when browser 
   const previous = Object.getOwnPropertyDescriptor(globalThis, "window");
   Object.defineProperty(globalThis, "window", { configurable: true, value: { get localStorage() { throw new Error("Storage blocked"); } } });
   try {
-    patchPreferences({ interfaceLanguage: "en", learningLanguage: "en", showTranslations: true });
+    patchPreferences({ interfaceLanguage: "en", learningLanguage: "en", translationLanguage: "en", showTranslations: true });
     patchPreferences({ learningLanguage: "es" }, EMPTY_PREFERENCES);
     patchPreferences({ interfaceLanguage: "tr" }, EMPTY_PREFERENCES);
+    patchPreferences({ translationLanguage: "ar" }, EMPTY_PREFERENCES);
     const final = patchPreferences({ showTranslations: false }, EMPTY_PREFERENCES);
-    assert.deepEqual(final, { learningLanguage: "es", interfaceLanguage: "tr", showTranslations: false });
+    assert.deepEqual(final, { learningLanguage: "es", interfaceLanguage: "tr", translationLanguage: "ar", showTranslations: false });
     assert.deepEqual(parsePreferences(getPreferencesSnapshot()), final);
     assert.deepEqual(patchPreferences({ learningLanguage: undefined }, EMPTY_PREFERENCES), final);
+    assert.equal(parsePreferences({ interfaceLanguage: "tr", learningLanguage: "es" }).translationLanguage, "tr");
   } finally {
     if (previous) Object.defineProperty(globalThis, "window", previous);
     else Reflect.deleteProperty(globalThis, "window");

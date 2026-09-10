@@ -54,12 +54,14 @@ export const PREFERENCES_METADATA_KEY = "scenebyscene_preferences";
 export type AppPreferences = {
   interfaceLanguage: LanguageId;
   learningLanguage: LanguageId;
+  translationLanguage: LanguageId;
   showTranslations: boolean;
 };
 
 export const EMPTY_PREFERENCES: AppPreferences = {
   interfaceLanguage: DEFAULT_INTERFACE_LANGUAGE,
   learningLanguage: DEFAULT_LEARNING_LANGUAGE,
+  translationLanguage: DEFAULT_INTERFACE_LANGUAGE,
   showTranslations: true,
 };
 
@@ -111,17 +113,23 @@ export function parsePreferences(raw: string | unknown): AppPreferences {
   }
   if (!parsed) return EMPTY_PREFERENCES;
 
+  const interfaceLanguage = isLanguageId(parsed.interfaceLanguage)
+    ? parsed.interfaceLanguage
+    : isLanguageId(parsed.speaking)
+      ? parsed.speaking
+      : DEFAULT_INTERFACE_LANGUAGE;
+
   return {
-    interfaceLanguage: isLanguageId(parsed.interfaceLanguage)
-      ? parsed.interfaceLanguage
-      : isLanguageId(parsed.speaking)
-        ? parsed.speaking
-        : DEFAULT_INTERFACE_LANGUAGE,
+    interfaceLanguage,
     learningLanguage: isLanguageId(parsed.learningLanguage)
       ? parsed.learningLanguage
       : isLanguageId(parsed.learning)
         ? parsed.learning
         : DEFAULT_LEARNING_LANGUAGE,
+    // Older preferences used the interface language as the subtitle target.
+    translationLanguage: isLanguageId(parsed.translationLanguage)
+      ? parsed.translationLanguage
+      : interfaceLanguage,
     showTranslations:
       typeof parsed.showTranslations === "boolean" ? parsed.showTranslations : true,
   };
@@ -131,7 +139,7 @@ export function hasStoredPreferences(value: unknown): boolean {
   if (!value || typeof value !== "object") return false;
   const record = value as Record<string, unknown>;
   return (
-    "interfaceLanguage" in record || "learningLanguage" in record ||
+    "interfaceLanguage" in record || "learningLanguage" in record || "translationLanguage" in record ||
     "learning" in record || "speaking" in record || "showTranslations" in record
   );
 }
@@ -155,6 +163,7 @@ export function patchPreferences(patch: Partial<AppPreferences>, fallback: AppPr
   const next = {
     interfaceLanguage: isLanguageId(patch.interfaceLanguage) ? patch.interfaceLanguage : current.interfaceLanguage,
     learningLanguage: isLanguageId(patch.learningLanguage) ? patch.learningLanguage : current.learningLanguage,
+    translationLanguage: isLanguageId(patch.translationLanguage) ? patch.translationLanguage : current.translationLanguage,
     showTranslations: typeof patch.showTranslations === "boolean" ? patch.showTranslations : current.showTranslations,
   };
   writePreferences(next);

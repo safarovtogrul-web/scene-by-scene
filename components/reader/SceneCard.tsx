@@ -7,6 +7,7 @@ import type { Difficulty } from "@/lib/catalog/types";
 import { sceneCopy, sceneImageSources, type BubblePlacement, type PackageScene } from "@/lib/story-packages/schema";
 import { bubbleCopySize, readerPagePose } from "@/lib/reader/presentation";
 import { SceneArtwork } from "./SceneArtwork";
+import { useSpeechSynthesis } from "./useSpeechSynthesis";
 import styles from "./reader.module.css";
 
 const presets = {
@@ -18,10 +19,11 @@ const presets = {
 function placementVariables(placement: BubblePlacement | undefined, prefix: string): CSSProperties {
   const value = placement ?? { preset: "bottom-center" };
   const [x, y] = value.preset ? presets[value.preset] : [value.x, value.y];
+  const adaptiveSafeWidth = prefix === "mobile-bubble" ? 0.74 : 0.64;
   return {
     [`--${prefix}-x`]: `${x * 100}%`, [`--${prefix}-y`]: `${y * 100}%`,
     [`--${prefix}-shift-x`]: `${-x * 100}%`, [`--${prefix}-shift-y`]: `${-y * 100}%`,
-    [`--${prefix}-width`]: `${(value.maxWidth ?? 0.8) * 100}%`,
+    [`--${prefix}-width`]: `${(value.maxWidth ?? adaptiveSafeWidth) * 100}%`,
     [`--${prefix}-align`]: value.alignment ?? "center",
     [`--${prefix}-surface`]: value.tone === "ink" ? "rgb(15 22 31 / 72%)" : "rgb(15 22 31 / 57%)",
   } as CSSProperties;
@@ -33,8 +35,10 @@ export function SceneCard({ scene, difficulty, active, nearby, total, visualOffs
 }) {
   const { preferences, t } = usePreferences();
   const learning = getLanguage(preferences.learningLanguage);
+  const translation = getLanguage(preferences.translationLanguage);
   const ui = getLanguage(preferences.interfaceLanguage);
-  const copy = sceneCopy(scene, difficulty, learning.id, ui.id);
+  const copy = sceneCopy(scene, difficulty, learning.id, translation.id);
+  const speech = useSpeechSynthesis(active);
   const [failedImage, setFailedImage] = useState<string | null>(null);
   const focal = scene.visual?.focalPoint ?? { x: 0.5, y: 0.5 };
   const mobileFocal = scene.visual?.mobileFocalPoint ?? focal;
@@ -43,11 +47,11 @@ export function SceneCard({ scene, difficulty, active, nearby, total, visualOffs
   const imageKey = `${images.desktop}|${images.mobile}`;
   const translationState = !preferences.showTranslations ? "hidden"
     : copy.translation ? "visible"
-      : learning.id === ui.id ? "same-language" : "unavailable";
+      : learning.id === translation.id ? "same-language" : "unavailable";
   const translationNotice = translationState === "same-language"
     ? t("translationSameLanguage")
     : translationState === "unavailable"
-      ? t("translationUnavailable", { language: ui.nativeName })
+      ? t("translationUnavailable", { language: translation.nativeName })
       : undefined;
   const pose = readerPagePose(visualOffset, drag);
   const variables = {
@@ -74,20 +78,35 @@ export function SceneCard({ scene, difficulty, active, nearby, total, visualOffs
         {(failedImage === imageKey || !images.desktop) && <p className={styles.imageError}>{t("sceneImageUnavailable")}</p>}
         {nearby && (
           <div className={styles.bubbleLayer}>
-            <div className={styles.bubble} data-bubble-type={scene.bubble?.type ?? "narration"}
-              data-copy-size={bubbleCopySize(copy.primary, copy.translation)} data-translation-state={translationState}>
-              <div className={styles.bubbleCopy} tabIndex={active ? 0 : -1}>
-                {scene.bubble?.speaker && <span className={styles.speaker}>{scene.bubble.speaker}</span>}
+            <div className={styles.bubbleStack}
+              data-copy-size={bubbleCopySize(copy.primary, copy.translation ?? translationNotice)}
+              data-translation-state={translationState}
+              data-compact={difficulty === "hard" && preferences.showTranslations && Boolean(copy.translation || translationNotice)}>
+              <div className={styles.bubble} data-bubble-type={scene.bubble?.type ?? "narration"}>
+                <div className={styles.bubbleHeader}>
+                  {scene.bubble?.speaker ? <span className={styles.speaker}>{scene.bubble.speaker}</span> : <span />}
+                  <button type="button" className={styles.audioButton} data-reader-control
+                    disabled={!speech.supported || !copy.primary}
+                    aria-label={speech.supported ? t(speech.speaking ? "stopSpeaking" : "speakSentence") : t("audioUnavailable")}
+                    title={speech.supported ? t(speech.speaking ? "stopSpeaking" : "speakSentence") : t("audioUnavailable")}
+                    aria-pressed={speech.speaking}
+                    onClick={() => speech.speaking ? speech.cancel() : speech.speak(copy.primary ?? "", learning.locale)}>
+                    {speech.speaking
+                      ? <svg viewBox="0 0 24 24" fill="none" aria-hidden><rect x="7" y="7" width="10" height="10" rx="1.5" fill="currentColor" /></svg>
+                      : <svg viewBox="0 0 24 24" fill="none" aria-hidden><path d="M5 10v4h3l4 3V7l-4 3H5Z" fill="currentColor" /><path d="M15.5 9.1a4 4 0 0 1 0 5.8M18 6.8a7.2 7.2 0 0 1 0 10.4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" /></svg>}
+                  </button>
+                </div>
+                <div className={styles.bubbleCopy} tabIndex={active ? 0 : -1}>
                 <p className={styles.primary} lang={learning.locale} dir={learning.dir}>{copy.primary}</p>
-                {preferences.showTranslations && (showCaption || translationNotice) && <div className={styles.translationBlock}
-                  data-translation-language={ui.id} data-translation-state={translationState}>
-                  <span className={styles.translationLabel}>{t("readerTranslation")} · <bdi>{ui.nativeName}</bdi></span>
-                  <p lang={ui.locale} dir={ui.dir}
-                    className={`${styles.caption} ${translationNotice ? styles.captionNotice : ""}`}>
-                    {copy.translation ?? translationNotice}
-                  </p>
-                </div>}
+                </div>
               </div>
+              {preferences.showTranslations && (showCaption || translationNotice) && <div className={styles.translationBubble}
+                data-translation-language={translation.id} data-translation-state={translationState}>
+                <p lang={copy.translation ? translation.locale : ui.locale} dir={copy.translation ? translation.dir : ui.dir}
+                  className={`${styles.caption} ${translationNotice ? styles.captionNotice : ""}`}>
+                  {copy.translation ?? translationNotice}
+                </p>
+              </div>}
             </div>
           </div>
         )}

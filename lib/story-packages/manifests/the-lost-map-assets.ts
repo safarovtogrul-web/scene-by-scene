@@ -59,8 +59,13 @@ type BubblePreset = (typeof BUBBLE_PRESETS)[number];
 const mobileBubbleConstraints: Partial<Record<string, Pick<BubblePlacement, "maxWidth" | "alignment">>> = {
   // Keep the entrance seal and Lucía's working hand outside the left safe column.
   S20: { maxWidth: 0.42, alignment: "start" },
-  // Use the full approved top-center strip so the longest line stays above her face.
-  S24: { maxWidth: 1, alignment: "center" },
+  // Keep the closing photograph and Lucía's face readable below the title strip.
+  S24: { maxWidth: 0.82, alignment: "center" },
+};
+const mobileBubblePresetOverrides: Partial<Record<string, BubblePreset>> = {
+  // Hard copy is tall enough to reach Lucía's face in the centered strip;
+  // the top-right stone and stair area remains clear of her and the photograph.
+  S24: "top-right",
 };
 
 function invariant(condition: unknown, message: string): asserts condition {
@@ -102,7 +107,8 @@ export const THE_LOST_MAP_ASSET_SCENES: TheLostMapAssetScene[] = manifest.scenes
     },
     bubble: { preset: bubblePreset(scene.bubbleSafeWide, `${scene.sceneId}.bubbleSafeWide`) },
     mobileBubble: {
-      preset: bubblePreset(scene.bubbleSafePortrait, `${scene.sceneId}.bubbleSafePortrait`),
+      preset: mobileBubblePresetOverrides[scene.sceneId]
+        ?? bubblePreset(scene.bubbleSafePortrait, `${scene.sceneId}.bubbleSafePortrait`),
       ...mobileBubbleConstraints[scene.sceneId],
     },
     production: {
