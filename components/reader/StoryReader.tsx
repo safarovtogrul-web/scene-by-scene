@@ -5,7 +5,7 @@ import { useEffect, useRef, useState, type CSSProperties, type KeyboardEvent, ty
 import { usePreferences } from "@/components/preferences/PreferencesProvider";
 import { getLanguage } from "@/lib/languages";
 import type { Difficulty } from "@/lib/catalog/types";
-import { sceneCopy, type StoryPackage } from "@/lib/story-packages/schema";
+import { sceneCopy, storyDisplay, type StoryPackage } from "@/lib/story-packages/schema";
 import { SceneArtwork } from "./SceneArtwork";
 import { SceneCard } from "./SceneCard";
 import { SceneTimeline } from "./SceneTimeline";
@@ -23,6 +23,7 @@ function BookCover({ story, difficulty, kind, onBegin, onRestart, exitHref }: {
 }) {
   const { preferences, t } = usePreferences();
   const learning = getLanguage(preferences.learningLanguage);
+  const display = storyDisplay(story, preferences.interfaceLanguage);
   const firstScene = story.scenes[0];
   const finalScene = story.scenes.at(-1);
   const image = kind === "start" ? firstScene?.image ?? story.cover : finalScene?.image ?? story.cover;
@@ -31,9 +32,9 @@ function BookCover({ story, difficulty, kind, onBegin, onRestart, exitHref }: {
     <span className={styles.coverVeil} aria-hidden />
     <div className={styles.coverContent}>
       <span className={styles.coverKicker}>{t(kind === "start" ? "readerOpening" : "readerCompleted")}</span>
-      <h2 id={`reader-${kind}-title`}>{kind === "start" ? story.title : t("storyComplete")}</h2>
+      <h2 id={`reader-${kind}-title`}>{kind === "start" ? display.title : t("storyComplete")}</h2>
       {kind === "start" ? <>
-        <p className={styles.coverSubtitle}>{story.subtitle ?? story.description}</p>
+        <p className={styles.coverSubtitle}>{display.subtitle ?? display.description}</p>
         <div className={styles.coverMeta}>
           <span>{t(difficulty)}</span><i aria-hidden /><span lang={learning.locale} dir={learning.dir}><bdi>{learning.nativeName}</bdi></span>
         </div>

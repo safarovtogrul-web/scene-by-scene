@@ -1,6 +1,7 @@
 import type { MessageKey } from "@/lib/i18n/messages";
 
 import type { LanguageId } from "@/lib/languages";
+import type { StoryDisplayCopy } from "@/lib/story-packages/schema";
 
 /** Scene by Scene intentionally uses only these two editorial difficulty versions. */
 export const STORY_DIFFICULTIES = ["easy", "hard"] as const;
@@ -80,6 +81,8 @@ export type Story = {
   levels: StoryLevels;
   /** Existing catalogue metadata, not reader scene text. */
   description: string;
+  /** Interface-language display copy; absent locales fall back to canonical English. */
+  localized?: Partial<Record<LanguageId, StoryDisplayCopy>>;
   /** Existing catalogue preview vocabulary, not authored reader vocabulary. */
   vocabulary: string[];
   /** ISO date the story was added — drives the "New Stories" row and sorting. */

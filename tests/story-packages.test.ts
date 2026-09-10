@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { BUBBLE_PRESETS, READER_MOBILE_MEDIA, packageToStory, readerHref, sceneCopy, sceneImageSources, type PackageScene, type SceneLanguageText, type StoryPackage } from "../lib/story-packages/schema";
+import { BUBBLE_PRESETS, READER_MOBILE_MEDIA, packageToStory, readerHref, sceneCopy, sceneImageSources, storyDisplay, type PackageScene, type SceneLanguageText, type StoryPackage } from "../lib/story-packages/schema";
+import { auditStoryParity } from "../scripts/audit-story-parity";
 import { assertStoryPackages, validateStoryPackages } from "../lib/story-packages/validation";
 import { storyAssetExists } from "../lib/story-packages/validate-files";
 import { THE_LOST_MAP_ASSET_MANIFEST, THE_LOST_MAP_ASSET_SCENES } from "../lib/story-packages/manifests/the-lost-map-assets";
@@ -226,13 +227,22 @@ test("The Lost Map approved Spanish copy maps exactly onto all 24 asset scenes",
   }
 });
 
-test("The Lost Map production package registers and validates without inventing translations", () => {
+test("The Lost Map registers, validates, and resolves in every shipped language", () => {
   assert.deepEqual(validateStoryPackages([THE_LOST_MAP], { assetExists: storyAssetExists }), []);
   assert.equal(STORY_PACKAGES.length, 1);
   assert.equal(getStoryPackage("the-lost-map"), THE_LOST_MAP);
+  assert.deepEqual([...THE_LOST_MAP.availableLanguages].sort(), [...LANGUAGE_IDS].sort());
   for (const scene of THE_LOST_MAP_SCENES) {
-    assert.equal(sceneCopy(scene, "easy", "es", "en").translation, undefined);
-    assert.equal(sceneCopy(scene, "hard", "es", "tr").translation, undefined);
+    for (const difficulty of ["easy", "hard"] as const) {
+      for (const learning of LANGUAGE_IDS) {
+        // The story sentence must exist in every language the story advertises.
+        assert.ok(sceneCopy(scene, difficulty, learning, learning).primary?.trim(), `${scene.id}.${difficulty}.${learning}`);
+        // A caption is suppressed only when it would repeat the sentence.
+        assert.equal(sceneCopy(scene, difficulty, learning, learning).translation, undefined);
+      }
+      assert.ok(sceneCopy(scene, difficulty, "es", "en").translation?.trim());
+      assert.ok(sceneCopy(scene, difficulty, "es", "tr").translation?.trim());
+    }
   }
 });
 
@@ -443,4 +453,60 @@ test("the product name is never translated away", () => {
       assert.ok(messageFor(id, key).includes("Scene by Scene"), `${id}.${key}`);
     }
   }
+});
+
+test("The Lost Map ships exactly 912 sentence variants with no empty required text", () => {
+  const scenes = THE_LOST_MAP_SCENES;
+  assert.equal(scenes.length, 24);
+  assert.equal(LANGUAGE_IDS.length, 19);
+
+  let variants = 0;
+  for (const scene of scenes) {
+    assert.ok(scene.semanticCore?.trim(), `${scene.id} needs a semantic core`);
+    for (const difficulty of ["easy", "hard"] as const) {
+      for (const language of LANGUAGE_IDS) {
+        const text = scene.text[difficulty][language];
+        assert.equal(typeof text, "string", `${scene.id}.${difficulty}.${language}`);
+        assert.ok(text!.trim(), `${scene.id}.${difficulty}.${language} must not be empty`);
+        variants += 1;
+      }
+    }
+  }
+  assert.equal(variants, 24 * 2 * 19);
+  assert.equal(variants, 912);
+});
+
+test("The Lost Map keeps the approved Spanish as its source of truth", () => {
+  // Every other language is written against these lines, so a drift here means
+  // the manifests disagree about what happens in the scene.
+  for (const [index, scene] of THE_LOST_MAP_SCENES.entries()) {
+    const approved = THE_LOST_MAP_COPY_MANIFEST.scenes[index];
+    assert.equal(scene.text.easy.es, approved.easy, `${scene.id} easy Spanish`);
+    assert.equal(scene.text.hard.es, approved.hard, `${scene.id} hard Spanish`);
+    assert.equal(scene.bubble?.type, approved.mode, `${scene.id} mode`);
+  }
+});
+
+test("every language tells the same event: names, question form, props and Easy/Hard parity", () => {
+  // The audit is the reviewable form of this check; the test makes it blocking.
+  assert.deepEqual(auditStoryParity(), []);
+});
+
+test("story metadata follows the interface language and never the story languages", () => {
+  for (const language of LANGUAGE_IDS) {
+    const display = storyDisplay(THE_LOST_MAP, language);
+    assert.ok(display.title.trim(), `${language} title`);
+    assert.ok(display.subtitle?.trim(), `${language} subtitle`);
+    assert.ok(display.description.trim(), `${language} description`);
+  }
+  // Identifiers never move with language.
+  assert.equal(THE_LOST_MAP.slug, "the-lost-map");
+  assert.equal(THE_LOST_MAP.id, "the-lost-map");
+  assert.equal(THE_LOST_MAP.title, "The Lost Map");
+  // Localised titles are real translations, not the English string repeated.
+  assert.equal(storyDisplay(THE_LOST_MAP, "es").title, "El mapa perdido");
+  assert.equal(storyDisplay(THE_LOST_MAP, "tr").title, "Kayıp Harita");
+  assert.notEqual(storyDisplay(THE_LOST_MAP, "ja").title, THE_LOST_MAP.title);
+  // An unlocalised language falls back to the canonical English rather than blank.
+  assert.equal(storyDisplay({ ...THE_LOST_MAP, localized: {} }, "th").title, "The Lost Map");
 });

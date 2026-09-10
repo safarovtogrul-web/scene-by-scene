@@ -6,6 +6,7 @@ import Link from "next/link";
 import { PremiumBadge, StoryMeta } from "./StoryMeta";
 import { progressRatio } from "@/lib/catalog";
 import type { Story } from "@/lib/catalog";
+import { storyDisplay } from "@/lib/story-packages/schema";
 import { cn } from "@/lib/cn";
 import { usePreferences } from "@/components/preferences/PreferencesProvider";
 
@@ -34,7 +35,7 @@ export function StoryCard({
   priority = false,
   className,
 }: StoryCardProps) {
-  const { t } = usePreferences();
+  const { preferences, t } = usePreferences();
   const ratio = showProgress ? progressRatio(story) : 0;
 
   return (
@@ -81,7 +82,7 @@ export function StoryCard({
       </div>
 
       <h3 className="mt-3 font-display text-[15px] leading-snug font-semibold tracking-tight text-mist-100 transition-colors duration-300 group-hover:text-white sm:mt-3.5 sm:text-[16px]">
-        {story.title}
+        {storyDisplay(story, preferences.interfaceLanguage).title}
       </h3>
       {showProgress && ratio > 0 ? (
         <p className="mt-1 text-[13px] text-mist-400">

@@ -4,6 +4,8 @@ import { notFound } from "next/navigation";
 import { SiteHeader } from "@/components/landing/SiteHeader";
 import { StoryDetail } from "@/components/story-ui/StoryDetail";
 import { STORIES, genreSlugLabel, getStoryBySlug } from "@/lib/catalog";
+import { getServerPreferences } from "@/lib/i18n/server";
+import { storyDisplay } from "@/lib/story-packages/schema";
 
 type PageProps = { params: Promise<{ slug: string }> };
 
@@ -18,9 +20,14 @@ export async function generateMetadata({
   const story = getStoryBySlug(slug);
   if (!story) return { title: "Story not found" };
 
+  // The tab title is user-visible story metadata, so it follows the interface
+  // language too. A crawler arrives without the cookie and gets English.
+  const { interfaceLanguage } = await getServerPreferences();
+  const display = storyDisplay(story, interfaceLanguage);
+
   return {
-    title: story.title,
-    description: `Easy and Hard · ${genreSlugLabel(story.genre)} · ${story.scenes} scenes. ${story.description}`,
+    title: display.title,
+    description: `Easy and Hard · ${genreSlugLabel(story.genre)} · ${story.scenes} scenes. ${display.description}`,
   };
 }
 

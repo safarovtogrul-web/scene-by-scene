@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ReaderExperience } from "@/components/reader/ReaderExperience";
+import { getServerPreferences } from "@/lib/i18n/server";
+import { storyDisplay } from "@/lib/story-packages/schema";
 import { getStoryPackage } from "@/lib/story-packages/registry";
 import { validateRegisteredStories } from "@/lib/story-packages/validate-files";
 
@@ -11,7 +13,9 @@ type PageProps = {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const story = getStoryPackage((await params).slug);
-  return { title: story?.title ?? "Story not found", robots: { index: false } };
+  if (!story) return { title: "Story not found", robots: { index: false } };
+  const { interfaceLanguage } = await getServerPreferences();
+  return { title: storyDisplay(story, interfaceLanguage).title, robots: { index: false } };
 }
 
 export default async function ReadStoryPage({ params, searchParams }: PageProps) {

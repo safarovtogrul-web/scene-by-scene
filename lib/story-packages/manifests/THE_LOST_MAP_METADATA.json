@@ -1,0 +1,102 @@
+{
+  "slug": "the-lost-map",
+  "canonicalTitle": "The Lost Map",
+  "note": "Display copy follows the interface language. The slug, id and canonical English title never change.",
+  "metadata": {
+    "en": {
+      "title": "The Lost Map",
+      "subtitle": "A grounded adventure mystery",
+      "description": "Lucía follows a map, a brass key and a trail of stone markers to a hidden family archive that reveals her grandmother's connection to an old bridge."
+    },
+    "es": {
+      "title": "El mapa perdido",
+      "subtitle": "Una aventura con los pies en la tierra",
+      "description": "Lucía sigue un mapa, una llave de latón y un rastro de hitos de piedra hasta un archivo familiar escondido que revela la relación de su abuela con un viejo puente."
+    },
+    "fr": {
+      "title": "La carte perdue",
+      "subtitle": "Une aventure ancrée dans le réel",
+      "description": "Lucía suit une carte, une clé en laiton et une trace de bornes de pierre jusqu'à des archives familiales cachées qui révèlent le lien de sa grand-mère avec un vieux pont."
+    },
+    "de": {
+      "title": "Die verlorene Karte",
+      "subtitle": "Ein bodenständiges Abenteuer",
+      "description": "Lucía folgt einer Karte, einem Messingschlüssel und einer Spur aus Steinmarkern zu einem verborgenen Familienarchiv, das die Verbindung ihrer Großmutter zu einer alten Brücke enthüllt."
+    },
+    "pt-BR": {
+      "title": "O mapa perdido",
+      "subtitle": "Uma aventura com os pés no chão",
+      "description": "Lucía segue um mapa, uma chave de latão e uma trilha de marcos de pedra até um arquivo de família escondido que revela a ligação da avó com uma ponte antiga."
+    },
+    "it": {
+      "title": "La mappa perduta",
+      "subtitle": "Un'avventura con i piedi per terra",
+      "description": "Lucía segue una mappa, una chiave di ottone e una scia di cippi di pietra fino a un archivio di famiglia nascosto che rivela il legame della nonna con un vecchio ponte."
+    },
+    "tr": {
+      "title": "Kayıp Harita",
+      "subtitle": "Ayakları yere basan bir macera",
+      "description": "Lucía bir haritanın, pirinç bir anahtarın ve taş işaretlerden oluşan bir izin peşinden giderek, büyükannesinin eski bir köprüyle bağını ortaya çıkaran gizli bir aile arşivine ulaşır."
+    },
+    "ru": {
+      "title": "Потерянная карта",
+      "subtitle": "Приключение без вымысла",
+      "description": "Лусия идёт по карте, латунному ключу и цепочке каменных знаков к спрятанному семейному архиву, который раскрывает связь её бабушки со старым мостом."
+    },
+    "uk": {
+      "title": "Загублена карта",
+      "subtitle": "Пригода без вигадок",
+      "description": "Лусія йде за картою, латунним ключем і низкою кам’яних знаків до схованого родинного архіву, який розкриває зв’язок її бабусі зі старим мостом."
+    },
+    "ar": {
+      "title": "الخريطة المفقودة",
+      "subtitle": "مغامرة واقعية",
+      "description": "تتبع لوسيا خريطة ومفتاحًا نحاسيًّا وسلسلة من العلامات الحجرية حتى تصل إلى أرشيف عائلي مخبّأ يكشف صلة جدّتها بجسر قديم."
+    },
+    "fa": {
+      "title": "نقشه‌ی گمشده",
+      "subtitle": "ماجراجویی‌ای زمینی",
+      "description": "لوسیا نقشه‌ای، کلیدی برنجی و رد نشانه‌های سنگی را دنبال می‌کند تا به بایگانی پنهان خانوادگی برسد که پیوند مادربزرگش با پلی کهنه را آشکار می‌کند."
+    },
+    "zh-CN": {
+      "title": "遗失的地图",
+      "subtitle": "一场脚踏实地的冒险",
+      "description": "露西亚循着一张地图、一把黄铜钥匙和一串石头路标，找到了一处隐蔽的家族档案，揭开祖母与一座老石桥之间的关联。"
+    },
+    "ja": {
+      "title": "失われた地図",
+      "subtitle": "地に足のついた冒険",
+      "description": "ルシアは一枚の地図と真鍮の鍵、そして石の道しるべをたどり、祖母と古い橋との関わりを明かす隠された家族の記録にたどり着く。"
+    },
+    "ko": {
+      "title": "잃어버린 지도",
+      "subtitle": "발밑에서 시작되는 모험",
+      "description": "루시아는 지도 한 장과 놋쇠 열쇠, 그리고 돌 표지의 흔적을 따라가다가, 할머니와 오래된 다리의 인연을 밝혀 주는 숨겨진 가족 기록에 이른다."
+    },
+    "id": {
+      "title": "Peta yang Hilang",
+      "subtitle": "Petualangan yang membumi",
+      "description": "Lucía mengikuti sebuah peta, kunci kuningan, dan jejak penanda batu sampai ke arsip keluarga tersembunyi yang mengungkap hubungan neneknya dengan sebuah jembatan tua."
+    },
+    "vi": {
+      "title": "Tấm bản đồ thất lạc",
+      "subtitle": "Một chuyến phiêu lưu rất đời",
+      "description": "Lucía lần theo một tấm bản đồ, một chiếc chìa khóa đồng và dấu vết của những cột mốc đá để tìm tới kho lưu trữ gia đình giấu kín, nơi hé lộ mối liên hệ giữa bà cô và một cây cầu cũ."
+    },
+    "th": {
+      "title": "แผนที่ที่หายไป",
+      "subtitle": "การผจญภัยที่ติดดิน",
+      "description": "ลูซีอาตามรอยแผนที่ กุญแจทองเหลือง และหลักหินเรียงราย ไปจนพบคลังเอกสารของครอบครัวที่ซ่อนอยู่ ซึ่งเผยความผูกพันของคุณยายกับสะพานเก่าแห่งหนึ่ง"
+    },
+    "hi": {
+      "title": "खोया हुआ नक्शा",
+      "subtitle": "ज़मीन से जुड़ा एक रोमांच",
+      "description": "लुसीआ एक नक्शे, पीतल की एक चाबी और पत्थर के निशानों के सहारे उस छिपे हुए पारिवारिक संग्रह तक पहुँचती है, जो उसकी दादी और एक पुराने पुल के रिश्ते को उजागर करता है।"
+    },
+    "sw": {
+      "title": "Ramani Iliyopotea",
+      "subtitle": "Matukio yenye mizizi ardhini",
+      "description": "Lucía anafuata ramani, ufunguo wa shaba na mfululizo wa alama za mawe hadi kwenye kumbukumbu za familia zilizofichwa, zinazofichua uhusiano wa bibi yake na daraja la zamani."
+    }
+  }
+}

@@ -1,5 +1,7 @@
-import { sceneImageSources, type StoryPackage } from "../schema";
-import { THE_LOST_MAP_SCENES } from "./the-lost-map-copy";
+import localizedMetadata from "./THE_LOST_MAP_METADATA.json";
+import { sceneImageSources, type StoryDisplayCopy, type StoryPackage } from "../schema";
+import type { LanguageId } from "../../languages";
+import { THE_LOST_MAP_LANGUAGES, THE_LOST_MAP_SCENES } from "./the-lost-map-copy";
 
 const openingScene = sceneImageSources(THE_LOST_MAP_SCENES[0].image).desktop;
 
@@ -23,7 +25,10 @@ export const THE_LOST_MAP = {
   background: { image: openingScene },
   defaultDifficulty: "easy",
   estimatedReadingMinutes: 8,
-  availableLanguages: ["es"],
+  availableLanguages: THE_LOST_MAP_LANGUAGES,
   addedAt: "2026-09-09",
+  // Display copy follows the interface language. The slug, id and canonical
+  // English title above are identifiers and never move with it.
+  localized: (localizedMetadata.metadata ?? {}) as Partial<Record<LanguageId, StoryDisplayCopy>>,
   scenes: THE_LOST_MAP_SCENES,
 } satisfies StoryPackage;

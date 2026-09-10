@@ -6,7 +6,7 @@ import { useState, type CSSProperties, type ReactNode } from "react";
 import { usePreferences } from "@/components/preferences/PreferencesProvider";
 import type { Difficulty } from "@/lib/catalog/types";
 import { getLanguage } from "@/lib/languages";
-import type { StoryPackage } from "@/lib/story-packages/schema";
+import { storyDisplay, type StoryPackage } from "@/lib/story-packages/schema";
 import { ReaderSettings } from "./ReaderSettings";
 import { StoryReader, ReaderArrow } from "./StoryReader";
 import styles from "./reader.module.css";
@@ -21,6 +21,7 @@ export function ReaderExperience({ story, initialDifficulty = story.defaultDiffi
   const [settingsOpen, setSettingsOpen] = useState(false);
   const safeIndex = Math.max(0, Math.min(index, story.scenes.length - 1));
   const ui = getLanguage(preferences.interfaceLanguage);
+  const display = storyDisplay(story, preferences.interfaceLanguage);
   const progress = index < 0 ? t("readerOpening")
     : index >= story.scenes.length ? t("readerCompleted")
       : t("sceneOf", { done: safeIndex + 1, total: story.scenes.length });
@@ -32,7 +33,7 @@ export function ReaderExperience({ story, initialDifficulty = story.defaultDiffi
       <a className={styles.skipLink} href="#story-scenes">{t("readerSkip")}</a>
       <header className={styles.header}>
         <Link href={exitHref ?? `/stories/${story.slug}`} className={styles.iconButton} aria-label={t("back")}><ReaderArrow left={ui.dir !== "rtl"} /></Link>
-        <div className={styles.identity}><h1>{story.title}</h1><p>{progress}</p></div>
+        <div className={styles.identity}><h1>{display.title}</h1><p>{progress}</p></div>
         <ReaderSettings open={settingsOpen} onOpenChange={setSettingsOpen} difficulty={difficulty} onDifficultyChange={setDifficulty} scene={story.scenes[safeIndex]} developmentTools={developmentTools} />
       </header>
       <StoryReader story={story} difficulty={difficulty} index={index} onIndexChange={setIndex}
